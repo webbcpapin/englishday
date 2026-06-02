@@ -19,11 +19,11 @@ Customs English Club Adventure untuk Bea Cukai Pangkalpinang.
 
 ## Deploy GitHub Pages
 
-1. Push folder ini ke repository `cec-quest`.
+1. Push folder ini ke repository `englishday`.
 2. Buka GitHub repository settings.
 3. Pilih Pages.
 4. Source: `main` branch, folder `/root`.
-5. Akses: `https://webbcpapin.github.io/cec-quest/`.
+5. Akses: `https://webbcpapin.github.io/englishday/`.
 
 ## Setup Google Apps Script
 
