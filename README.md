@@ -4,14 +4,16 @@ Customs English Club Adventure untuk Bea Cukai Pangkalpinang.
 
 ## Isi MVP
 
-- Registrasi awal: nama dan NIP.
-- Login pegawai: NIP, unit kerja resmi, dan pilihan avatar.
+- Registrasi awal: nama, NIP, unit kerja resmi, dan password.
+- Login pegawai: NIP dan password, dengan deteksi nama jika NIP sudah terdaftar.
+- Menu mentor dari halaman login dengan password khusus.
+- Profil pegawai tampil setelah login, berisi progress, pilihan avatar, dan tombol mulai petualangan.
 - Dashboard: XP, level, misi harian, world progress, quick actions.
 - Quest: 6 world, World 1 aktif, 10 level, 250 soal terstruktur.
 - Quiz: vocabulary, grammar, listening Text-to-Speech, sentence builder.
 - Boss Battle Level 10: self introduction memakai Web Speech API.
 - Result: star, XP, badge, confetti.
-- Leaderboard, badge, profil, mentor dashboard, admin panel.
+- Leaderboard tanpa data dummy, badge, profil, mentor dashboard, admin panel.
 - Local Storage untuk progress browser.
 - Template Google Apps Script di `gas_backend.gs`.
 
@@ -33,4 +35,3 @@ Customs English Club Adventure untuk Bea Cukai Pangkalpinang.
 6. Who has access: Anyone.
 7. Salin Web App URL.
 8. Isi konstanta `APPS_SCRIPT_URL` di `index.html`.
-

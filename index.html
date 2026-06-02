@@ -225,6 +225,14 @@
             <label for="reg-nip">NIP / Nomor Pegawai</label>
             <input id="reg-nip" inputmode="numeric" maxlength="24" required placeholder="Masukkan NIP">
           </div>
+          <div class="field">
+            <label for="reg-unit">Seksi / Unit Kerja</label>
+            <select id="reg-unit" required></select>
+          </div>
+          <div class="field">
+            <label for="reg-password">Password</label>
+            <input id="reg-password" type="password" minlength="4" maxlength="40" required placeholder="Buat password login">
+          </div>
           <button class="btn" type="submit">Daftar</button>
           <button class="btn secondary" type="button" data-action="show-login">Sudah Terdaftar</button>
         </form>
@@ -250,16 +258,16 @@
             <input id="login-name" maxlength="60" readonly placeholder="Nama akan muncul setelah NIP valid">
           </div>
           <div class="field">
-            <label for="login-unit">Seksi / Unit Kerja</label>
-            <select id="login-unit" required></select>
+            <label for="login-password">Password</label>
+            <input id="login-password" type="password" maxlength="40" required placeholder="Masukkan password">
           </div>
-          <div class="field">
-            <label>Pilih Karakter</label>
-            <div id="avatar-grid" class="avatar-grid"></div>
-          </div>
-          <button class="btn" type="submit">Mulai Petualangan</button>
-          <button class="btn ghost" type="button" data-action="guest-login">Masuk Sebagai Guest</button>
+          <button class="btn" type="submit">Login Pegawai</button>
           <button class="btn secondary" type="button" data-action="back-register">Registrasi Baru</button>
+          <div class="field" style="margin-top:18px">
+            <label for="mentor-password">Menu Mentor</label>
+            <input id="mentor-password" type="password" maxlength="40" placeholder="Password mentor">
+          </div>
+          <button class="btn ghost" type="button" data-action="mentor-login">Login Mentor</button>
         </form>
       </div>
     </section>
@@ -378,6 +386,12 @@
           </div>
         </article>
         <article class="card">
+          <h2>Pilih Karakter</h2>
+          <p class="sub">Karakter dapat diganti sebelum mulai petualangan.</p>
+          <div id="profile-avatar-grid" class="avatar-grid"></div>
+          <button class="btn" type="button" data-action="start-adventure">Mulai Petualangan</button>
+        </article>
+        <article class="card">
           <h2>Skill Progress</h2>
           <div id="skill-bars"></div>
         </article>
@@ -491,13 +505,6 @@
       ["perfect", "Perfect Score", "Skor 100% satu level", "💯"],
       ["daily", "Daily Warrior", "Selesaikan misi harian", "📅"]
     ];
-    const DEMO_USERS = [
-      { name: "Agung H.", nip: "demo1", unit: "Seksi Penindakan dan Penyidikan", xp: 1250, level: 8, avatar: "🎯", stars: 18 },
-      { name: "Rina W.", nip: "demo2", unit: "Seksi Perbendaharaan", xp: 980, level: 6, avatar: "🤝", stars: 14 },
-      { name: "Budi S.", nip: "demo3", unit: "Subbagian Umum", xp: 860, level: 5, avatar: "📊", stars: 12 },
-      { name: "Sari L.", nip: "demo4", unit: "PPNPN", xp: 650, level: 4, avatar: "🛡", stars: 9 }
-    ];
-
     const state = {
       user: null,
       users: {},
@@ -555,14 +562,23 @@
     }
     const QUESTION_BANK = buildQuestionBank();
 
-    function defaultUser({ name, nip, unit = "", avatar = "ranger", guest = false }) {
+    function defaultUser({ name, nip, unit = "", password = "", avatar = "ranger" }) {
       const av = AVATARS.find(a => a.id === avatar) || AVATARS[0];
       return {
-        name, nip, unit, avatar, avatarEmoji: av.emoji, guest,
+        name, nip, unit, password, avatar, avatarEmoji: av.emoji,
         xp: 0, level: 1, stars: 0, streak: 0, totalQuestions: 0, correctQuestions: 0,
         skills: { grammar: 0, vocab: 0, listening: 0, speaking: 0 },
         progress: {}, attempts: [], badges: [], registeredAt: new Date().toISOString(), lastActive: new Date().toISOString()
       };
+    }
+
+    function loadRegisteredUsers() {
+      const rawUsers = load("cecQuestUsers", {});
+      return Object.fromEntries(Object.entries(rawUsers).filter(([nip, user]) => {
+        if (!user || !user.password) return false;
+        if (String(nip).startsWith("guest-") || String(nip).startsWith("demo")) return false;
+        return true;
+      }));
     }
 
     async function backend(action, payload) {
@@ -581,15 +597,18 @@
     }
 
     function init() {
-      state.users = load("cecQuestUsers", {});
+      state.users = loadRegisteredUsers();
+      save("cecQuestUsers", state.users);
       renderUnitOptions();
-      renderAvatars();
       bindEvents();
       setTimeout(() => {
         $("splash").classList.add("hide");
         const last = localStorage.getItem("cecQuestCurrentUser");
-        if (last && state.users[last]) loginUser(last);
-        else if (Object.keys(state.users).length) showAuth("login-screen");
+        if (last && state.users[last]) {
+          $("login-nip").value = last;
+          hydrateLoginName();
+          showAuth("login-screen");
+        } else if (Object.keys(state.users).length) showAuth("login-screen");
         else showAuth("register-screen");
       }, 1600);
     }
@@ -603,7 +622,8 @@
         const a = action.dataset.action;
         if (a === "show-login") showAuth("login-screen");
         if (a === "back-register") showAuth("register-screen");
-        if (a === "guest-login") guestLogin();
+        if (a === "mentor-login") mentorLogin();
+        if (a === "start-adventure") showScreen("home-screen");
         if (a === "continue") continueLearning();
         if (a === "quit-quiz") quitQuiz();
         if (a === "next-question") nextQuestion();
@@ -621,19 +641,26 @@
     }
 
     function renderUnitOptions() {
-      $("login-unit").innerHTML = `<option value="">Pilih Unit Kerja</option>` + UNITS.map(u => `<option value="${esc(u)}">${esc(u)}</option>`).join("");
+      const options = `<option value="">Pilih Unit Kerja</option>` + UNITS.map(u => `<option value="${esc(u)}">${esc(u)}</option>`).join("");
+      $("reg-unit").innerHTML = options;
     }
 
-    function renderAvatars() {
-      $("avatar-grid").innerHTML = AVATARS.map(a => `
+    function renderProfileAvatars() {
+      const host = $("profile-avatar-grid");
+      if (!host || !state.user) return;
+      host.innerHTML = AVATARS.map(a => `
         <button class="avatar-option ${a.id === state.selectedAvatar ? "active" : ""}" type="button" data-avatar="${a.id}">
           <div class="avatar-face" style="background:${a.color}">${a.emoji}</div>
           <b>${a.name}</b>
           <div class="small">${a.bonus}</div>
         </button>`).join("");
-      $("avatar-grid").querySelectorAll("[data-avatar]").forEach(btn => btn.addEventListener("click", () => {
+      host.querySelectorAll("[data-avatar]").forEach(btn => btn.addEventListener("click", () => {
         state.selectedAvatar = btn.dataset.avatar;
-        renderAvatars();
+        const av = AVATARS.find(a => a.id === state.selectedAvatar) || AVATARS[0];
+        state.user.avatar = av.id;
+        state.user.avatarEmoji = av.emoji;
+        persistUser();
+        renderAll();
       }));
     }
 
@@ -656,13 +683,21 @@
       event.preventDefault();
       const name = $("reg-name").value.trim();
       const nip = $("reg-nip").value.trim();
-      if (!name || !nip) return toast("Nama dan NIP wajib diisi.", "err");
-      if (!state.users[nip]) state.users[nip] = defaultUser({ name, nip });
-      else state.users[nip].name = name;
+      const unit = $("reg-unit").value;
+      const password = $("reg-password").value.trim();
+      if (!name || !nip || !unit || !password) return toast("Nama, NIP, unit kerja, dan password wajib diisi.", "err");
+      if (state.users[nip] && state.users[nip].password) {
+        $("login-nip").value = nip;
+        hydrateLoginName();
+        toast("NIP sudah terregistrasi. Silakan login dengan password.", "ok");
+        showAuth("login-screen");
+        return;
+      }
+      state.users[nip] = defaultUser({ name, nip, unit, password });
       save("cecQuestUsers", state.users);
       $("login-nip").value = nip;
       hydrateLoginName();
-      backend("registerUser", state.users[nip]);
+      backend("registerUser", publicUser(state.users[nip]));
       toast("Registrasi tersimpan. Silakan login pegawai.", "ok");
       showAuth("login-screen");
     }
@@ -675,26 +710,29 @@
     function submitLogin(event) {
       event.preventDefault();
       const nip = $("login-nip").value.trim();
-      const unit = $("login-unit").value;
+      const password = $("login-password").value.trim();
       if (!state.users[nip]) return toast("NIP belum terdaftar. Registrasi terlebih dahulu.", "err");
-      if (!unit) return toast("Pilih unit kerja terlebih dahulu.", "err");
-      const av = AVATARS.find(a => a.id === state.selectedAvatar) || AVATARS[0];
-      Object.assign(state.users[nip], { unit, avatar: av.id, avatarEmoji: av.emoji, lastActive: new Date().toISOString() });
+      if (!state.users[nip].password) return toast("Akun lama belum memiliki password. Silakan registrasi ulang NIP ini.", "err");
+      if (state.users[nip].password !== password) return toast("Password salah.", "err");
+      state.users[nip].lastActive = new Date().toISOString();
       save("cecQuestUsers", state.users);
       loginUser(nip);
     }
 
-    function guestLogin() {
-      const nip = "guest-" + Date.now();
-      state.users[nip] = defaultUser({ name: "Guest", nip, unit: "Lainnya", avatar: "ranger", guest: true });
-      save("cecQuestUsers", state.users);
-      loginUser(nip);
+    function mentorLogin() {
+      const password = $("mentor-password").value.trim();
+      if (password !== "acatigakali") return toast("Password mentor salah.", "err");
+      state.user = defaultUser({ name: "Mentor CEC", nip: "__mentor", unit: "Mentor", password: "acatigakali", avatar: "advisor" });
+      state.user.avatarEmoji = "📋";
+      showScreen("mentor-screen");
+      toast("Login mentor berhasil.", "ok");
     }
 
     function loginUser(nip) {
       state.user = state.users[nip];
+      state.selectedAvatar = state.user.avatar || "ranger";
       localStorage.setItem("cecQuestCurrentUser", nip);
-      showScreen("home-screen");
+      showScreen("profile-screen");
       toast(`Selamat datang, ${state.user.name}.`, "ok");
     }
 
@@ -896,7 +934,7 @@
       state.user.attempts.unshift({ date: new Date().toISOString(), level: state.currentLevel, topic: LEVEL_TOPICS[state.currentLevel].name, score: pct, stars, xp: xpTotal });
       checkBadges(pct);
       persistUser();
-      backend("saveProgress", { user: state.user, latestAttempt: state.user.attempts[0] });
+      backend("saveProgress", { user: publicUser(state.user), latestAttempt: state.user.attempts[0] });
       showScreen("result-screen");
       renderResult({ pct, stars, xpTotal });
       if (stars >= 2) confetti();
@@ -990,8 +1028,10 @@
     function renderLeaderboard() {
       if (!state.user) return;
       const locals = Object.values(state.users).map(u => ({ name: u.name, nip: u.nip, unit: u.unit || "Belum diisi", xp: u.xp || 0, level: u.level || 1, avatar: u.avatarEmoji || "●", stars: u.stars || 0 }));
-      const users = [...locals, ...DEMO_USERS].sort((a, b) => b.xp - a.xp).slice(0, 20);
-      $("leaderboard-body").innerHTML = users.map((u, i) => `<tr><td>${i + 1}</td><td>${u.avatar} ${esc(u.name)}${u.nip === state.user.nip ? " (Anda)" : ""}</td><td>${esc(u.unit)}</td><td><b>${u.xp}</b></td></tr>`).join("");
+      const users = locals.sort((a, b) => b.xp - a.xp).slice(0, 20);
+      $("leaderboard-body").innerHTML = users.length
+        ? users.map((u, i) => `<tr><td>${i + 1}</td><td>${u.avatar} ${esc(u.name)}${u.nip === state.user.nip ? " (Anda)" : ""}</td><td>${esc(u.unit)}</td><td><b>${u.xp}</b></td></tr>`).join("")
+        : `<tr><td colspan="4">Belum ada pegawai terdaftar.</td></tr>`;
     }
 
     function renderBadges() {
@@ -1005,6 +1045,8 @@
       $("profile-avatar").textContent = state.user.avatarEmoji;
       $("profile-name").textContent = state.user.name;
       $("profile-unit").textContent = state.user.unit || "Belum memilih unit";
+      state.selectedAvatar = state.user.avatar || state.selectedAvatar;
+      renderProfileAvatars();
       const skills = state.user.skills;
       $("skill-bars").innerHTML = [
         ["Grammar", skills.grammar],
@@ -1020,7 +1062,7 @@
     function renderMentor() {
       const users = Object.values(state.users);
       const attempts = users.flatMap(u => (u.attempts || []).map(a => ({ ...a, name: u.name })));
-      const entries = load("cecQuestMentorEntries", []);
+      const entries = load("cecQuestMentorEntries", []).filter(e => state.users[e.nip]);
       $("mentor-total").textContent = users.length;
       $("mentor-active").textContent = users.filter(u => (u.attempts || []).length > 0).length;
       $("mentor-attempts").textContent = attempts.length + entries.length;
@@ -1096,6 +1138,12 @@
 
     function calcLevel(xp) {
       return Math.max(1, Math.min(100, Math.floor(xp / 100) + 1));
+    }
+
+    function publicUser(user) {
+      const copy = { ...user };
+      delete copy.password;
+      return copy;
     }
 
     function titleForLevel(level) {
