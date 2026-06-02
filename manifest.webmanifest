@@ -1,0 +1,17 @@
+{
+  "name": "CEC Quest - Bea Cukai Pangkalpinang",
+  "short_name": "CEC Quest",
+  "description": "Customs English Club Adventure untuk Bea Cukai Pangkalpinang",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#003366",
+  "theme_color": "#003366",
+  "icons": [
+    {
+      "src": "assets/logo-bea-cukai.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

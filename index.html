@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#003366">
+  <title>CEC Quest - Bea Cukai Pangkalpinang</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <style>
+    :root {
+      --navy: #003366;
+      --navy-2: #064879;
+      --ink: #031525;
+      --gold: #d4af37;
+      --gold-2: #f2cf5b;
+      --green: #22c55e;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --purple: #8b5cf6;
+      --text: #ffffff;
+      --muted: rgba(255, 255, 255, .68);
+      --line: rgba(255, 255, 255, .16);
+      --panel: rgba(255, 255, 255, .1);
+      --panel-2: rgba(255, 255, 255, .15);
+      --r-sm: 8px;
+      --r-md: 12px;
+      --r-lg: 16px;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; color: var(--text); background: var(--ink); }
+    body {
+      background:
+        radial-gradient(circle at 85% 8%, rgba(212, 175, 55, .18), transparent 26rem),
+        linear-gradient(145deg, #031525 0%, #003366 52%, #064879 100%);
+      overflow-x: hidden;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .app { width: min(100%, 480px); min-height: 100vh; margin: 0 auto; position: relative; background: rgba(0, 36, 71, .58); box-shadow: 0 0 0 1px rgba(255,255,255,.05); }
+    .screen { display: none; min-height: 100vh; padding: 16px 16px 92px; animation: rise .24s ease; }
+    .screen.active { display: block; }
+    .auth-screen { display: none; min-height: 100vh; padding: 24px 16px; place-items: center; }
+    .auth-screen.active { display: grid; }
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes confetti { to { transform: translateY(-105vh) rotate(640deg); opacity: 0; } }
+    @keyframes load { to { width: 100%; } }
+
+    .splash {
+      position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 24px;
+      background: linear-gradient(145deg, #031525, #003366 58%, #064879);
+      transition: opacity .35s ease, visibility .35s ease;
+    }
+    .splash.hide { opacity: 0; visibility: hidden; }
+    .splash-card { width: min(100%, 360px); text-align: center; }
+    .brand-logo { width: 96px; height: 96px; object-fit: contain; margin: 0 auto 18px; display: block; filter: drop-shadow(0 12px 22px rgba(0,0,0,.35)); animation: pulse 2.2s infinite; }
+    .brand-title { margin: 0; color: var(--gold-2); font-size: 2.15rem; font-weight: 900; letter-spacing: 0; }
+    .brand-subtitle { margin: 6px 0 4px; color: var(--muted); font-weight: 600; }
+    .brand-office { color: var(--gold-2); font-size: .85rem; text-transform: uppercase; font-weight: 800; }
+    .globe { width: 42px; height: 42px; display: grid; place-items: center; margin: 22px auto; border-radius: 50%; border: 2px solid rgba(212,175,55,.6); animation: spin 7s linear infinite; }
+    .loader { height: 5px; border-radius: 999px; overflow: hidden; background: rgba(255,255,255,.16); }
+    .loader span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--gold), var(--green)); animation: load 1.5s ease forwards; }
+
+    .card {
+      background: linear-gradient(160deg, rgba(255,255,255,.14), rgba(255,255,255,.08));
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      padding: 18px;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, .18);
+    }
+    .auth-card { width: min(100%, 392px); padding: 24px; }
+    .auth-logo { display: grid; place-items: center; gap: 8px; margin-bottom: 20px; text-align: center; }
+    .auth-logo img { width: 74px; height: 74px; object-fit: contain; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { font-size: 1.55rem; margin-bottom: 4px; }
+    h2 { font-size: 1.25rem; margin-bottom: 10px; }
+    h3 { font-size: 1rem; margin-bottom: 8px; }
+    .sub { color: var(--muted); font-size: .88rem; line-height: 1.45; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; margin-bottom: 7px; color: rgba(255,255,255,.88); font-size: .86rem; font-weight: 750; }
+    input, select, textarea {
+      width: 100%; color: var(--text); background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.22);
+      border-radius: var(--r-md); padding: 13px 14px; outline: none;
+    }
+    textarea { min-height: 92px; resize: vertical; }
+    input:focus, select:focus, textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,175,55,.18); }
+    option { background: #073764; color: #fff; }
+    .btn {
+      border: 0; border-radius: var(--r-md); padding: 13px 14px; font-weight: 850; color: var(--ink);
+      background: linear-gradient(135deg, var(--gold), var(--gold-2)); width: 100%;
+    }
+    .btn.secondary { color: #fff; background: rgba(255,255,255,.13); border: 1px solid var(--line); }
+    .btn.ghost { background: transparent; color: var(--gold-2); border: 1px solid rgba(212,175,55,.35); }
+    .btn.danger { background: rgba(239,68,68,.18); border: 1px solid rgba(239,68,68,.45); color: #fff; }
+    .btn:disabled { opacity: .48; cursor: not-allowed; }
+    .stack { display: grid; gap: 12px; }
+    .row { display: flex; gap: 10px; align-items: center; }
+    .row > * { min-width: 0; }
+    .between { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+
+    .avatar-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 8px 0 16px; }
+    .avatar-option { border: 2px solid transparent; border-radius: var(--r-md); background: rgba(255,255,255,.12); padding: 12px 8px; text-align: center; color: #fff; }
+    .avatar-option.active { border-color: var(--gold); background: rgba(212,175,55,.12); }
+    .avatar-face { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 7px; font-size: 1.35rem; }
+    .small { font-size: .76rem; color: var(--muted); }
+
+    .topbar { position: sticky; top: 0; z-index: 50; margin: -16px -16px 16px; padding: 12px 16px; background: rgba(3,21,37,.92); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+    .user-mini { display: flex; align-items: center; gap: 10px; }
+    .mini-avatar { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--gold); color: var(--ink); font-size: 1.25rem; flex: 0 0 auto; }
+    .user-name { font-weight: 850; font-size: .95rem; }
+    .user-title { color: var(--gold-2); font-size: .7rem; text-transform: uppercase; font-weight: 750; }
+    .pill { border-radius: 999px; background: rgba(255,255,255,.13); border: 1px solid var(--line); padding: 5px 10px; font-size: .76rem; font-weight: 800; white-space: nowrap; }
+    .xp-pill { background: linear-gradient(135deg, var(--gold), var(--gold-2)); color: var(--ink); border: 0; }
+
+    .hero { display: grid; gap: 14px; margin-bottom: 16px; }
+    .office-band { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: var(--r-lg); background: rgba(212,175,55,.13); border: 1px solid rgba(212,175,55,.32); }
+    .office-band img { width: 56px; height: 56px; object-fit: contain; flex: 0 0 auto; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .stat { padding: 12px; border-radius: var(--r-md); background: rgba(255,255,255,.1); border: 1px solid var(--line); }
+    .stat b { display: block; font-size: 1.05rem; color: var(--gold-2); }
+    .stat span { color: var(--muted); font-size: .72rem; }
+    .progress { height: 8px; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,.14); }
+    .progress span { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--gold), var(--green)); transition: width .3s ease; }
+
+    .mission-list { display: grid; gap: 8px; }
+    .mission { display: grid; grid-template-columns: 24px 1fr auto; gap: 8px; align-items: center; padding: 9px 10px; border-radius: var(--r-sm); background: rgba(255,255,255,.07); }
+    .check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--green); display: grid; place-items: center; font-size: .7rem; }
+    .mission.done .check { background: var(--green); }
+    .mission.done .label { color: var(--muted); text-decoration: line-through; }
+
+    .quick-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .quick { color: #fff; text-align: left; border: 1px solid var(--line); background: rgba(255,255,255,.1); border-radius: var(--r-md); padding: 13px; min-height: 86px; }
+    .quick b { display: block; margin-top: 8px; }
+    .quick span { display: block; margin-top: 4px; color: var(--muted); font-size: .72rem; line-height: 1.35; }
+
+    .world-list, .level-grid { display: grid; gap: 10px; }
+    .world { border-radius: var(--r-md); padding: 14px; border: 1px solid var(--line); background: rgba(255,255,255,.1); color: #fff; text-align: left; }
+    .world.active { border-color: var(--gold); background: rgba(212,175,55,.13); }
+    .world.locked { opacity: .52; cursor: not-allowed; }
+    .level-grid { grid-template-columns: repeat(5, 1fr); }
+    .level { aspect-ratio: 1; min-height: 64px; border-radius: var(--r-md); border: 1px solid var(--line); background: rgba(255,255,255,.1); color: #fff; display: grid; place-items: center; text-align: center; padding: 6px; }
+    .level.current { border-color: var(--gold); background: rgba(212,175,55,.16); animation: pulse 2s infinite; }
+    .level.done { border-color: var(--green); background: rgba(34,197,94,.14); }
+    .level.locked { opacity: .45; cursor: not-allowed; }
+
+    .question-card { display: grid; gap: 14px; }
+    .question-meta { color: var(--gold-2); font-size: .78rem; font-weight: 800; text-transform: uppercase; }
+    .question-text { font-size: 1.22rem; font-weight: 850; line-height: 1.35; }
+    .choices { display: grid; gap: 10px; }
+    .choice { color: #fff; text-align: left; border: 1px solid var(--line); background: rgba(255,255,255,.1); border-radius: var(--r-md); padding: 13px; }
+    .choice.correct { border-color: var(--green); background: rgba(34,197,94,.22); }
+    .choice.wrong { border-color: var(--red); background: rgba(239,68,68,.2); }
+    .word-bank, .sentence-drop { display: flex; flex-wrap: wrap; gap: 8px; min-height: 58px; padding: 10px; border-radius: var(--r-md); border: 1px dashed rgba(255,255,255,.35); background: rgba(255,255,255,.07); }
+    .word { width: auto; padding: 8px 11px; border-radius: 999px; background: rgba(255,255,255,.16); border: 1px solid var(--line); color: #fff; font-weight: 750; }
+    .audio-panel { text-align: center; display: grid; gap: 12px; }
+    .round-btn { width: 76px; height: 76px; border-radius: 50%; margin: 0 auto; border: 0; display: grid; place-items: center; font-size: 1.75rem; color: var(--ink); background: linear-gradient(135deg, var(--gold), var(--gold-2)); }
+    .timer { font-variant-numeric: tabular-nums; color: var(--gold-2); font-weight: 900; }
+
+    .result-stars { display: flex; justify-content: center; gap: 8px; font-size: 2.1rem; margin: 8px 0 14px; }
+    .leaderboard, .history-table { width: 100%; border-collapse: collapse; }
+    .leaderboard th, .leaderboard td, .history-table th, .history-table td { border-bottom: 1px solid var(--line); padding: 10px 6px; text-align: left; font-size: .82rem; }
+    .leaderboard th, .history-table th { color: var(--gold-2); font-size: .72rem; text-transform: uppercase; }
+    .badge-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .badge { min-height: 128px; text-align: center; border-radius: var(--r-md); padding: 14px 10px; background: rgba(255,255,255,.1); border: 1px solid var(--line); }
+    .badge.locked { opacity: .45; filter: grayscale(1); }
+    .badge-icon { font-size: 2rem; margin-bottom: 7px; }
+    .skill { display: grid; gap: 6px; margin-bottom: 11px; }
+    .skill .between { font-size: .82rem; }
+
+    .tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+    .tab { width: auto; white-space: nowrap; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,.1); color: #fff; padding: 8px 12px; }
+    .tab.active { background: var(--gold); color: var(--ink); border-color: transparent; font-weight: 850; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: grid; gap: 12px; }
+
+    .bottom-nav { position: fixed; z-index: 80; bottom: 0; left: 50%; transform: translateX(-50%); width: min(100%, 480px); display: grid; grid-template-columns: repeat(5, 1fr); background: rgba(3,21,37,.96); border-top: 1px solid var(--line); padding: 7px 4px 8px; }
+    .nav-item { color: rgba(255,255,255,.6); background: transparent; border: 0; display: grid; place-items: center; gap: 3px; font-size: .68rem; padding: 4px; }
+    .nav-item strong { font-size: 1.08rem; }
+    .nav-item.active { color: var(--gold-2); }
+    .hidden { display: none !important; }
+    .toast-wrap { position: fixed; z-index: 1200; left: 50%; bottom: 82px; transform: translateX(-50%); width: min(calc(100% - 28px), 440px); display: grid; gap: 8px; }
+    .toast { padding: 12px 14px; border-radius: var(--r-md); background: rgba(3,21,37,.96); border: 1px solid var(--line); box-shadow: 0 12px 28px rgba(0,0,0,.24); }
+    .toast.ok { border-color: rgba(34,197,94,.55); }
+    .toast.err { border-color: rgba(239,68,68,.55); }
+    .confetti-piece { position: fixed; bottom: -16px; z-index: 1100; width: 10px; height: 10px; animation: confetti 2.8s ease-out forwards; }
+
+    @media (max-width: 380px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .level-grid { grid-template-columns: repeat(4, 1fr); }
+      .quick-grid, .badge-grid, .avatar-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div id="splash" class="splash">
+    <div class="splash-card">
+      <img class="brand-logo" src="assets/logo-bea-cukai.png" alt="Logo Bea Cukai">
+      <h1 class="brand-title">CEC QUEST</h1>
+      <div class="brand-subtitle">Customs English Club Adventure</div>
+      <div class="brand-office">Bea Cukai Pangkalpinang</div>
+      <div class="globe">🌐</div>
+      <div class="loader"><span></span></div>
+    </div>
+  </div>
+
+  <main class="app">
+    <section id="register-screen" class="auth-screen">
+      <div class="card auth-card">
+        <div class="auth-logo">
+          <img src="assets/logo-bea-cukai.png" alt="Logo Bea Cukai">
+          <div>
+            <h1>Registrasi Pegawai</h1>
+            <p class="sub">CEC Quest Bea Cukai Pangkalpinang</p>
+          </div>
+        </div>
+        <form id="register-form" class="stack">
+          <div class="field">
+            <label for="reg-name">Nama Lengkap</label>
+            <input id="reg-name" autocomplete="name" maxlength="60" required placeholder="Masukkan nama lengkap">
+          </div>
+          <div class="field">
+            <label for="reg-nip">NIP / Nomor Pegawai</label>
+            <input id="reg-nip" inputmode="numeric" maxlength="24" required placeholder="Masukkan NIP">
+          </div>
+          <button class="btn" type="submit">Daftar</button>
+          <button class="btn secondary" type="button" data-action="show-login">Sudah Terdaftar</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="login-screen" class="auth-screen">
+      <div class="card auth-card">
+        <div class="auth-logo">
+          <img src="assets/logo-bea-cukai.png" alt="Logo Bea Cukai">
+          <div>
+            <h1>Login Pegawai</h1>
+            <p class="sub">Lengkapi unit kerja dan karakter belajar</p>
+          </div>
+        </div>
+        <form id="login-form" class="stack">
+          <div class="field">
+            <label for="login-nip">NIP / Nomor Pegawai</label>
+            <input id="login-nip" inputmode="numeric" maxlength="24" required placeholder="NIP yang sudah registrasi">
+          </div>
+          <div class="field">
+            <label for="login-name">Nama Lengkap</label>
+            <input id="login-name" maxlength="60" readonly placeholder="Nama akan muncul setelah NIP valid">
+          </div>
+          <div class="field">
+            <label for="login-unit">Seksi / Unit Kerja</label>
+            <select id="login-unit" required></select>
+          </div>
+          <div class="field">
+            <label>Pilih Karakter</label>
+            <div id="avatar-grid" class="avatar-grid"></div>
+          </div>
+          <button class="btn" type="submit">Mulai Petualangan</button>
+          <button class="btn ghost" type="button" data-action="guest-login">Masuk Sebagai Guest</button>
+          <button class="btn secondary" type="button" data-action="back-register">Registrasi Baru</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="home-screen" class="screen">
+      <header class="topbar"></header>
+      <div class="hero">
+        <div class="office-band">
+          <img src="assets/logo-bea-cukai.png" alt="Logo Bea Cukai">
+          <div>
+            <h2 id="welcome-title">Selamat Datang</h2>
+            <div class="sub">Customs English Club Adventure - Bea Cukai Pangkalpinang</div>
+          </div>
+        </div>
+        <div class="stats">
+          <div class="stat"><b id="home-xp">0</b><span>Total XP</span></div>
+          <div class="stat"><b id="home-level">1</b><span>Level Pegawai</span></div>
+          <div class="stat"><b id="home-stars">0</b><span>Total Bintang</span></div>
+        </div>
+      </div>
+      <div class="stack">
+        <article class="card">
+          <div class="between"><h2>Misi Harian</h2><span class="pill xp-pill">+100 XP</span></div>
+          <div id="daily-missions" class="mission-list"></div>
+        </article>
+        <article class="card">
+          <div class="between"><h2>World Progress</h2><span id="world-progress-label" class="pill">0/10</span></div>
+          <div class="progress"><span id="world-progress-bar"></span></div>
+        </article>
+        <article class="card">
+          <h2>Quick Actions</h2>
+          <div class="quick-grid">
+            <button class="quick" data-action="continue"><span>▶</span><b>Lanjutkan</b><span>Level berikutnya</span></button>
+            <button class="quick" data-nav="quest-screen"><span>🗺</span><b>Quest</b><span>Pilih world dan level</span></button>
+            <button class="quick" data-nav="leaderboard-screen"><span>🏆</span><b>Rank</b><span>Leaderboard pegawai</span></button>
+            <button class="quick" data-nav="mentor-screen"><span>📋</span><b>Mentor</b><span>History dan dashboard pengisian</span></button>
+            <button class="quick" data-nav="badge-screen"><span>🎖</span><b>Badge</b><span>Pencapaian belajar</span></button>
+            <button class="quick" data-nav="admin-screen"><span>⚙</span><b>Admin</b><span>Soal, user, analytics</span></button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="quest-screen" class="screen">
+      <header class="topbar"></header>
+      <div class="stack">
+        <article class="card">
+          <h2>Peta Dunia</h2>
+          <div id="world-list" class="world-list"></div>
+        </article>
+        <article id="level-panel" class="card">
+          <div class="between"><h2 id="level-title">English Explorer</h2><span class="pill">World 1</span></div>
+          <div id="level-grid" class="level-grid"></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="quiz-screen" class="screen">
+      <header class="topbar"></header>
+      <div class="stack">
+        <div class="between">
+          <button class="btn secondary" type="button" data-action="quit-quiz">Keluar</button>
+          <span id="quiz-timer" class="pill timer">00:30</span>
+        </div>
+        <div class="progress"><span id="quiz-progress"></span></div>
+        <article id="question-host" class="card question-card"></article>
+      </div>
+    </section>
+
+    <section id="boss-screen" class="screen">
+      <header class="topbar"></header>
+      <div class="card stack">
+        <div class="question-meta">Boss Battle - Level 10</div>
+        <h2>Self Introduction</h2>
+        <p class="sub">Ucapkan perkenalan diri sebagai pegawai Bea Cukai Pangkalpinang dalam 30 detik.</p>
+        <div class="audio-panel">
+          <button id="boss-record" class="round-btn" type="button">🎤</button>
+          <div id="boss-time" class="timer">00:30</div>
+          <div id="boss-transcript" class="card small">Belum ada transkrip.</div>
+        </div>
+        <button id="boss-continue" class="btn" type="button" disabled>Lanjut Customs Scenario</button>
+      </div>
+    </section>
+
+    <section id="result-screen" class="screen">
+      <header class="topbar"></header>
+      <article class="card stack" id="result-host"></article>
+    </section>
+
+    <section id="leaderboard-screen" class="screen">
+      <header class="topbar"></header>
+      <article class="card">
+        <div class="between"><h2>Leaderboard</h2><button class="tab active" type="button" data-action="refresh-rank">Refresh</button></div>
+        <table class="leaderboard">
+          <thead><tr><th>#</th><th>Pegawai</th><th>Unit</th><th>XP</th></tr></thead>
+          <tbody id="leaderboard-body"></tbody>
+        </table>
+      </article>
+    </section>
+
+    <section id="badge-screen" class="screen">
+      <header class="topbar"></header>
+      <article class="card">
+        <h2>Achievement Badge</h2>
+        <div id="badge-grid" class="badge-grid"></div>
+      </article>
+    </section>
+
+    <section id="profile-screen" class="screen">
+      <header class="topbar"></header>
+      <div class="stack">
+        <article class="card">
+          <div class="between">
+            <div class="user-mini"><div id="profile-avatar" class="mini-avatar">🎯</div><div><h2 id="profile-name">Pegawai</h2><div id="profile-unit" class="sub">Unit Kerja</div></div></div>
+            <button class="tab" type="button" data-action="logout">Logout</button>
+          </div>
+        </article>
+        <article class="card">
+          <h2>Skill Progress</h2>
+          <div id="skill-bars"></div>
+        </article>
+        <article class="card">
+          <h2>Progress World 1</h2>
+          <div class="between"><span>English Explorer</span><span id="profile-world-label">0/10</span></div>
+          <div class="progress"><span id="profile-world-bar"></span></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="mentor-screen" class="screen">
+      <header class="topbar"></header>
+      <div class="stack">
+        <article class="card">
+          <h2>Mentor Dashboard</h2>
+          <div class="stats">
+            <div class="stat"><b id="mentor-total">0</b><span>Peserta</span></div>
+            <div class="stat"><b id="mentor-active">0</b><span>Aktif</span></div>
+            <div class="stat"><b id="mentor-attempts">0</b><span>History</span></div>
+          </div>
+        </article>
+        <article class="card">
+          <h2>Dashboard Pengisian</h2>
+          <form id="mentor-form" class="stack">
+            <div class="field"><label for="mentor-user">Pegawai</label><select id="mentor-user"></select></div>
+            <div class="field"><label for="mentor-note">Catatan Mentor</label><textarea id="mentor-note" required placeholder="Contoh: perlu latihan listening level 3"></textarea></div>
+            <button class="btn" type="submit">Simpan Catatan</button>
+          </form>
+        </article>
+        <article class="card">
+          <h2>History Pegawai</h2>
+          <table class="history-table">
+            <thead><tr><th>Tanggal</th><th>Pegawai</th><th>Aktivitas</th><th>Skor</th></tr></thead>
+            <tbody id="mentor-history"></tbody>
+          </table>
+        </article>
+      </div>
+    </section>
+
+    <section id="admin-screen" class="screen">
+      <header class="topbar"></header>
+      <div class="stack">
+        <div class="tabs">
+          <button class="tab active" data-admin-tab="questions" type="button">Soal</button>
+          <button class="tab" data-admin-tab="users" type="button">User</button>
+          <button class="tab" data-admin-tab="analytics" type="button">Analytics</button>
+        </div>
+        <article id="admin-questions" class="card tab-panel active"></article>
+        <article id="admin-users" class="card tab-panel"></article>
+        <article id="admin-analytics" class="card tab-panel"></article>
+      </div>
+    </section>
+
+    <nav id="bottom-nav" class="bottom-nav hidden">
+      <button class="nav-item active" data-nav="home-screen"><strong>⌂</strong><span>Home</span></button>
+      <button class="nav-item" data-nav="quest-screen"><strong>🗺</strong><span>Quest</span></button>
+      <button class="nav-item" data-nav="leaderboard-screen"><strong>🏆</strong><span>Rank</span></button>
+      <button class="nav-item" data-nav="badge-screen"><strong>🎖</strong><span>Badge</span></button>
+      <button class="nav-item" data-nav="profile-screen"><strong>●</strong><span>Profil</span></button>
+    </nav>
+  </main>
+  <div id="toast-wrap" class="toast-wrap"></div>
+
+  <script>
+    const APPS_SCRIPT_URL = "";
+    const UNITS = [
+      "Kepala Kantor",
+      "Subbagian Umum",
+      "Seksi Penindakan dan Penyidikan",
+      "Seksi Perbendaharaan",
+      "Seksi Pelayanan Kepabeanan dan Cukai dan Dukungan Teknis",
+      "Seksi Kepatuhan Internal dan Penyuluhan",
+      "PPNPN",
+      "Lainnya"
+    ];
+    const AVATARS = [
+      { id: "ranger", emoji: "🎯", name: "Customs Ranger", bonus: "+10% Grammar XP", color: "linear-gradient(135deg,#3b82f6,#1d4ed8)" },
+      { id: "facilitator", emoji: "🤝", name: "Trade Facilitator", bonus: "+10% Vocab XP", color: "linear-gradient(135deg,#22c55e,#15803d)" },
+      { id: "advisor", emoji: "📊", name: "Export Advisor", bonus: "+10% Speaking XP", color: "linear-gradient(135deg,#f59e0b,#d97706)" },
+      { id: "guardian", emoji: "🛡", name: "Revenue Guardian", bonus: "+10% Listening XP", color: "linear-gradient(135deg,#ef4444,#b91c1c)" }
+    ];
+    const WORLDS = [
+      ["English Explorer", "Bahasa Inggris dasar untuk Customs Officer"],
+      ["Office Survivor", "Komunikasi kantor dan meeting"],
+      ["Customs Rookie", "Istilah dasar kepabeanan"],
+      ["Export Specialist", "Percakapan dokumen ekspor"],
+      ["International Officer", "Meeting dan presentasi internasional"],
+      ["Customs Ambassador", "Negosiasi dan public speaking"]
+    ];
+    const LEVEL_TOPICS = [
+      null,
+      { name: "Alphabet & Pronunciation", words: [["A", "ei"], ["B", "bi"], ["C", "si"], ["D", "di"], ["E", "i"], ["F", "ef"], ["G", "ji"], ["H", "eich"], ["I", "ai"], ["J", "jei"]], grammar: ["This is letter A.", "Can you spell your name?", "The first letter is B."], sentence: "I can spell customs" },
+      { name: "Numbers", words: [["one", "satu"], ["two", "dua"], ["three", "tiga"], ["four", "empat"], ["five", "lima"], ["six", "enam"], ["seven", "tujuh"], ["eight", "delapan"], ["nine", "sembilan"], ["ten", "sepuluh"]], grammar: ["There are five boxes.", "I have two documents.", "The number is seven."], sentence: "There are five documents" },
+      { name: "Days of Week", words: [["Monday", "Senin"], ["Tuesday", "Selasa"], ["Wednesday", "Rabu"], ["Thursday", "Kamis"], ["Friday", "Jumat"], ["Saturday", "Sabtu"], ["Sunday", "Minggu"], ["today", "hari ini"], ["tomorrow", "besok"], ["yesterday", "kemarin"]], grammar: ["Today is Monday.", "The meeting is on Friday.", "Tomorrow is Tuesday."], sentence: "The meeting is on Friday" },
+      { name: "Months", words: [["January", "Januari"], ["February", "Februari"], ["March", "Maret"], ["April", "April"], ["May", "Mei"], ["June", "Juni"], ["July", "Juli"], ["August", "Agustus"], ["September", "September"], ["December", "Desember"]], grammar: ["The report is due in June.", "My training starts in March.", "The audit is in April."], sentence: "The report is due in June" },
+      { name: "Colors", words: [["red", "merah"], ["blue", "biru"], ["green", "hijau"], ["yellow", "kuning"], ["black", "hitam"], ["white", "putih"], ["orange", "oranye"], ["purple", "ungu"], ["brown", "cokelat"], ["gray", "abu-abu"]], grammar: ["The seal is red.", "The form is blue.", "The box is yellow."], sentence: "The seal is red" },
+      { name: "Family", words: [["father", "ayah"], ["mother", "ibu"], ["brother", "saudara laki-laki"], ["sister", "saudara perempuan"], ["son", "anak laki-laki"], ["daughter", "anak perempuan"], ["uncle", "paman"], ["aunt", "bibi"], ["family", "keluarga"], ["parents", "orang tua"]], grammar: ["My father is a teacher.", "Her sister is kind.", "They are my parents."], sentence: "My family lives in Pangkalpinang" },
+      { name: "Occupation", words: [["officer", "pegawai"], ["teacher", "guru"], ["doctor", "dokter"], ["driver", "pengemudi"], ["farmer", "petani"], ["cashier", "kasir"], ["manager", "manajer"], ["auditor", "auditor"], ["analyst", "analis"], ["inspector", "pemeriksa"]], grammar: ["I am a Customs Officer.", "She is an inspector.", "He works as an analyst."], sentence: "I am a customs officer" },
+      { name: "Countries", words: [["Indonesia", "Indonesia"], ["Singapore", "Singapura"], ["Malaysia", "Malaysia"], ["Japan", "Jepang"], ["China", "Cina"], ["Australia", "Australia"], ["Thailand", "Thailand"], ["India", "India"], ["Korea", "Korea"], ["Vietnam", "Vietnam"]], grammar: ["The vessel comes from Singapore.", "The goods are from Japan.", "I live in Indonesia."], sentence: "The vessel comes from Singapore" },
+      { name: "Daily Activities", words: [["wake up", "bangun"], ["work", "bekerja"], ["read", "membaca"], ["write", "menulis"], ["check", "memeriksa"], ["speak", "berbicara"], ["listen", "mendengarkan"], ["eat", "makan"], ["go home", "pulang"], ["study", "belajar"]], grammar: ["I check documents every morning.", "She studies English after work.", "We listen to the announcement."], sentence: "I check documents every morning" },
+      { name: "Self Introduction (BOSS)", words: [["name", "nama"], ["office", "kantor"], ["customs", "bea cukai"], ["pangkalpinang", "pangkalpinang"], ["duty", "tugas"], ["document", "dokumen"], ["goods", "barang"], ["passenger", "penumpang"], ["inspection", "pemeriksaan"], ["service", "pelayanan"]], grammar: ["Hello, my name is Andi.", "I work at Bea Cukai Pangkalpinang.", "My duty is checking documents."], sentence: "I work at Bea Cukai Pangkalpinang" }
+    ];
+    const BADGES = [
+      ["explorer", "Explorer", "Selesaikan 100 soal", "🌱"],
+      ["grammar", "Grammar Master", "Jawab 50 grammar", "📚"],
+      ["vocab", "Vocabulary Hunter", "Jawab 50 vocab", "🔤"],
+      ["listening", "Listening Hero", "Selesaikan 20 listening", "🎧"],
+      ["customs", "Customs Rookie", "Selesaikan World 1", "🛃"],
+      ["streak", "Streak Master", "Streak 10 benar", "🔥"],
+      ["perfect", "Perfect Score", "Skor 100% satu level", "💯"],
+      ["daily", "Daily Warrior", "Selesaikan misi harian", "📅"]
+    ];
+    const DEMO_USERS = [
+      { name: "Agung H.", nip: "demo1", unit: "Seksi Penindakan dan Penyidikan", xp: 1250, level: 8, avatar: "🎯", stars: 18 },
+      { name: "Rina W.", nip: "demo2", unit: "Seksi Perbendaharaan", xp: 980, level: 6, avatar: "🤝", stars: 14 },
+      { name: "Budi S.", nip: "demo3", unit: "Subbagian Umum", xp: 860, level: 5, avatar: "📊", stars: 12 },
+      { name: "Sari L.", nip: "demo4", unit: "PPNPN", xp: 650, level: 4, avatar: "🛡", stars: 9 }
+    ];
+
+    const state = {
+      user: null,
+      users: {},
+      selectedAvatar: "ranger",
+      currentLevel: 1,
+      questions: [],
+      qIndex: 0,
+      score: 0,
+      earnedXp: 0,
+      streak: 0,
+      maxStreak: 0,
+      timer: null,
+      seconds: 30,
+      sentence: [],
+      selectedWords: [],
+      recognition: null,
+      bossSeconds: 30
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const save = (key, val) => localStorage.setItem(key, JSON.stringify(val));
+    const load = (key, fallback) => JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
+    const today = () => new Date().toISOString().slice(0, 10);
+    const esc = (text) => String(text ?? "").replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+    const shuffle = (arr) => [...arr].sort(() => Math.random() - .5);
+
+    function buildQuestionBank() {
+      const bank = [];
+      LEVEL_TOPICS.slice(1).forEach((topic, li) => {
+        const level = li + 1;
+        const wrongPool = LEVEL_TOPICS.slice(1).flatMap(t => t.words.map(w => w[1]));
+        topic.words.forEach(([term, meaning], i) => {
+          bank.push({ level, type: "vocab", title: "Vocabulary Hunter", prompt: `Apa arti "${term}"?`, options: shuffle([meaning, ...shuffle(wrongPool.filter(w => w !== meaning)).slice(0, 3)]), answer: meaning, xp: 10 });
+        });
+        topic.grammar.forEach((line, i) => {
+          const parts = line.split(" ");
+          const answer = line;
+          const lower = line.replace(".", "").toLowerCase();
+          bank.push({ level, type: "grammar", title: "Grammar Battle", prompt: `Pilih kalimat yang benar untuk topik ${topic.name}.`, options: shuffle([answer, lower + ".", parts.reverse().join(" ") + ".", line.replace(" is ", " are ")]), answer, xp: 10 });
+        });
+        while (bank.filter(q => q.level === level && q.type === "grammar").length < 5) {
+          const base = topic.grammar[bank.filter(q => q.level === level && q.type === "grammar").length % topic.grammar.length];
+          bank.push({ level, type: "grammar", title: "Grammar Battle", prompt: "Pilih susunan kalimat yang paling tepat.", options: shuffle([base, base.replace(" is ", " are "), base.toUpperCase(), base.replace(".", "")]), answer: base, xp: 10 });
+        }
+        for (let i = 0; i < 5; i++) {
+          const phrase = topic.grammar[i % topic.grammar.length];
+          bank.push({ level, type: "listening", title: "Listening Screen", prompt: "Dengarkan audio lalu pilih kalimat yang Anda dengar.", speak: phrase, options: shuffle([phrase, topic.sentence + ".", topic.grammar[(i + 1) % topic.grammar.length], "I am from Pangkalpinang."]), answer: phrase, xp: 10 });
+        }
+        for (let i = 0; i < 5; i++) {
+          const sentence = i === 0 ? topic.sentence : topic.grammar[i % topic.grammar.length].replace(".", "");
+          bank.push({ level, type: "sentence", title: "Sentence Builder", prompt: "Susun kata menjadi kalimat yang benar.", words: sentence.split(" "), answer: sentence, xp: 10 });
+        }
+      });
+      return bank.slice(0, 250);
+    }
+    const QUESTION_BANK = buildQuestionBank();
+
+    function defaultUser({ name, nip, unit = "", avatar = "ranger", guest = false }) {
+      const av = AVATARS.find(a => a.id === avatar) || AVATARS[0];
+      return {
+        name, nip, unit, avatar, avatarEmoji: av.emoji, guest,
+        xp: 0, level: 1, stars: 0, streak: 0, totalQuestions: 0, correctQuestions: 0,
+        skills: { grammar: 0, vocab: 0, listening: 0, speaking: 0 },
+        progress: {}, attempts: [], badges: [], registeredAt: new Date().toISOString(), lastActive: new Date().toISOString()
+      };
+    }
+
+    async function backend(action, payload) {
+      if (!APPS_SCRIPT_URL) return null;
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({ action, payload }),
+          headers: { "Content-Type": "text/plain;charset=utf-8" }
+        });
+        return await res.json();
+      } catch (err) {
+        console.warn("Backend unavailable", err);
+        return null;
+      }
+    }
+
+    function init() {
+      state.users = load("cecQuestUsers", {});
+      renderUnitOptions();
+      renderAvatars();
+      bindEvents();
+      setTimeout(() => {
+        $("splash").classList.add("hide");
+        const last = localStorage.getItem("cecQuestCurrentUser");
+        if (last && state.users[last]) loginUser(last);
+        else if (Object.keys(state.users).length) showAuth("login-screen");
+        else showAuth("register-screen");
+      }, 1600);
+    }
+
+    function bindEvents() {
+      document.addEventListener("click", (event) => {
+        const nav = event.target.closest("[data-nav]");
+        const action = event.target.closest("[data-action]");
+        if (nav) showScreen(nav.dataset.nav);
+        if (!action) return;
+        const a = action.dataset.action;
+        if (a === "show-login") showAuth("login-screen");
+        if (a === "back-register") showAuth("register-screen");
+        if (a === "guest-login") guestLogin();
+        if (a === "continue") continueLearning();
+        if (a === "quit-quiz") quitQuiz();
+        if (a === "next-question") nextQuestion();
+        if (a === "check-sentence") checkSentence();
+        if (a === "refresh-rank") renderLeaderboard();
+        if (a === "logout") logout();
+      });
+      $("register-form").addEventListener("submit", registerUser);
+      $("login-form").addEventListener("submit", submitLogin);
+      $("login-nip").addEventListener("input", hydrateLoginName);
+      $("mentor-form").addEventListener("submit", saveMentorEntry);
+      $("boss-record").addEventListener("click", toggleBossSpeech);
+      $("boss-continue").addEventListener("click", () => startLevel(10, true));
+      document.querySelectorAll("[data-admin-tab]").forEach(btn => btn.addEventListener("click", () => switchAdminTab(btn.dataset.adminTab)));
+    }
+
+    function renderUnitOptions() {
+      $("login-unit").innerHTML = `<option value="">Pilih Unit Kerja</option>` + UNITS.map(u => `<option value="${esc(u)}">${esc(u)}</option>`).join("");
+    }
+
+    function renderAvatars() {
+      $("avatar-grid").innerHTML = AVATARS.map(a => `
+        <button class="avatar-option ${a.id === state.selectedAvatar ? "active" : ""}" type="button" data-avatar="${a.id}">
+          <div class="avatar-face" style="background:${a.color}">${a.emoji}</div>
+          <b>${a.name}</b>
+          <div class="small">${a.bonus}</div>
+        </button>`).join("");
+      $("avatar-grid").querySelectorAll("[data-avatar]").forEach(btn => btn.addEventListener("click", () => {
+        state.selectedAvatar = btn.dataset.avatar;
+        renderAvatars();
+      }));
+    }
+
+    function showAuth(id) {
+      document.querySelectorAll(".screen,.auth-screen").forEach(s => s.classList.remove("active"));
+      $(id).classList.add("active");
+      $("bottom-nav").classList.add("hidden");
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll(".screen,.auth-screen").forEach(s => s.classList.remove("active"));
+      $(id).classList.add("active");
+      $("bottom-nav").classList.remove("hidden");
+      document.querySelectorAll(".nav-item").forEach(b => b.classList.toggle("active", b.dataset.nav === id));
+      renderAll();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function registerUser(event) {
+      event.preventDefault();
+      const name = $("reg-name").value.trim();
+      const nip = $("reg-nip").value.trim();
+      if (!name || !nip) return toast("Nama dan NIP wajib diisi.", "err");
+      if (!state.users[nip]) state.users[nip] = defaultUser({ name, nip });
+      else state.users[nip].name = name;
+      save("cecQuestUsers", state.users);
+      $("login-nip").value = nip;
+      hydrateLoginName();
+      backend("registerUser", state.users[nip]);
+      toast("Registrasi tersimpan. Silakan login pegawai.", "ok");
+      showAuth("login-screen");
+    }
+
+    function hydrateLoginName() {
+      const nip = $("login-nip").value.trim();
+      $("login-name").value = state.users[nip]?.name || "";
+    }
+
+    function submitLogin(event) {
+      event.preventDefault();
+      const nip = $("login-nip").value.trim();
+      const unit = $("login-unit").value;
+      if (!state.users[nip]) return toast("NIP belum terdaftar. Registrasi terlebih dahulu.", "err");
+      if (!unit) return toast("Pilih unit kerja terlebih dahulu.", "err");
+      const av = AVATARS.find(a => a.id === state.selectedAvatar) || AVATARS[0];
+      Object.assign(state.users[nip], { unit, avatar: av.id, avatarEmoji: av.emoji, lastActive: new Date().toISOString() });
+      save("cecQuestUsers", state.users);
+      loginUser(nip);
+    }
+
+    function guestLogin() {
+      const nip = "guest-" + Date.now();
+      state.users[nip] = defaultUser({ name: "Guest", nip, unit: "Lainnya", avatar: "ranger", guest: true });
+      save("cecQuestUsers", state.users);
+      loginUser(nip);
+    }
+
+    function loginUser(nip) {
+      state.user = state.users[nip];
+      localStorage.setItem("cecQuestCurrentUser", nip);
+      showScreen("home-screen");
+      toast(`Selamat datang, ${state.user.name}.`, "ok");
+    }
+
+    function logout() {
+      localStorage.removeItem("cecQuestCurrentUser");
+      state.user = null;
+      showAuth("login-screen");
+    }
+
+    function persistUser() {
+      if (!state.user) return;
+      state.user.level = calcLevel(state.user.xp);
+      state.user.lastActive = new Date().toISOString();
+      state.users[state.user.nip] = state.user;
+      save("cecQuestUsers", state.users);
+    }
+
+    function renderAll() {
+      if (!state.user) return;
+      renderTopbars();
+      renderHome();
+      renderWorlds();
+      renderLevels();
+      renderLeaderboard();
+      renderBadges();
+      renderProfile();
+      renderMentor();
+      renderAdmin();
+    }
+
+    function renderTopbars() {
+      document.querySelectorAll(".topbar").forEach(bar => {
+        bar.innerHTML = `
+          <div class="between">
+            <div class="user-mini">
+              <div class="mini-avatar">${state.user.avatarEmoji}</div>
+              <div><div class="user-name">${esc(state.user.name)}</div><div class="user-title">${esc(titleForLevel(state.user.level))}</div></div>
+            </div>
+            <div class="row"><span class="pill xp-pill">${state.user.xp} XP</span><span class="pill">Lv ${state.user.level}</span></div>
+          </div>`;
+      });
+    }
+
+    function renderHome() {
+      $("welcome-title").textContent = `Selamat Datang, ${state.user.name}`;
+      $("home-xp").textContent = state.user.xp;
+      $("home-level").textContent = state.user.level;
+      $("home-stars").textContent = state.user.stars;
+      const completed = completedLevels();
+      $("world-progress-label").textContent = `${completed}/10`;
+      $("world-progress-bar").style.width = `${completed * 10}%`;
+      const dailyDone = dailyProgress();
+      const missions = [
+        ["login", "Login hari ini", true, "1/1"],
+        ["questions", "Kerjakan 10 soal", dailyDone.questions >= 10, `${Math.min(dailyDone.questions, 10)}/10`],
+        ["score", "Dapatkan skor 80%", dailyDone.highScore, dailyDone.highScore ? "1/1" : "0/1"],
+        ["vocab", "Pelajari 5 kosakata", dailyDone.vocab >= 5, `${Math.min(dailyDone.vocab, 5)}/5`]
+      ];
+      $("daily-missions").innerHTML = missions.map(m => `<div class="mission ${m[2] ? "done" : ""}"><div class="check">${m[2] ? "✓" : ""}</div><div class="label">${m[1]}</div><div class="small">${m[3]}</div></div>`).join("");
+      if (missions.every(m => m[2]) && !state.user.badges.includes("daily")) {
+        state.user.badges.push("daily");
+        state.user.xp += 100;
+        persistUser();
+        toast("Misi harian selesai. Bonus 100 XP diberikan.", "ok");
+      }
+    }
+
+    function renderWorlds() {
+      $("world-list").innerHTML = WORLDS.map((w, i) => {
+        const num = i + 1;
+        const unlocked = num === 1 || completedLevels() >= 10;
+        return `<button class="world ${num === 1 ? "active" : ""} ${unlocked ? "" : "locked"}" ${unlocked ? `data-world="${num}"` : "disabled"}>
+          <div class="between"><b>World ${num}: ${w[0]}</b><span class="pill">${unlocked ? (num === 1 ? "Aktif" : "Terbuka") : "Terkunci"}</span></div>
+          <div class="sub">${w[1]}</div>
+        </button>`;
+      }).join("");
+    }
+
+    function renderLevels() {
+      $("level-grid").innerHTML = "";
+      for (let i = 1; i <= 10; i++) {
+        const done = state.user.progress[`1_${i}`];
+        const unlocked = i === 1 || state.user.progress[`1_${i - 1}`];
+        const cls = done ? "done" : unlocked ? "current" : "locked";
+        const stars = done ? "★".repeat(done.stars) + "☆".repeat(3 - done.stars) : unlocked ? "Mulai" : "🔒";
+        const btn = document.createElement("button");
+        btn.className = `level ${cls}`;
+        btn.disabled = !unlocked;
+        btn.innerHTML = `<div><b>${i}</b><div class="small">${stars}</div></div>`;
+        btn.addEventListener("click", () => i === 10 ? showBoss() : startLevel(i));
+        $("level-grid").appendChild(btn);
+      }
+    }
+
+    function startLevel(level, fromBoss = false) {
+      state.currentLevel = level;
+      state.questions = shuffle(QUESTION_BANK.filter(q => q.level === level)).slice(0, 25);
+      state.qIndex = 0;
+      state.score = 0;
+      state.earnedXp = fromBoss ? 50 : 0;
+      state.streak = 0;
+      state.maxStreak = 0;
+      showScreen("quiz-screen");
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      clearInterval(state.timer);
+      state.seconds = 30;
+      tickTimer();
+      state.timer = setInterval(() => {
+        state.seconds -= 1;
+        tickTimer();
+        if (state.seconds <= 0) answerCurrent(null);
+      }, 1000);
+      const q = state.questions[state.qIndex];
+      $("quiz-progress").style.width = `${(state.qIndex / state.questions.length) * 100}%`;
+      if (q.type === "sentence") return renderSentence(q);
+      const audio = q.type === "listening" ? `<div class="audio-panel"><button class="round-btn" type="button" id="play-audio">▶</button><div class="small">Text-to-Speech browser</div></div>` : "";
+      $("question-host").innerHTML = `
+        <div class="question-meta">${q.title} - Level ${state.currentLevel}</div>
+        <div class="question-text">${esc(q.prompt)}</div>
+        ${audio}
+        <div class="choices">${q.options.map(o => `<button class="choice" type="button" data-choice="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;
+      $("question-host").querySelectorAll("[data-choice]").forEach(btn => btn.addEventListener("click", () => answerCurrent(btn.dataset.choice)));
+      const play = $("play-audio");
+      if (play) play.addEventListener("click", () => speak(q.speak));
+    }
+
+    function renderSentence(q) {
+      state.sentence = q.words;
+      state.selectedWords = [];
+      $("question-host").innerHTML = `
+        <div class="question-meta">${q.title} - Level ${state.currentLevel}</div>
+        <div class="question-text">${esc(q.prompt)}</div>
+        <div id="sentence-drop" class="sentence-drop"><span class="small">Kalimat tersusun muncul di sini</span></div>
+        <div id="word-bank" class="word-bank">${shuffle(q.words).map(w => `<button class="word" type="button" data-word="${esc(w)}">${esc(w)}</button>`).join("")}</div>
+        <button class="btn" type="button" data-action="check-sentence">Cek Jawaban</button>`;
+      $("word-bank").querySelectorAll("[data-word]").forEach(btn => btn.addEventListener("click", () => moveWord(btn)));
+    }
+
+    function moveWord(btn) {
+      state.selectedWords.push(btn.dataset.word);
+      btn.remove();
+      $("sentence-drop").innerHTML = state.selectedWords.map(w => `<button class="word" type="button">${esc(w)}</button>`).join("");
+    }
+
+    function checkSentence() {
+      const q = state.questions[state.qIndex];
+      answerCurrent(state.selectedWords.join(" "), q.answer);
+    }
+
+    function answerCurrent(value, expectedOverride) {
+      clearInterval(state.timer);
+      const q = state.questions[state.qIndex];
+      const expected = expectedOverride || q.answer;
+      const ok = value === expected;
+      if (ok) {
+        state.score += 1;
+        state.streak += 1;
+        state.maxStreak = Math.max(state.maxStreak, state.streak);
+        const bonus = state.streak >= 10 ? 5 : state.streak >= 5 ? 2 : 0;
+        state.earnedXp += q.xp + bonus;
+      } else {
+        state.streak = 0;
+      }
+      state.user.totalQuestions += 1;
+      if (ok) state.user.correctQuestions += 1;
+      incrementSkill(q.type, ok);
+      const host = $("question-host");
+      host.querySelectorAll("[data-choice]").forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.choice === expected) btn.classList.add("correct");
+        if (value && btn.dataset.choice === value && value !== expected) btn.classList.add("wrong");
+      });
+      if (q.type === "sentence") {
+        const msg = ok ? "Benar." : `Jawaban benar: ${expected}`;
+        host.insertAdjacentHTML("beforeend", `<div class="card small">${esc(msg)}</div>`);
+      }
+      host.insertAdjacentHTML("beforeend", `<button class="btn" type="button" data-action="next-question">Lanjut</button>`);
+    }
+
+    function nextQuestion() {
+      state.qIndex += 1;
+      if (state.qIndex >= state.questions.length) return finishLevel();
+      renderQuestion();
+    }
+
+    function finishLevel() {
+      clearInterval(state.timer);
+      const pct = Math.round((state.score / state.questions.length) * 100);
+      const stars = pct >= 90 ? 3 : pct >= 75 ? 2 : pct >= 60 ? 1 : 0;
+      const perfectBonus = pct === 100 ? 50 : 0;
+      const xpTotal = state.earnedXp + perfectBonus;
+      state.user.xp += xpTotal;
+      state.user.stars += stars;
+      state.user.streak = Math.max(state.user.streak || 0, state.maxStreak);
+      state.user.progress[`1_${state.currentLevel}`] = { stars, score: pct, date: new Date().toISOString() };
+      state.user.attempts.unshift({ date: new Date().toISOString(), level: state.currentLevel, topic: LEVEL_TOPICS[state.currentLevel].name, score: pct, stars, xp: xpTotal });
+      checkBadges(pct);
+      persistUser();
+      backend("saveProgress", { user: state.user, latestAttempt: state.user.attempts[0] });
+      showScreen("result-screen");
+      renderResult({ pct, stars, xpTotal });
+      if (stars >= 2) confetti();
+    }
+
+    function renderResult({ pct, stars, xpTotal }) {
+      $("result-host").innerHTML = `
+        <div class="question-meta">Result Screen</div>
+        <h2>${pct >= 80 ? "Sempurna" : pct >= 60 ? "Bagus" : "Terus Berlatih"}</h2>
+        <div class="result-stars">${Array.from({ length: 3 }, (_, i) => i < stars ? "★" : "☆").join("")}</div>
+        <div class="stats">
+          <div class="stat"><b>${pct}%</b><span>Skor</span></div>
+          <div class="stat"><b>${state.score}/${state.questions.length}</b><span>Benar</span></div>
+          <div class="stat"><b>+${xpTotal}</b><span>XP</span></div>
+        </div>
+        <button class="btn" data-nav="quest-screen" type="button">Kembali ke Level</button>
+        <button class="btn secondary" data-action="continue" type="button">Lanjutkan Belajar</button>`;
+    }
+
+    function showBoss() {
+      if (!state.user.progress["1_9"]) return toast("Selesaikan Level 9 terlebih dahulu.", "err");
+      showScreen("boss-screen");
+      $("boss-transcript").textContent = "Belum ada transkrip.";
+      $("boss-continue").disabled = true;
+      $("boss-time").textContent = "00:30";
+    }
+
+    function toggleBossSpeech() {
+      const target = "Hello, my name is " + state.user.name + ". I am a Customs Officer from Pangkalpinang.";
+      if (state.recognition) {
+        state.recognition.stop();
+        state.recognition = null;
+        return;
+      }
+      state.bossSeconds = 30;
+      $("boss-time").textContent = "00:30";
+      speak(target);
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) {
+        $("boss-transcript").textContent = "Browser belum mendukung Speech Recognition. Mode simulasi aktif.";
+        setTimeout(() => $("boss-continue").disabled = false, 1200);
+        return;
+      }
+      const rec = new SR();
+      state.recognition = rec;
+      rec.lang = "en-US";
+      rec.interimResults = true;
+      rec.continuous = true;
+      rec.onresult = (event) => {
+        let text = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) text += event.results[i][0].transcript + " ";
+        $("boss-transcript").textContent = text.trim() || "Mendengarkan...";
+        if (text.trim().length > 20) $("boss-continue").disabled = false;
+      };
+      rec.onerror = () => {
+        $("boss-transcript").textContent = "Speech Recognition tidak tersedia. Anda tetap bisa lanjut.";
+        $("boss-continue").disabled = false;
+      };
+      rec.onend = () => {
+        state.recognition = null;
+        $("boss-continue").disabled = false;
+      };
+      rec.start();
+      const countdown = setInterval(() => {
+        state.bossSeconds -= 1;
+        $("boss-time").textContent = "00:" + String(Math.max(state.bossSeconds, 0)).padStart(2, "0");
+        if (state.bossSeconds <= 0 || !state.recognition) {
+          clearInterval(countdown);
+          if (state.recognition) state.recognition.stop();
+          $("boss-continue").disabled = false;
+        }
+      }, 1000);
+    }
+
+    function continueLearning() {
+      for (let i = 1; i <= 10; i++) {
+        if (!state.user.progress[`1_${i}`]) {
+          if (i === 10) return showBoss();
+          return startLevel(i);
+        }
+      }
+      toast("World 1 sudah selesai.", "ok");
+      showScreen("quest-screen");
+    }
+
+    function quitQuiz() {
+      clearInterval(state.timer);
+      showScreen("quest-screen");
+    }
+
+    function renderLeaderboard() {
+      if (!state.user) return;
+      const locals = Object.values(state.users).map(u => ({ name: u.name, nip: u.nip, unit: u.unit || "Belum diisi", xp: u.xp || 0, level: u.level || 1, avatar: u.avatarEmoji || "●", stars: u.stars || 0 }));
+      const users = [...locals, ...DEMO_USERS].sort((a, b) => b.xp - a.xp).slice(0, 20);
+      $("leaderboard-body").innerHTML = users.map((u, i) => `<tr><td>${i + 1}</td><td>${u.avatar} ${esc(u.name)}${u.nip === state.user.nip ? " (Anda)" : ""}</td><td>${esc(u.unit)}</td><td><b>${u.xp}</b></td></tr>`).join("");
+    }
+
+    function renderBadges() {
+      $("badge-grid").innerHTML = BADGES.map(([id, name, desc, icon]) => {
+        const earned = state.user.badges.includes(id);
+        return `<div class="badge ${earned ? "" : "locked"}"><div class="badge-icon">${icon}</div><b>${name}</b><div class="small">${desc}</div><div class="pill" style="margin-top:10px">${earned ? "Terbuka" : "Terkunci"}</div></div>`;
+      }).join("");
+    }
+
+    function renderProfile() {
+      $("profile-avatar").textContent = state.user.avatarEmoji;
+      $("profile-name").textContent = state.user.name;
+      $("profile-unit").textContent = state.user.unit || "Belum memilih unit";
+      const skills = state.user.skills;
+      $("skill-bars").innerHTML = [
+        ["Grammar", skills.grammar],
+        ["Vocabulary", skills.vocab],
+        ["Listening", skills.listening],
+        ["Speaking", skills.speaking]
+      ].map(([name, value]) => `<div class="skill"><div class="between"><b>${name}</b><span>${Math.min(value, 100)}%</span></div><div class="progress"><span style="width:${Math.min(value, 100)}%"></span></div></div>`).join("");
+      const completed = completedLevels();
+      $("profile-world-label").textContent = `${completed}/10`;
+      $("profile-world-bar").style.width = `${completed * 10}%`;
+    }
+
+    function renderMentor() {
+      const users = Object.values(state.users);
+      const attempts = users.flatMap(u => (u.attempts || []).map(a => ({ ...a, name: u.name })));
+      const entries = load("cecQuestMentorEntries", []);
+      $("mentor-total").textContent = users.length;
+      $("mentor-active").textContent = users.filter(u => (u.attempts || []).length > 0).length;
+      $("mentor-attempts").textContent = attempts.length + entries.length;
+      $("mentor-user").innerHTML = users.map(u => `<option value="${esc(u.nip)}">${esc(u.name)} - ${esc(u.unit || "Belum diisi")}</option>`).join("");
+      const rows = [
+        ...attempts.map(a => ({ date: a.date, name: a.name, activity: `Level ${a.level}: ${a.topic}`, score: `${a.score}%` })),
+        ...entries.map(e => ({ date: e.date, name: e.name, activity: e.note, score: "Catatan" }))
+      ].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 25);
+      $("mentor-history").innerHTML = rows.length ? rows.map(r => `<tr><td>${new Date(r.date).toLocaleDateString("id-ID")}</td><td>${esc(r.name)}</td><td>${esc(r.activity)}</td><td>${esc(r.score)}</td></tr>`).join("") : `<tr><td colspan="4">Belum ada history.</td></tr>`;
+    }
+
+    function saveMentorEntry(event) {
+      event.preventDefault();
+      const nip = $("mentor-user").value;
+      const note = $("mentor-note").value.trim();
+      if (!nip || !note) return toast("Pilih pegawai dan isi catatan.", "err");
+      const user = state.users[nip];
+      const entries = load("cecQuestMentorEntries", []);
+      const entry = { date: new Date().toISOString(), nip, name: user.name, note };
+      entries.unshift(entry);
+      save("cecQuestMentorEntries", entries);
+      $("mentor-note").value = "";
+      backend("saveMentorEntry", entry);
+      renderMentor();
+      toast("Catatan mentor tersimpan.", "ok");
+    }
+
+    function renderAdmin() {
+      $("admin-questions").innerHTML = `<h2>Question Bank</h2><div class="stats"><div class="stat"><b>${QUESTION_BANK.length}</b><span>Total Soal</span></div><div class="stat"><b>10</b><span>Level</span></div><div class="stat"><b>4</b><span>Tipe</span></div></div>`;
+      $("admin-users").innerHTML = `<h2>User</h2><table class="history-table"><thead><tr><th>Nama</th><th>Unit</th><th>XP</th></tr></thead><tbody>${Object.values(state.users).map(u => `<tr><td>${esc(u.name)}</td><td>${esc(u.unit || "-")}</td><td>${u.xp}</td></tr>`).join("")}</tbody></table>`;
+      const avg = Object.values(state.users).length ? Math.round(Object.values(state.users).reduce((s, u) => s + completedLevels(u), 0) / Object.values(state.users).length) : 0;
+      $("admin-analytics").innerHTML = `<h2>Analytics</h2><div class="stats"><div class="stat"><b>${Object.keys(state.users).length}</b><span>User</span></div><div class="stat"><b>${avg}/10</b><span>Rata Progress</span></div><div class="stat"><b>${UNITS.length}</b><span>Unit Kerja</span></div></div>`;
+    }
+
+    function switchAdminTab(tab) {
+      document.querySelectorAll("[data-admin-tab]").forEach(b => b.classList.toggle("active", b.dataset.adminTab === tab));
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+      $(`admin-${tab}`).classList.add("active");
+    }
+
+    function checkBadges(pct) {
+      const add = (id) => { if (!state.user.badges.includes(id)) state.user.badges.push(id); };
+      if (state.user.totalQuestions >= 100) add("explorer");
+      if (state.user.skills.grammar >= 50) add("grammar");
+      if (state.user.skills.vocab >= 50) add("vocab");
+      if (state.user.skills.listening >= 20) add("listening");
+      if (completedLevels() >= 9 && state.currentLevel === 10) add("customs");
+      if (state.maxStreak >= 10) add("streak");
+      if (pct === 100) add("perfect");
+    }
+
+    function incrementSkill(type, ok) {
+      if (!ok) return;
+      if (type === "grammar") state.user.skills.grammar += 1;
+      if (type === "vocab") state.user.skills.vocab += 1;
+      if (type === "listening") state.user.skills.listening += 1;
+      if (type === "sentence") state.user.skills.speaking += 1;
+    }
+
+    function dailyProgress() {
+      const d = today();
+      const attempts = (state.user.attempts || []).filter(a => a.date.slice(0, 10) === d);
+      return {
+        questions: attempts.length * 25,
+        highScore: attempts.some(a => a.score >= 80),
+        vocab: attempts.length * 5
+      };
+    }
+
+    function completedLevels(user = state.user) {
+      return Object.keys(user.progress || {}).filter(k => k.startsWith("1_")).length;
+    }
+
+    function calcLevel(xp) {
+      return Math.max(1, Math.min(100, Math.floor(xp / 100) + 1));
+    }
+
+    function titleForLevel(level) {
+      if (level >= 20) return "Customs Ambassador";
+      if (level >= 10) return "Customs Officer";
+      if (level >= 5) return "English Cadet";
+      return "English Recruit";
+    }
+
+    function tickTimer() {
+      $("quiz-timer").textContent = "00:" + String(Math.max(state.seconds, 0)).padStart(2, "0");
+    }
+
+    function speak(text) {
+      if (!("speechSynthesis" in window)) return toast("Text-to-Speech belum tersedia di browser ini.", "err");
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "en-US";
+      utter.rate = .9;
+      window.speechSynthesis.speak(utter);
+    }
+
+    function toast(message, type = "") {
+      const el = document.createElement("div");
+      el.className = `toast ${type}`;
+      el.textContent = message;
+      $("toast-wrap").appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }
+
+    function confetti() {
+      const colors = ["#d4af37", "#22c55e", "#3b82f6", "#ef4444", "#f59e0b"];
+      for (let i = 0; i < 46; i++) {
+        const piece = document.createElement("div");
+        piece.className = "confetti-piece";
+        piece.style.left = Math.random() * 100 + "%";
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDelay = Math.random() * .5 + "s";
+        document.body.appendChild(piece);
+        setTimeout(() => piece.remove(), 3200);
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
