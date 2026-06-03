@@ -175,6 +175,20 @@
     .tab.active { background: var(--gold); color: var(--ink); border-color: transparent; font-weight: 850; }
     .tab-panel { display: none; }
     .tab-panel.active { display: grid; gap: 12px; }
+    .program-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .program-card { border-radius: var(--r-md); padding: 14px; background: rgba(255,255,255,.1); border: 1px solid var(--line); }
+    .program-card b { display: block; margin-bottom: 6px; }
+    .status { display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: 4px 9px; font-size: .7rem; font-weight: 850; }
+    .status.excellent { background: rgba(34,197,94,.18); color: #86efac; border: 1px solid rgba(34,197,94,.45); }
+    .status.good { background: rgba(59,130,246,.18); color: #bfdbfe; border: 1px solid rgba(59,130,246,.45); }
+    .status.needs { background: rgba(245,158,11,.2); color: #fde68a; border: 1px solid rgba(245,158,11,.5); }
+    .status.critical { background: rgba(239,68,68,.2); color: #fecaca; border: 1px solid rgba(239,68,68,.5); }
+    .form-grid { display: grid; gap: 10px; }
+    .report-box { white-space: pre-wrap; color: #f8fafc; background: rgba(0,0,0,.22); border: 1px solid var(--line); border-radius: var(--r-md); padding: 14px; font-size: .82rem; line-height: 1.45; max-height: 420px; overflow: auto; }
+    .table-scroll { overflow-x: auto; }
+    .mini-table { width: 100%; min-width: 560px; border-collapse: collapse; }
+    .mini-table th, .mini-table td { border-bottom: 1px solid var(--line); padding: 9px 6px; text-align: left; font-size: .8rem; }
+    .mini-table th { color: var(--gold-2); font-size: .7rem; text-transform: uppercase; }
 
     .bottom-nav { position: fixed; z-index: 80; bottom: 0; left: 50%; transform: translateX(-50%); width: min(100%, 480px); display: grid; grid-template-columns: repeat(5, 1fr); background: rgba(3,21,37,.96); border-top: 1px solid var(--line); padding: 7px 4px 8px; }
     .nav-item { color: rgba(255,255,255,.6); background: transparent; border: 0; display: grid; place-items: center; gap: 3px; font-size: .68rem; padding: 4px; }
@@ -190,7 +204,7 @@
     @media (max-width: 380px) {
       .stats { grid-template-columns: repeat(2, 1fr); }
       .level-grid { grid-template-columns: repeat(4, 1fr); }
-      .quick-grid, .badge-grid, .avatar-grid { grid-template-columns: 1fr; }
+      .quick-grid, .badge-grid, .avatar-grid, .program-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -302,12 +316,81 @@
           <div class="quick-grid">
             <button class="quick" data-action="continue"><span>▶</span><b>Lanjutkan</b><span>Level berikutnya</span></button>
             <button class="quick" data-nav="quest-screen"><span>🗺</span><b>Quest</b><span>Pilih world dan level</span></button>
+            <button class="quick" data-nav="program-screen"><span>📊</span><b>Program</b><span>Monitoring CEC</span></button>
             <button class="quick" data-nav="leaderboard-screen"><span>🏆</span><b>Rank</b><span>Leaderboard pegawai</span></button>
             <button class="quick" data-nav="mentor-screen"><span>📋</span><b>Mentor</b><span>History dan dashboard pengisian</span></button>
             <button class="quick" data-nav="badge-screen"><span>🎖</span><b>Badge</b><span>Pencapaian belajar</span></button>
             <button class="quick" data-nav="admin-screen"><span>⚙</span><b>Admin</b><span>Soal, user, analytics</span></button>
           </div>
         </article>
+      </div>
+    </section>
+
+    <section id="program-screen" class="screen">
+      <header class="topbar"></header>
+      <div class="stack">
+        <article class="card">
+          <div class="between">
+            <div>
+              <h2>CEC Quest Monitoring System</h2>
+              <p class="sub">Learning, Gamification, and Program Monitoring Platform for CEC Bea Cukai Pangkalpinang</p>
+            </div>
+            <span id="program-health-pill" class="status good">Good</span>
+          </div>
+        </article>
+        <div class="tabs">
+          <button class="tab active" type="button" data-program-tab="executive">Executive</button>
+          <button class="tab" type="button" data-program-tab="programs">Programs</button>
+          <button class="tab" type="button" data-program-tab="monthly">Monthly Class</button>
+          <button class="tab" type="button" data-program-tab="participants">Participants</button>
+          <button class="tab" type="button" data-program-tab="input">Input</button>
+          <button class="tab" type="button" data-program-tab="report">Report</button>
+        </div>
+        <article id="program-executive" class="card tab-panel active"></article>
+        <article id="program-programs" class="card tab-panel"></article>
+        <article id="program-monthly" class="card tab-panel"></article>
+        <article id="program-participants" class="card tab-panel"></article>
+        <article id="program-input" class="card tab-panel">
+          <h2>Input Monitoring</h2>
+          <form id="monthly-plan-form" class="form-grid">
+            <div class="row">
+              <div class="field"><label for="plan-month">Bulan</label><select id="plan-month"></select></div>
+              <div class="field"><label for="plan-year">Tahun</label><input id="plan-year" type="number" min="2024" max="2035"></div>
+            </div>
+            <button class="btn" type="submit">Generate Jadwal Selasa</button>
+          </form>
+          <form id="session-form" class="form-grid">
+            <div class="field"><label for="session-program">Program</label><select id="session-program"></select></div>
+            <div class="field"><label for="session-title">Judul / Tema</label><input id="session-title" required placeholder="Contoh: Greeting and Self Introduction"></div>
+            <div class="row">
+              <div class="field"><label for="session-date">Tanggal</label><input id="session-date" type="date" required></div>
+              <div class="field"><label for="session-location">Lokasi / Platform</label><input id="session-location" placeholder="Aula / Zoom / Instagram"></div>
+            </div>
+            <div class="field"><label for="session-participants">Peserta / PIC</label><input id="session-participants" placeholder="Pisahkan dengan koma"></div>
+            <div class="field"><label for="session-docs">Link Dokumentasi</label><input id="session-docs" placeholder="https://..."></div>
+            <div class="field"><label for="session-notes">Catatan dan tindak lanjut</label><textarea id="session-notes" placeholder="Kendala, feedback, follow-up"></textarea></div>
+            <button class="btn" type="submit">Simpan Kegiatan</button>
+          </form>
+          <form id="assessment-form" class="form-grid">
+            <h3>Attendance & Assessment</h3>
+            <div class="field"><label for="assessment-session">Kegiatan</label><select id="assessment-session"></select></div>
+            <div class="field"><label for="assessment-participant">Pegawai</label><select id="assessment-participant"></select></div>
+            <div class="row">
+              <div class="field"><label for="assessment-attendance">Hadir</label><select id="assessment-attendance"><option value="present">Hadir</option><option value="absent">Tidak Hadir</option></select></div>
+              <div class="field"><label for="assessment-active">Aktif</label><select id="assessment-active"><option value="yes">Aktif</option><option value="no">Pasif</option></select></div>
+            </div>
+            <div class="row">
+              <div class="field"><label for="score-speaking">Speaking</label><input id="score-speaking" type="number" min="0" max="100" value="80"></div>
+              <div class="field"><label for="score-writing">Writing</label><input id="score-writing" type="number" min="0" max="100" value="80"></div>
+            </div>
+            <div class="row">
+              <div class="field"><label for="score-grammar">Grammar</label><input id="score-grammar" type="number" min="0" max="100" value="80"></div>
+              <div class="field"><label for="score-presentation">Presentation</label><input id="score-presentation" type="number" min="0" max="100" value="80"></div>
+            </div>
+            <button class="btn" type="submit">Simpan Nilai</button>
+          </form>
+        </article>
+        <article id="program-report" class="card tab-panel"></article>
       </div>
     </section>
 
@@ -449,7 +532,7 @@
     <nav id="bottom-nav" class="bottom-nav hidden">
       <button class="nav-item active" data-nav="home-screen"><strong>⌂</strong><span>Home</span></button>
       <button class="nav-item" data-nav="quest-screen"><strong>🗺</strong><span>Quest</span></button>
-      <button class="nav-item" data-nav="leaderboard-screen"><strong>🏆</strong><span>Rank</span></button>
+      <button class="nav-item" data-nav="program-screen"><strong>📊</strong><span>Program</span></button>
       <button class="nav-item" data-nav="badge-screen"><strong>🎖</strong><span>Badge</span></button>
       <button class="nav-item" data-nav="profile-screen"><strong>●</strong><span>Profil</span></button>
     </nav>
@@ -503,7 +586,77 @@
       ["customs", "Customs Rookie", "Selesaikan World 1", "🛃"],
       ["streak", "Streak Master", "Streak 10 benar", "🔥"],
       ["perfect", "Perfect Score", "Skor 100% satu level", "💯"],
-      ["daily", "Daily Warrior", "Selesaikan misi harian", "📅"]
+      ["daily", "Daily Warrior", "Selesaikan misi harian", "📅"],
+      ["conversation_starter", "Conversation Starter", "Aktif di minggu 1", "💬"],
+      ["grammar_builder", "Grammar Builder", "Lulus grammar minggu 2", "🧱"],
+      ["game_champion", "Game Champion", "Aktif atau menang games", "🏁"],
+      ["listening_explorer", "Listening Explorer", "Selesaikan listening task", "🎬"],
+      ["workplace_communicator", "Workplace Communicator", "Hadir 4 pertemuan bulanan", "🏢"],
+      ["monthly_cec_star", "Monthly CEC Star", "Nilai bulanan minimal 85", "⭐"],
+      ["most_improved", "Most Improved Learner", "Peningkatan nilai tertinggi", "📈"],
+      ["best_speaker", "Best Speaker", "Nilai speaking tertinggi", "🎤"]
+    ];
+    const MONITORING_KEYS = {
+      programs: "cec_programs",
+      sessions: "cec_program_sessions",
+      attendance: "cec_attendance",
+      assessments: "cec_assessments",
+      plans: "cec_monthly_plans",
+      reports: "cec_reports",
+      evidence: "cec_evidence",
+      badges: "cec_badges",
+      participants: "cec_participants"
+    };
+    const PROGRAM_DEFS = [
+      { id: "language_mastery", name: "Language Mastery Initiative", target: 2, icon: "🎓" },
+      { id: "english_day", name: "English Day", target: 4, icon: "🇬🇧" },
+      { id: "engliscape", name: "Engliscape Initiative", target: 4, icon: "📰" },
+      { id: "lingualeap", name: "LinguaLeap Challenges", target: 1, icon: "🏆" },
+      { id: "workplace_communication", name: "English for Workplace Communication", target: 4, icon: "🏢" }
+    ];
+    const MONTHLY_THEMES = [
+      { bigTheme: "Basic Workplace Communication", weeks: [
+        ["Classical Conversation", "Greeting and Self Introduction"],
+        ["Grammar for Workplace", "Simple Present for Daily Work"],
+        ["English Games and Roleplay", "Guess My Job and Office Vocabulary Race"],
+        ["Listening from Short Movie", "Workplace Small Talk"],
+        ["Mini Presentation and Monthly Evaluation", "My Role in Customs"]
+      ]},
+      { bigTheme: "Professional Office Communication", weeks: [
+        ["Classical Conversation", "Asking for Help and Offering Assistance"],
+        ["Grammar for Workplace", "Modal Verbs for Polite Requests"],
+        ["English Games and Roleplay", "Telephone Roleplay Battle"],
+        ["Listening from Short Movie", "Office Phone Conversation"],
+        ["Mini Presentation and Monthly Evaluation", "How I Serve Stakeholders"]
+      ]},
+      { bigTheme: "Customs Service Communication", weeks: [
+        ["Classical Conversation", "Explaining Customs Service"],
+        ["Grammar for Workplace", "Passive Voice for Official Explanation"],
+        ["English Games and Roleplay", "Customs Vocabulary Challenge"],
+        ["Listening from Short Movie", "Airport and Passenger Conversation"],
+        ["Mini Presentation and Monthly Evaluation", "How to Explain Customs Declaration"]
+      ]},
+      { bigTheme: "Export Assistance Communication", weeks: [
+        ["Classical Conversation", "Talking with Exporters"],
+        ["Grammar for Workplace", "Future Tense for Export Planning"],
+        ["English Games and Roleplay", "Export Document Card Game"],
+        ["Listening from Short Movie", "Buyer and Seller Conversation"],
+        ["Mini Presentation and Monthly Evaluation", "How to Assist MSMEs for Export"]
+      ]},
+      { bigTheme: "Presentation and Public Speaking", weeks: [
+        ["Classical Conversation", "Opening a Presentation"],
+        ["Grammar for Workplace", "Signposting Language"],
+        ["English Games and Roleplay", "Presentation Relay"],
+        ["Listening from Short Movie", "Short Public Speaking Clip"],
+        ["Mini Presentation and Monthly Evaluation", "Three Minute Customs Talk"]
+      ]},
+      { bigTheme: "Evaluation and Showcase", weeks: [
+        ["Classical Conversation", "Sharing Learning Experience"],
+        ["Grammar for Workplace", "Common Mistakes Review"],
+        ["English Games and Roleplay", "CEC Team Battle"],
+        ["Listening from Short Movie", "Final Listening Challenge"],
+        ["Final Showcase", "CEC Monthly Performance Day"]
+      ]}
     ];
     const state = {
       user: null,
@@ -581,14 +734,216 @@
       }));
     }
 
+    function saveData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+    function loadData(key, fallback) { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
+    function generateId(prefix) { return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`; }
+
+    function seedMonitoringData() {
+      if (!loadData(MONITORING_KEYS.programs, []).length) saveData(MONITORING_KEYS.programs, PROGRAM_DEFS);
+      const existingSessions = loadData(MONITORING_KEYS.sessions, []);
+      if (existingSessions.length) return;
+      const now = new Date();
+      const month = now.getMonth() + 1;
+      const year = now.getFullYear();
+      const participants = Object.values(state.users).map(u => u.name).filter(Boolean);
+      const names = participants.length ? participants : ["Agung Hermawan", "Rina Wulandari", "Budi Santoso", "Sari Lestari"];
+      const baseSessions = [
+        { programType: "language_mastery", title: "Speaking Clinic with Mentor", topic: "Self Introduction and Office Duties", speaker: "Mentor CEC", location: "Aula KPPBC TMP C Pangkalpinang", participants: names.slice(0, 8), documentationUrl: "", notes: "Peserta perlu latihan pronunciation.", followUp: "Latihan speaking circle minggu depan" },
+        { programType: "english_day", title: "English Day Check-in", theme: "Office Small Talk", activity: "Pair conversation and check-in", participants: names, activeParticipants: names.slice(0, 3), participationScore: 82, documentationUrl: "", mentorNotes: "Partisipasi meningkat.", obstacles: "Sebagian peserta masih malu berbicara.", followUp: "Gunakan question card" },
+        { programType: "engliscape", title: "Customs Education Post", contentCategory: "Customs Education", platform: "Instagram", pic: names[0], status: "published", link: "", engagement: 42, languageReviewNotes: "Perbaiki tense pada caption.", documentationUrl: "" },
+        { programType: "lingualeap", title: "Vocabulary Challenge", challengeType: "Vocabulary Challenge", theme: "Customs Service Vocabulary", participants: names, teams: ["Bravo", "Charlie"], judges: ["Mentor CEC"], winner: names[0], documentationUrl: "", notes: "Pemenang mendapat badge Game Champion." }
+      ].map((s, i) => ({ id: generateId("ses"), date: new Date(year, month - 1, Math.min(4 + i * 5, 24)).toISOString().slice(0, 10), ...s }));
+      saveData(MONITORING_KEYS.sessions, baseSessions);
+      const plan = generateTuesdaySchedule(month, year);
+      saveData(MONITORING_KEYS.plans, [plan]);
+      const attendance = plan.meetings.flatMap(m => names.slice(0, 4).map((name, idx) => ({
+        id: generateId("att"), sessionId: m.id, participantId: name, participantName: name, date: m.date, status: idx === 3 ? "absent" : "present", active: idx < 2
+      })));
+      const assessments = plan.meetings.flatMap((m, weekIndex) => names.slice(0, 3).map((name, idx) => ({
+        id: generateId("asm"), sessionId: m.id, participantId: name, participantName: name, date: m.date,
+        speaking: 72 + weekIndex * 3 + idx * 2, writing: 70 + weekIndex * 2 + idx, grammar: 74 + weekIndex * 2, presentation: weekIndex >= 3 ? 78 + idx * 3 : 0
+      })));
+      saveData(MONITORING_KEYS.attendance, attendance);
+      saveData(MONITORING_KEYS.assessments, assessments);
+    }
+
+    function statusFromScore(score) {
+      if (score >= 90) return { text: "Excellent", cls: "excellent" };
+      if (score >= 75) return { text: "Good", cls: "good" };
+      if (score >= 60) return { text: "Needs Improvement", cls: "needs" };
+      return { text: "Critical", cls: "critical" };
+    }
+
+    function getCurrentMonthYear() {
+      return { month: new Date().getMonth() + 1, year: new Date().getFullYear() };
+    }
+
+    function monthName(month) {
+      return new Date(2026, month - 1, 1).toLocaleString("id-ID", { month: "long" });
+    }
+
+    function generateTuesdaySchedule(month, year) {
+      const tuesdays = [];
+      const cursor = new Date(year, month - 1, 1);
+      while (cursor.getMonth() === month - 1) {
+        if (cursor.getDay() === 2) tuesdays.push(new Date(cursor));
+        cursor.setDate(cursor.getDate() + 1);
+      }
+      const theme = MONTHLY_THEMES[(month - 1) % MONTHLY_THEMES.length];
+      const meetings = tuesdays.map((date, index) => {
+        const week = theme.weeks[index] || theme.weeks[4];
+        return {
+          id: generateId("mtg"),
+          week: index + 1,
+          date: date.toISOString().slice(0, 10),
+          category: week[0],
+          subtheme: week[1],
+          activities: defaultActivitiesForCategory(week[0]),
+          participants: [],
+          attendance: [],
+          scores: [],
+          documentationUrl: "",
+          mentorNotes: "",
+          obstacles: "",
+          followUp: ""
+        };
+      });
+      return {
+        id: generateId("plan"),
+        programType: "workplace_communication",
+        month,
+        year,
+        bigTheme: theme.bigTheme,
+        meetings,
+        monthlyScoreSummary: [],
+        monthlyReport: ""
+      };
+    }
+
+    function defaultActivitiesForCategory(category) {
+      if (category.includes("Conversation")) return ["Pair conversation", "Question card", "Speaking circle"];
+      if (category.includes("Grammar")) return ["Mini lesson", "Error correction", "Grammar battle"];
+      if (category.includes("Games")) return ["Roleplay roulette", "Vocabulary race", "Team reflection"];
+      if (category.includes("Listening")) return ["Watch short clip", "Fill in the blanks", "Summary in English"];
+      return ["Mini presentation", "Q&A", "Feedback mentor", "Awarding badge"];
+    }
+
+    function calculateProgramHealth(data = {}) {
+      const { month, year } = data.month ? data : getCurrentMonthYear();
+      const sessions = loadData(MONITORING_KEYS.sessions, []).filter(s => isSameMonth(s.date, month, year));
+      const plans = loadData(MONITORING_KEYS.plans, []);
+      const plan = plans.find(p => Number(p.month) === Number(month) && Number(p.year) === Number(year)) || generateTuesdaySchedule(month, year);
+      const attendance = loadData(MONITORING_KEYS.attendance, []).filter(a => isSameMonth(a.date, month, year));
+      const assessments = loadData(MONITORING_KEYS.assessments, []).filter(a => isSameMonth(a.date, month, year));
+      const present = attendance.filter(a => a.status === "present").length;
+      const active = attendance.filter(a => a.active).length;
+      const attendanceScore = attendance.length ? (present / attendance.length) * 100 : 0;
+      const activeScore = attendance.length ? (active / attendance.length) * 100 : 0;
+      const taskScore = sessions.length ? Math.min(100, sessions.length / 8 * 100) : 40;
+      const speakingScore = avg(assessments.map(a => Number(a.speaking || 0)).filter(Boolean));
+      const meetingScore = Math.min(100, (plan.meetings.filter(m => new Date(m.date) <= new Date()).length / 4) * 100);
+      const docsCount = sessions.filter(s => s.documentationUrl).length + plan.meetings.filter(m => m.documentationUrl).length;
+      const docsScore = Math.min(100, docsCount / Math.max(1, sessions.length + plan.meetings.length) * 100);
+      const score = Math.round(attendanceScore * .3 + activeScore * .2 + taskScore * .15 + speakingScore * .15 + meetingScore * .1 + docsScore * .1);
+      return { score, status: statusFromScore(score), attendanceScore, activeScore, taskScore, speakingScore, meetingScore, docsScore };
+    }
+
+    function calculateMonthlyScore(participantId, month, year) {
+      const attendance = loadData(MONITORING_KEYS.attendance, []).filter(a => sameParticipant(a, participantId) && isSameMonth(a.date, month, year));
+      const assessments = loadData(MONITORING_KEYS.assessments, []).filter(a => sameParticipant(a, participantId) && isSameMonth(a.date, month, year));
+      const attendanceScore = attendance.length ? attendance.filter(a => a.status === "present").length / Math.max(4, attendance.length) * 100 : 0;
+      const activeScore = attendance.length ? attendance.filter(a => a.active).length / attendance.length * 100 : 0;
+      const speaking = avg(assessments.map(a => Number(a.speaking || 0)).filter(Boolean));
+      const writing = avg(assessments.map(a => Number(a.writing || a.grammar || 0)).filter(Boolean));
+      const presentation = avg(assessments.map(a => Number(a.presentation || 0)).filter(Boolean));
+      const attendanceActive = (attendanceScore * .65) + (activeScore * .35);
+      const finalScore = Math.round(attendanceActive * .4 + speaking * .3 + writing * .15 + presentation * .15);
+      return { participantId, attendanceScore, activeScore, speaking, writing, presentation, finalScore, competency: competencyStatus(finalScore) };
+    }
+
+    function generateMonthlyReport(month, year) {
+      const sessions = loadData(MONITORING_KEYS.sessions, []).filter(s => isSameMonth(s.date, month, year));
+      const plans = loadData(MONITORING_KEYS.plans, []);
+      const plan = plans.find(p => Number(p.month) === Number(month) && Number(p.year) === Number(year)) || generateTuesdaySchedule(month, year);
+      const participants = participantNames();
+      const summaries = participants.map(name => calculateMonthlyScore(name, month, year)).sort((a, b) => b.finalScore - a.finalScore);
+      const health = calculateProgramHealth({ month, year });
+      const realized = sessions.length + plan.meetings.length;
+      const report = [
+        `LAPORAN BULANAN CEC BEA CUKAI PANGKALPINANG`,
+        `Bulan: ${monthName(month)} ${year}`,
+        `Program: BEDELEW dan English for Workplace Communication`,
+        `Target: ${PROGRAM_DEFS.reduce((s, p) => s + p.target, 0)} aktivitas`,
+        `Realisasi: ${realized} aktivitas/pertemuan`,
+        `Program Health Score: ${health.score} (${health.status.text})`,
+        ``,
+        `Ringkasan kegiatan:`,
+        `- Monthly CEC Class: ${plan.bigTheme}`,
+        ...plan.meetings.map(m => `- Selasa ${m.week}: ${m.category} - ${m.subtheme} (${m.date})`),
+        ...sessions.map(s => `- ${programName(s.programType)}: ${s.title || s.theme || s.topic} (${s.date})`),
+        ``,
+        `Rekap kehadiran dan nilai:`,
+        ...summaries.slice(0, 8).map(s => `- ${s.participantId}: nilai akhir ${s.finalScore}, speaking ${Math.round(s.speaking)}, writing ${Math.round(s.writing)}, status ${s.competency}`),
+        ``,
+        `Top learners: ${summaries.slice(0, 5).map(s => s.participantId).join(", ") || "-"}`,
+        `Badge awarded: ${programBadgesForMonth(month, year).join(", ") || "-"}`,
+        `Kendala: ${sessions.map(s => s.obstacles || s.notes).filter(Boolean).slice(0, 3).join("; ") || "Belum ada kendala utama."}`,
+        `Tindak lanjut: ${sessions.map(s => s.followUp).filter(Boolean).slice(0, 3).join("; ") || "Lanjutkan monitoring mingguan dan coaching peserta."}`,
+        `Dokumentasi: ${sessions.map(s => s.documentationUrl).filter(Boolean).join(", ") || "Belum semua kegiatan memiliki link dokumentasi."}`
+      ].join("\n");
+      return report;
+    }
+
+    function isSameMonth(date, month, year) {
+      const d = new Date(date);
+      return d.getMonth() + 1 === Number(month) && d.getFullYear() === Number(year);
+    }
+
+    function avg(values) {
+      return values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
+    }
+
+    function sameParticipant(row, participantId) {
+      return row.participantId === participantId || row.participantName === participantId;
+    }
+
+    function participantNames() {
+      const users = Object.values(state.users).map(u => u.name).filter(Boolean);
+      const attendance = loadData(MONITORING_KEYS.attendance, []).map(a => a.participantName || a.participantId).filter(Boolean);
+      const assessments = loadData(MONITORING_KEYS.assessments, []).map(a => a.participantName || a.participantId).filter(Boolean);
+      return [...new Set([...users, ...attendance, ...assessments])];
+    }
+
+    function competencyStatus(score) {
+      if (score >= 95) return "International Ready";
+      if (score >= 88) return "Customs English Ready";
+      if (score >= 80) return "Presentation Ready";
+      if (score >= 70) return "Workplace Ready";
+      if (score >= 55) return "Developing";
+      return "Beginner";
+    }
+
+    function programBadgesForMonth(month, year) {
+      const assessments = loadData(MONITORING_KEYS.assessments, []).filter(a => isSameMonth(a.date, month, year));
+      const badges = [];
+      if (assessments.some(a => Number(a.speaking || 0) >= 85)) badges.push("Best Speaker");
+      if (assessments.some(a => Number(a.grammar || 0) >= 80)) badges.push("Grammar Builder");
+      if (assessments.some(a => Number(a.presentation || 0) >= 85)) badges.push("Monthly CEC Star");
+      return badges;
+    }
+
+    function programName(id) {
+      return PROGRAM_DEFS.find(p => p.id === id)?.name || id;
+    }
+
     async function backend(action, payload) {
       if (!APPS_SCRIPT_URL) return null;
       try {
-        const res = await fetch(APPS_SCRIPT_URL, {
+        const res = await fetchWithTimeout(APPS_SCRIPT_URL, {
           method: "POST",
           body: JSON.stringify({ action, payload }),
           headers: { "Content-Type": "text/plain;charset=utf-8" }
-        });
+        }, 6000);
         return await res.json();
       } catch (err) {
         console.warn("Backend unavailable", err);
@@ -596,9 +951,54 @@
       }
     }
 
-    function init() {
-      state.users = loadRegisteredUsers();
+    async function backendGet(action) {
+      if (!APPS_SCRIPT_URL) return null;
+      try {
+        const res = await fetchWithTimeout(`${APPS_SCRIPT_URL}?action=${encodeURIComponent(action)}`, {}, 6000);
+        return await res.json();
+      } catch (err) {
+        console.warn("Backend read unavailable", err);
+        return null;
+      }
+    }
+
+    function fetchWithTimeout(url, options = {}, timeout = 6000) {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+      return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(id));
+    }
+
+    async function syncUsersFromBackend() {
+      const response = await backendGet("getUsers");
+      if (!response || !Array.isArray(response.rows)) return;
+      response.rows.forEach(row => {
+        if (!row.nip) return;
+        let user = null;
+        try { user = row.rawJson ? JSON.parse(row.rawJson) : null; } catch (err) { user = null; }
+        const merged = {
+          ...defaultUser({
+            name: row.name || user?.name || "",
+            nip: String(row.nip),
+            unit: row.unit || user?.unit || "",
+            password: row.password || user?.password || "",
+            avatar: user?.avatar || "ranger"
+          }),
+          ...(user || {}),
+          password: row.password || user?.password || "",
+          xp: Number(row.xp || user?.xp || 0),
+          level: Number(row.level || user?.level || 1),
+          stars: Number(row.stars || user?.stars || 0)
+        };
+        if (merged.password) state.users[String(row.nip)] = merged;
+      });
       save("cecQuestUsers", state.users);
+    }
+
+    async function init() {
+      state.users = loadRegisteredUsers();
+      await syncUsersFromBackend();
+      save("cecQuestUsers", state.users);
+      seedMonitoringData();
       renderUnitOptions();
       bindEvents();
       setTimeout(() => {
@@ -630,14 +1030,22 @@
         if (a === "check-sentence") checkSentence();
         if (a === "refresh-rank") renderLeaderboard();
         if (a === "logout") logout();
+        if (a === "copy-report") copyMonthlyReport();
+        if (a === "print-report") printMonthlyReport();
+        if (a === "export-report-json") exportMonthlyReportJson();
+        if (a === "export-report-csv") exportMonthlyReportCsv();
       });
       $("register-form").addEventListener("submit", registerUser);
       $("login-form").addEventListener("submit", submitLogin);
       $("login-nip").addEventListener("input", hydrateLoginName);
       $("mentor-form").addEventListener("submit", saveMentorEntry);
+      $("monthly-plan-form").addEventListener("submit", saveMonthlyPlan);
+      $("session-form").addEventListener("submit", saveProgramSession);
+      $("assessment-form").addEventListener("submit", saveProgramAssessment);
       $("boss-record").addEventListener("click", toggleBossSpeech);
       $("boss-continue").addEventListener("click", () => startLevel(10, true));
       document.querySelectorAll("[data-admin-tab]").forEach(btn => btn.addEventListener("click", () => switchAdminTab(btn.dataset.adminTab)));
+      document.querySelectorAll("[data-program-tab]").forEach(btn => btn.addEventListener("click", () => switchProgramTab(btn.dataset.programTab)));
     }
 
     function renderUnitOptions() {
@@ -761,6 +1169,7 @@
       renderProfile();
       renderMentor();
       renderAdmin();
+      renderProgramMonitoring();
     }
 
     function renderTopbars() {
@@ -1090,6 +1499,286 @@
       toast("Catatan mentor tersimpan.", "ok");
     }
 
+    function renderProgramMonitoring() {
+      if (!$("program-executive")) return;
+      const { month, year } = getCurrentMonthYear();
+      const health = calculateProgramHealth({ month, year });
+      $("program-health-pill").textContent = `${health.score} ${health.status.text}`;
+      $("program-health-pill").className = `status ${health.status.cls}`;
+      renderProgramExecutive(month, year, health);
+      renderProgramCards(month, year);
+      renderMonthlyProgram(month, year);
+      renderParticipantProgress(month, year);
+      renderProgramForms(month, year);
+      renderProgramReport(month, year);
+    }
+
+    function renderProgramExecutive(month, year, health) {
+      const sessions = loadData(MONITORING_KEYS.sessions, []).filter(s => isSameMonth(s.date, month, year));
+      const attendance = loadData(MONITORING_KEYS.attendance, []).filter(a => isSameMonth(a.date, month, year));
+      const assessments = loadData(MONITORING_KEYS.assessments, []).filter(a => isSameMonth(a.date, month, year));
+      const activeThisMonth = [...new Set(attendance.filter(a => a.status === "present").map(a => a.participantName || a.participantId))].length;
+      const followUp = sessions.filter(s => s.followUp || s.obstacles || s.notes).slice(0, 5);
+      const topLearners = participantNames().map(name => calculateMonthlyScore(name, month, year)).sort((a, b) => b.finalScore - a.finalScore).slice(0, 5);
+      $("program-executive").innerHTML = `
+        <h2>Executive Dashboard</h2>
+        <div class="stats">
+          <div class="stat"><b>${Object.keys(state.users).length}</b><span>Pegawai terdaftar</span></div>
+          <div class="stat"><b>${activeThisMonth}</b><span>Aktif bulan ini</span></div>
+          <div class="stat"><b>${sessions.length}</b><span>Kegiatan program</span></div>
+          <div class="stat"><b>${health.score}</b><span>Health Score</span></div>
+        </div>
+        <h3>KPI Global CEC</h3>
+        <div class="program-grid">
+          ${[
+            ["Participation Rate", Math.round(health.activeScore)],
+            ["Training Attendance Rate", Math.round(health.attendanceScore)],
+            ["Learning Completion Rate", Math.round(health.taskScore)],
+            ["Average Speaking Score", Math.round(health.speakingScore)],
+            ["Documentation and Report", Math.round(health.docsScore)],
+            ["Final Evaluation Score", Math.round(avg(assessments.map(a => Number(a.presentation || 0)).filter(Boolean)))]
+          ].map(k => `<div class="program-card"><b>${k[0]}</b><div class="progress"><span style="width:${k[1]}%"></span></div><div class="small">${k[1]}%</div></div>`).join("")}
+        </div>
+        <h3>Top 5 Active Learners</h3>
+        <div class="table-scroll"><table class="mini-table"><thead><tr><th>Pegawai</th><th>Final</th><th>Status</th></tr></thead><tbody>
+          ${topLearners.map(t => `<tr><td>${esc(t.participantId)}</td><td>${t.finalScore}</td><td>${t.competency}</td></tr>`).join("") || `<tr><td colspan="3">Belum ada data.</td></tr>`}
+        </tbody></table></div>
+        <h3>Follow-up Needed</h3>
+        <div class="stack">${followUp.map(s => `<div class="program-card"><b>${esc(s.title || s.theme || programName(s.programType))}</b><div class="small">${esc(s.followUp || s.obstacles || s.notes)}</div></div>`).join("") || `<p class="sub">Belum ada tindak lanjut kritis.</p>`}</div>`;
+    }
+
+    function renderProgramCards(month, year) {
+      const sessions = loadData(MONITORING_KEYS.sessions, []).filter(s => isSameMonth(s.date, month, year));
+      const plan = loadData(MONITORING_KEYS.plans, []).find(p => Number(p.month) === month && Number(p.year) === year);
+      $("program-programs").innerHTML = `
+        <h2>Program Dashboard</h2>
+        <div class="program-grid">
+          ${PROGRAM_DEFS.map(p => {
+            const realization = p.id === "workplace_communication" ? (plan?.meetings?.length || 0) : sessions.filter(s => s.programType === p.id).length;
+            const pct = Math.min(100, Math.round((realization / p.target) * 100));
+            const status = statusFromScore(pct);
+            return `<div class="program-card">
+              <div class="between"><b>${p.icon} ${p.name}</b><span class="status ${status.cls}">${status.text}</span></div>
+              <div class="small">Target bulanan: ${p.target}</div>
+              <div class="small">Realisasi: ${realization}</div>
+              <div class="progress"><span style="width:${pct}%"></span></div>
+              <div class="small">${pct}% capaian</div>
+            </div>`;
+          }).join("")}
+        </div>`;
+    }
+
+    function renderMonthlyProgram(month, year) {
+      const plans = loadData(MONITORING_KEYS.plans, []);
+      const plan = plans.find(p => Number(p.month) === month && Number(p.year) === year) || generateTuesdaySchedule(month, year);
+      const attendance = loadData(MONITORING_KEYS.attendance, []).filter(a => isSameMonth(a.date, month, year));
+      const assessments = loadData(MONITORING_KEYS.assessments, []).filter(a => isSameMonth(a.date, month, year));
+      const avgAttendance = attendance.length ? Math.round(attendance.filter(a => a.status === "present").length / attendance.length * 100) : 0;
+      $("program-monthly").innerHTML = `
+        <h2>Monthly Program Dashboard</h2>
+        <div class="stats">
+          <div class="stat"><b>${monthName(month)}</b><span>Bulan berjalan</span></div>
+          <div class="stat"><b>${plan.meetings.length}</b><span>Selasa terjadwal</span></div>
+          <div class="stat"><b>${avgAttendance}%</b><span>Kehadiran rata-rata</span></div>
+          <div class="stat"><b>${Math.round(avg(assessments.map(a => Number(a.speaking || 0)).filter(Boolean)))}</b><span>Speaking rata-rata</span></div>
+          <div class="stat"><b>${Math.round(avg(assessments.map(a => Number(a.writing || a.grammar || 0)).filter(Boolean)))}</b><span>Grammar/Writing</span></div>
+          <div class="stat"><b>${plan.monthlyReport ? "Ready" : "Draft"}</b><span>Status laporan</span></div>
+        </div>
+        <h3>${plan.bigTheme}</h3>
+        <div class="table-scroll"><table class="mini-table"><thead><tr><th>Week</th><th>Date</th><th>Category</th><th>Subtheme</th><th>Activities</th></tr></thead><tbody>
+          ${plan.meetings.map(m => `<tr><td>${m.week}</td><td>${m.date}</td><td>${esc(m.category)}</td><td>${esc(m.subtheme)}</td><td>${esc((m.activities || []).join(", "))}</td></tr>`).join("")}
+        </tbody></table></div>`;
+    }
+
+    function renderParticipantProgress(month, year) {
+      const rows = participantNames().map(name => {
+        const score = calculateMonthlyScore(name, month, year);
+        const user = Object.values(state.users).find(u => u.name === name) || {};
+        const attendance = loadData(MONITORING_KEYS.attendance, []).filter(a => sameParticipant(a, name) && isSameMonth(a.date, month, year));
+        return { name, score, user, attendance };
+      });
+      $("program-participants").innerHTML = `
+        <h2>Participant Progress Dashboard</h2>
+        <div class="table-scroll"><table class="mini-table"><thead><tr><th>Pegawai</th><th>Level</th><th>XP</th><th>Hadir</th><th>Speaking</th><th>Writing</th><th>Final</th><th>Status</th></tr></thead><tbody>
+          ${rows.map(r => `<tr><td>${esc(r.name)}</td><td>${r.user.level || 1}</td><td>${r.user.xp || 0}</td><td>${r.attendance.filter(a => a.status === "present").length}</td><td>${Math.round(r.score.speaking)}</td><td>${Math.round(r.score.writing)}</td><td>${r.score.finalScore}</td><td>${r.score.competency}</td></tr>`).join("") || `<tr><td colspan="8">Belum ada peserta.</td></tr>`}
+        </tbody></table></div>`;
+    }
+
+    function renderProgramForms(month, year) {
+      $("plan-month").innerHTML = Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}" ${i + 1 === month ? "selected" : ""}>${monthName(i + 1)}</option>`).join("");
+      $("plan-year").value = year;
+      $("session-program").innerHTML = PROGRAM_DEFS.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
+      const sessions = [
+        ...loadData(MONITORING_KEYS.sessions, []),
+        ...loadData(MONITORING_KEYS.plans, []).flatMap(p => p.meetings.map(m => ({ ...m, title: `${monthName(p.month)} W${m.week}: ${m.subtheme}` })))
+      ];
+      $("assessment-session").innerHTML = sessions.map(s => `<option value="${s.id}">${esc(s.title || s.subtheme || s.theme || s.id)}</option>`).join("");
+      const people = participantNames();
+      $("assessment-participant").innerHTML = people.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join("") || `<option value="">Belum ada pegawai</option>`;
+    }
+
+    function renderProgramReport(month, year) {
+      const report = generateMonthlyReport(month, year);
+      $("program-report").innerHTML = `
+        <div class="between"><h2>Monthly Report</h2><span class="pill">${monthName(month)} ${year}</span></div>
+        <div class="row">
+          <button class="btn secondary" type="button" data-action="copy-report">Copy report</button>
+          <button class="btn secondary" type="button" data-action="print-report">Print report</button>
+        </div>
+        <div class="row">
+          <button class="btn ghost" type="button" data-action="export-report-json">Export JSON</button>
+          <button class="btn ghost" type="button" data-action="export-report-csv">Export CSV</button>
+        </div>
+        <div id="monthly-report-box" class="report-box">${esc(report)}</div>`;
+    }
+
+    function switchProgramTab(tab) {
+      document.querySelectorAll("[data-program-tab]").forEach(b => b.classList.toggle("active", b.dataset.programTab === tab));
+      ["executive", "programs", "monthly", "participants", "input", "report"].forEach(id => $(`program-${id}`).classList.toggle("active", id === tab));
+    }
+
+    function saveMonthlyPlan(event) {
+      event.preventDefault();
+      const month = Number($("plan-month").value);
+      const year = Number($("plan-year").value);
+      const plans = loadData(MONITORING_KEYS.plans, []).filter(p => !(Number(p.month) === month && Number(p.year) === year));
+      const plan = generateTuesdaySchedule(month, year);
+      plans.unshift(plan);
+      saveData(MONITORING_KEYS.plans, plans);
+      backend("saveProgramData", { type: "monthly_plan", data: plan });
+      renderProgramMonitoring();
+      toast("Jadwal Selasa bulanan berhasil dibuat.", "ok");
+    }
+
+    function saveProgramSession(event) {
+      event.preventDefault();
+      const participants = $("session-participants").value.split(",").map(p => p.trim()).filter(Boolean);
+      const notes = $("session-notes").value.trim();
+      const session = {
+        id: generateId("ses"),
+        programType: $("session-program").value,
+        title: $("session-title").value.trim(),
+        date: $("session-date").value,
+        speaker: "",
+        location: $("session-location").value.trim(),
+        topic: $("session-title").value.trim(),
+        theme: $("session-title").value.trim(),
+        participants,
+        attendance: [],
+        scores: [],
+        documentationUrl: $("session-docs").value.trim(),
+        notes,
+        mentorNotes: notes,
+        obstacles: "",
+        followUp: notes
+      };
+      const sessions = loadData(MONITORING_KEYS.sessions, []);
+      sessions.unshift(session);
+      saveData(MONITORING_KEYS.sessions, sessions);
+      backend("saveProgramData", { type: "program_session", data: session });
+      event.target.reset();
+      renderProgramMonitoring();
+      toast("Kegiatan program tersimpan.", "ok");
+    }
+
+    function saveProgramAssessment(event) {
+      event.preventDefault();
+      const sessionId = $("assessment-session").value;
+      const participantName = $("assessment-participant").value;
+      if (!sessionId || !participantName) return toast("Pilih kegiatan dan pegawai.", "err");
+      const date = findSessionDate(sessionId) || new Date().toISOString().slice(0, 10);
+      const attendance = loadData(MONITORING_KEYS.attendance, []);
+      attendance.unshift({
+        id: generateId("att"), sessionId, participantId: participantName, participantName, date,
+        status: $("assessment-attendance").value, active: $("assessment-active").value === "yes"
+      });
+      saveData(MONITORING_KEYS.attendance, attendance);
+      const assessment = {
+        id: generateId("asm"), sessionId, participantId: participantName, participantName, date,
+        speaking: Number($("score-speaking").value || 0),
+        writing: Number($("score-writing").value || 0),
+        grammar: Number($("score-grammar").value || 0),
+        presentation: Number($("score-presentation").value || 0)
+      };
+      const assessments = loadData(MONITORING_KEYS.assessments, []);
+      assessments.unshift(assessment);
+      saveData(MONITORING_KEYS.assessments, assessments);
+      awardProgramBadges(participantName, assessment);
+      backend("saveProgramData", { type: "assessment", data: { attendance: attendance[0], assessment } });
+      renderProgramMonitoring();
+      renderBadges();
+      toast("Attendance dan assessment tersimpan.", "ok");
+    }
+
+    function findSessionDate(sessionId) {
+      const session = loadData(MONITORING_KEYS.sessions, []).find(s => s.id === sessionId);
+      if (session) return session.date;
+      for (const plan of loadData(MONITORING_KEYS.plans, [])) {
+        const meeting = plan.meetings.find(m => m.id === sessionId);
+        if (meeting) return meeting.date;
+      }
+      return "";
+    }
+
+    function awardProgramBadges(participantName, assessment) {
+      const user = Object.values(state.users).find(u => u.name === participantName);
+      if (!user) return;
+      const add = id => { if (!user.badges.includes(id)) user.badges.push(id); };
+      if (Number(assessment.speaking) >= 85) add("best_speaker");
+      if (Number(assessment.grammar) >= 80) add("grammar_builder");
+      if (Number(assessment.presentation) >= 85) add("monthly_cec_star");
+      state.users[user.nip] = user;
+      save("cecQuestUsers", state.users);
+      backend("registerUser", publicUser(user));
+    }
+
+    function currentReportContext() {
+      return { month: Number($("plan-month")?.value || getCurrentMonthYear().month), year: Number($("plan-year")?.value || getCurrentMonthYear().year) };
+    }
+
+    function copyMonthlyReport() {
+      const text = $("monthly-report-box")?.textContent || generateMonthlyReport(getCurrentMonthYear().month, getCurrentMonthYear().year);
+      navigator.clipboard?.writeText(text);
+      toast("Report disalin.", "ok");
+    }
+
+    function printMonthlyReport() {
+      const text = $("monthly-report-box")?.textContent || "";
+      const w = window.open("", "_blank");
+      w.document.write(`<pre style="font-family:Segoe UI,Arial,sans-serif;white-space:pre-wrap">${esc(text)}</pre>`);
+      w.document.close();
+      w.print();
+    }
+
+    function exportMonthlyReportJson() {
+      const { month, year } = getCurrentMonthYear();
+      downloadFile(`cec-report-${year}-${month}.json`, JSON.stringify({ month, year, report: generateMonthlyReport(month, year), data: collectMonitoringData() }, null, 2), "application/json");
+    }
+
+    function exportMonthlyReportCsv() {
+      const { month, year } = getCurrentMonthYear();
+      const rows = participantNames().map(name => {
+        const s = calculateMonthlyScore(name, month, year);
+        return [name, s.finalScore, Math.round(s.speaking), Math.round(s.writing), Math.round(s.presentation), s.competency];
+      });
+      const csv = [["Pegawai", "Final", "Speaking", "Writing", "Presentation", "Status"], ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+      downloadFile(`cec-score-${year}-${month}.csv`, csv, "text/csv");
+    }
+
+    function collectMonitoringData() {
+      return Object.fromEntries(Object.entries(MONITORING_KEYS).map(([name, key]) => [name, loadData(key, [])]));
+    }
+
+    function downloadFile(filename, content, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
     function renderAdmin() {
       $("admin-questions").innerHTML = `<h2>Question Bank</h2><div class="stats"><div class="stat"><b>${QUESTION_BANK.length}</b><span>Total Soal</span></div><div class="stat"><b>10</b><span>Level</span></div><div class="stat"><b>4</b><span>Tipe</span></div></div>`;
       $("admin-users").innerHTML = `<h2>User</h2><table class="history-table"><thead><tr><th>Nama</th><th>Unit</th><th>XP</th></tr></thead><tbody>${Object.values(state.users).map(u => `<tr><td>${esc(u.name)}</td><td>${esc(u.unit || "-")}</td><td>${u.xp}</td></tr>`).join("")}</tbody></table>`;
@@ -1142,7 +1831,6 @@
 
     function publicUser(user) {
       const copy = { ...user };
-      delete copy.password;
       return copy;
     }
 

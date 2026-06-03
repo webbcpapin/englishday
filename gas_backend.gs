@@ -1,10 +1,15 @@
 const CONFIG = {
+  SPREADSHEET_ID: '1ezBkjO0aKxs65iJuYOwrNMOXIszWWkBPQi_ZmR-mf0c',
   SHEETS: {
     USERS: 'Users',
     PROGRESS: 'Progress',
     ATTEMPTS: 'Attempts',
     LEADERBOARD: 'Leaderboard',
-    MENTOR: 'MentorEntries'
+    MENTOR: 'MentorEntries',
+    PROGRAM_DATA: 'ProgramData',
+    MONTHLY_PLANS: 'MonthlyPlans',
+    ASSESSMENTS: 'Assessments',
+    REPORTS: 'Reports'
   }
 };
 
@@ -15,6 +20,9 @@ function doGet(e) {
   if (action === 'getUsers') return json_(getUsers_());
   if (action === 'getLeaderboard') return json_(getLeaderboard_());
   if (action === 'getAttempts') return json_(readSheet_(CONFIG.SHEETS.ATTEMPTS));
+  if (action === 'getProgramData') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.PROGRAM_DATA) });
+  if (action === 'getMonthlyPlans') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.MONTHLY_PLANS) });
+  if (action === 'getAssessments') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.ASSESSMENTS) });
   if (action === 'test') return json_({ ok: true, app: 'CEC Quest Backend', time: new Date().toISOString() });
 
   return json_({
@@ -34,17 +42,22 @@ function doPost(e) {
   if (action === 'saveProgress') return json_(saveProgress_(payload));
   if (action === 'saveAttempt') return json_(saveAttempt_(payload));
   if (action === 'saveMentorEntry') return json_(saveMentorEntry_(payload));
+  if (action === 'saveProgramData') return json_(saveProgramData_(payload));
 
   return json_({ ok: false, error: 'Unknown action: ' + action });
 }
 
 function ensureSheets_() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  ensureSheet_(ss, CONFIG.SHEETS.USERS, ['nip', 'name', 'unit', 'avatar', 'xp', 'level', 'stars', 'badges', 'registeredAt', 'lastActive', 'rawJson']);
+  const ss = getSs_();
+  ensureSheet_(ss, CONFIG.SHEETS.USERS, ['nip', 'name', 'unit', 'password', 'avatar', 'xp', 'level', 'stars', 'badges', 'registeredAt', 'lastActive', 'rawJson']);
   ensureSheet_(ss, CONFIG.SHEETS.PROGRESS, ['nip', 'world', 'level', 'score', 'stars', 'xp', 'updatedAt']);
   ensureSheet_(ss, CONFIG.SHEETS.ATTEMPTS, ['id', 'nip', 'name', 'level', 'topic', 'score', 'stars', 'xp', 'date', 'rawJson']);
   ensureSheet_(ss, CONFIG.SHEETS.LEADERBOARD, ['nip', 'name', 'unit', 'xp', 'level', 'stars', 'updatedAt']);
   ensureSheet_(ss, CONFIG.SHEETS.MENTOR, ['id', 'nip', 'name', 'note', 'date', 'rawJson']);
+  ensureSheet_(ss, CONFIG.SHEETS.PROGRAM_DATA, ['id', 'type', 'programType', 'title', 'date', 'participants', 'documentationUrl', 'notes', 'createdAt', 'rawJson']);
+  ensureSheet_(ss, CONFIG.SHEETS.MONTHLY_PLANS, ['id', 'month', 'year', 'bigTheme', 'meetingsCount', 'createdAt', 'rawJson']);
+  ensureSheet_(ss, CONFIG.SHEETS.ASSESSMENTS, ['id', 'sessionId', 'participantName', 'date', 'attendance', 'active', 'speaking', 'writing', 'grammar', 'presentation', 'createdAt', 'rawJson']);
+  ensureSheet_(ss, CONFIG.SHEETS.REPORTS, ['id', 'month', 'year', 'healthScore', 'status', 'createdAt', 'rawJson']);
 }
 
 function ensureSheet_(ss, name, headers) {
@@ -53,19 +66,33 @@ function ensureSheet_(ss, name, headers) {
   if (sh.getLastRow() === 0) {
     sh.getRange(1, 1, 1, headers.length).setValues([headers]);
     sh.setFrozenRows(1);
+    return;
   }
+  let current = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0];
+  headers.forEach(function(header, index) {
+    if (current.indexOf(header) === -1) {
+      sh.insertColumnBefore(index + 1);
+      sh.getRange(1, index + 1).setValue(header);
+      current.splice(index, 0, header);
+    }
+  });
+}
+
+function getSs_() {
+  return SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
 }
 
 function upsertUser_(user) {
   if (!user || !user.nip) return { ok: false, error: 'Missing user.nip' };
 
-  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEETS.USERS);
+  const sh = getSs_().getSheetByName(CONFIG.SHEETS.USERS);
   const data = sh.getDataRange().getValues();
   const row = findRow_(data, 0, user.nip);
   const values = [
     user.nip,
     user.name || '',
     user.unit || '',
+    user.password || '',
     user.avatarEmoji || user.avatar || '',
     Number(user.xp || 0),
     Number(user.level || 1),
@@ -103,7 +130,7 @@ function saveProgress_(payload) {
 }
 
 function upsertProgressRow_(nip, world, level, score, stars, xp, updatedAt) {
-  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEETS.PROGRESS);
+  const sh = getSs_().getSheetByName(CONFIG.SHEETS.PROGRESS);
   const data = sh.getDataRange().getValues();
   let rowIndex = -1;
   for (let i = 1; i < data.length; i++) {
@@ -132,7 +159,7 @@ function saveAttempt_(attempt) {
     attempt.date || new Date().toISOString(),
     JSON.stringify(attempt)
   ];
-  SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEETS.ATTEMPTS).appendRow(values);
+  getSs_().getSheetByName(CONFIG.SHEETS.ATTEMPTS).appendRow(values);
   return { ok: true, id: id };
 }
 
@@ -147,12 +174,62 @@ function saveMentorEntry_(entry) {
     entry.date || new Date().toISOString(),
     JSON.stringify(entry)
   ];
-  SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEETS.MENTOR).appendRow(values);
+  getSs_().getSheetByName(CONFIG.SHEETS.MENTOR).appendRow(values);
   return { ok: true, id: id };
 }
 
+function saveProgramData_(payload) {
+  const type = payload.type || 'program_data';
+  const data = payload.data || payload;
+  const id = data.id || Utilities.getUuid();
+  if (type === 'monthly_plan') {
+    getSs_().getSheetByName(CONFIG.SHEETS.MONTHLY_PLANS).appendRow([
+      id,
+      data.month || '',
+      data.year || '',
+      data.bigTheme || '',
+      data.meetings ? data.meetings.length : 0,
+      new Date().toISOString(),
+      JSON.stringify(data)
+    ]);
+    return { ok: true, id: id, type: type };
+  }
+  if (type === 'assessment') {
+    const att = data.attendance || {};
+    const assessment = data.assessment || {};
+    getSs_().getSheetByName(CONFIG.SHEETS.ASSESSMENTS).appendRow([
+      assessment.id || id,
+      assessment.sessionId || att.sessionId || '',
+      assessment.participantName || att.participantName || '',
+      assessment.date || att.date || '',
+      att.status || '',
+      att.active === true ? 'yes' : 'no',
+      Number(assessment.speaking || 0),
+      Number(assessment.writing || 0),
+      Number(assessment.grammar || 0),
+      Number(assessment.presentation || 0),
+      new Date().toISOString(),
+      JSON.stringify(data)
+    ]);
+    return { ok: true, id: assessment.id || id, type: type };
+  }
+  getSs_().getSheetByName(CONFIG.SHEETS.PROGRAM_DATA).appendRow([
+    id,
+    type,
+    data.programType || '',
+    data.title || data.theme || data.topic || '',
+    data.date || data.publishDate || '',
+    Array.isArray(data.participants) ? data.participants.join(', ') : (data.participants || data.pic || ''),
+    data.documentationUrl || data.link || '',
+    data.notes || data.mentorNotes || data.languageReviewNotes || '',
+    new Date().toISOString(),
+    JSON.stringify(data)
+  ]);
+  return { ok: true, id: id, type: type };
+}
+
 function syncLeaderboard_(user) {
-  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEETS.LEADERBOARD);
+  const sh = getSs_().getSheetByName(CONFIG.SHEETS.LEADERBOARD);
   const data = sh.getDataRange().getValues();
   const row = findRow_(data, 0, user.nip);
   const values = [
@@ -179,7 +256,7 @@ function getLeaderboard_() {
 }
 
 function readSheet_(name) {
-  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name);
+  const sh = getSs_().getSheetByName(name);
   const values = sh.getDataRange().getValues();
   if (values.length < 2) return [];
   const headers = values[0];

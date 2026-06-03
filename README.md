@@ -14,8 +14,40 @@ Customs English Club Adventure untuk Bea Cukai Pangkalpinang.
 - Boss Battle Level 10: self introduction memakai Web Speech API.
 - Result: star, XP, badge, confetti.
 - Leaderboard tanpa data dummy, badge, profil, mentor dashboard, admin panel.
+- Program Monitoring: Executive Dashboard, 5 program CEC, Monthly CEC Class, participant progress, input attendance, assessment, dan monthly report.
+- Auto-generate jadwal Selasa untuk English for Workplace Communication.
+- Program Health Score memakai bobot kehadiran, keaktifan, tugas, speaking, keterlaksanaan pertemuan, dokumentasi, dan laporan.
+- Export report: copy, print, JSON, CSV.
 - Local Storage untuk progress browser.
 - Template Google Apps Script di `gas_backend.gs`.
+
+## Program CEC yang Dimonitor
+
+1. Language Mastery Initiative
+2. English Day
+3. Engliscape Initiative
+4. LinguaLeap Challenges
+5. English for Workplace Communication
+
+## Google Sheet Backend
+
+Backend Google Apps Script memakai spreadsheet:
+
+`1ezBkjO0aKxs65iJuYOwrNMOXIszWWkBPQi_ZmR-mf0c`
+
+Sheet yang dibuat otomatis:
+
+- `Users`
+- `Progress`
+- `Attempts`
+- `Leaderboard`
+- `MentorEntries`
+- `ProgramData`
+- `MonthlyPlans`
+- `Assessments`
+- `Reports`
+
+Setelah mengubah `gas_backend.gs`, deploy ulang Web App Apps Script agar versi backend terbaru aktif.
 
 ## Deploy GitHub Pages
 
