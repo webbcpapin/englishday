@@ -189,6 +189,15 @@
     .mini-table { width: 100%; min-width: 560px; border-collapse: collapse; }
     .mini-table th, .mini-table td { border-bottom: 1px solid var(--line); padding: 9px 6px; text-align: left; font-size: .8rem; }
     .mini-table th { color: var(--gold-2); font-size: .7rem; text-transform: uppercase; }
+    .today-card { display: grid; gap: 12px; border-color: rgba(212,175,55,.42); background: linear-gradient(160deg, rgba(212,175,55,.18), rgba(255,255,255,.08)); }
+    .today-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .question-form { display: grid; gap: 12px; }
+    .session-question { display: grid; gap: 8px; padding: 12px; border-radius: var(--r-md); background: rgba(255,255,255,.08); border: 1px solid var(--line); }
+    .session-question label { font-weight: 800; line-height: 1.35; }
+    .mentor-detail { display: grid; gap: 12px; }
+    .history-list { display: grid; gap: 8px; }
+    .history-item { padding: 10px 12px; border-radius: var(--r-md); border: 1px solid var(--line); background: rgba(255,255,255,.08); }
+    .score-level { color: var(--green); font-weight: 900; }
 
     .bottom-nav { position: fixed; z-index: 80; bottom: 0; left: 50%; transform: translateX(-50%); width: min(100%, 480px); display: grid; grid-template-columns: repeat(5, 1fr); background: rgba(3,21,37,.96); border-top: 1px solid var(--line); padding: 7px 4px 8px; }
     .nav-item { color: rgba(255,255,255,.6); background: transparent; border: 0; display: grid; place-items: center; gap: 3px; font-size: .68rem; padding: 4px; }
@@ -306,6 +315,17 @@
         <article class="card">
           <div class="between"><h2>Misi Harian</h2><span class="pill xp-pill">+100 XP</span></div>
           <div id="daily-missions" class="mission-list"></div>
+        </article>
+        <article class="card today-card">
+          <div class="between"><h2>Today's English Day</h2><span class="pill">11 Juni 2026</span></div>
+          <div>
+            <b>English Day Movie Learning Session: The Expert</b>
+            <p class="sub">Listening and Understanding melalui watching movie dan diskusi workplace communication.</p>
+          </div>
+          <div class="today-actions">
+            <button class="btn secondary" type="button" data-action="watch-today-video">Watch Video</button>
+            <button class="btn" type="button" data-action="open-today-session">Start Questions</button>
+          </div>
         </article>
         <article class="card">
           <div class="between"><h2>World Progress</h2><span id="world-progress-label" class="pill">0/10</span></div>
@@ -440,6 +460,31 @@
       <article class="card stack" id="result-host"></article>
     </section>
 
+    <section id="englishday-screen" class="screen">
+      <header class="topbar"></header>
+      <div class="stack">
+        <article class="card today-card">
+          <div class="question-meta">English Day - Movie Learning Session</div>
+          <h2>The Expert</h2>
+          <p class="sub">Today is not a grammar test. We are here to practice simple, clear, and polite English for workplace communication.</p>
+          <div class="stats">
+            <div class="stat"><b>135</b><span>Max score</span></div>
+            <div class="stat"><b>45-60</b><span>Minutes</span></div>
+            <div class="stat"><b>12</b><span>Questions</span></div>
+          </div>
+          <div class="today-actions">
+            <button class="btn secondary" type="button" data-action="watch-today-video">Watch Video</button>
+            <button class="btn" type="button" data-action="render-today-questions">Start Questions</button>
+          </div>
+        </article>
+        <article class="card">
+          <h2>Focus Vocabulary</h2>
+          <p class="sub">expert, client, requirement, deadline, feasible, impossible, transparent, perpendicular, clarify, miscommunication</p>
+        </article>
+        <article id="today-question-host" class="card"></article>
+      </div>
+    </section>
+
     <section id="leaderboard-screen" class="screen">
       <header class="topbar"></header>
       <article class="card">
@@ -479,6 +524,16 @@
           <div id="skill-bars"></div>
         </article>
         <article class="card">
+          <h2>English Day Score</h2>
+          <div class="stats">
+            <div class="stat"><b id="profile-total-score">0</b><span>Total Score</span></div>
+            <div class="stat"><b id="profile-level-name">Beginner</b><span>Level</span></div>
+            <div class="stat"><b id="profile-last-activity">-</b><span>Last Activity</span></div>
+          </div>
+          <div class="between"><span>Progress level</span><span id="profile-level-progress">0%</span></div>
+          <div class="progress"><span id="profile-level-bar"></span></div>
+        </article>
+        <article class="card">
           <h2>Progress World 1</h2>
           <div class="between"><span>English Explorer</span><span id="profile-world-label">0/10</span></div>
           <div class="progress"><span id="profile-world-bar"></span></div>
@@ -512,6 +567,14 @@
             <tbody id="mentor-history"></tbody>
           </table>
         </article>
+        <article class="card">
+          <h2>Progress Peserta</h2>
+          <div id="mentor-progress"></div>
+        </article>
+        <article class="card">
+          <h2>Detail Profil</h2>
+          <div id="mentor-detail" class="mentor-detail"></div>
+        </article>
       </div>
     </section>
 
@@ -540,7 +603,7 @@
   <div id="toast-wrap" class="toast-wrap"></div>
 
   <script>
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxgPaxN_jpsHpQicdhp6nuePPM7qBH91R-PRBU1-SjdIgEFcSaDn6BrjGswzc97NY/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby8gNLHo0JAs2Ka4pkYkiCbfMStqP-Tzm3LS9KVv9cOMf5xXxW3Q-Psh_yFTe-XRCrw/exec";
     const UNITS = [
       "Kepala Kantor",
       "Subbagian Umum",
@@ -607,6 +670,42 @@
       badges: "cec_badges",
       participants: "cec_participants"
     };
+    const DATA_KEYS = {
+      currentSession: "cecQuestSession",
+      loginHistory: "cec_login_history",
+      sessionHistory: "cec_english_day_session_history",
+      submissions: "cec_question_submissions",
+      scoreHistory: "cec_score_history"
+    };
+    const TODAY_SESSION = {
+      id: "english_day_the_expert_2026_06_11",
+      date: "2026-06-11",
+      title: "English Day Movie Learning Session: The Expert",
+      agenda: "Listening and Understanding",
+      topic: "Watching movie and workplace communication discussion",
+      videoUrl: "https://www.youtube.com/watch?v=BKorP55Aqvg",
+      description: "Participants watch The Expert, a short comedy sketch about a meeting, unclear requirements, unrealistic expectations, and workplace communication.",
+      objectives: [
+        "Understand the main story in simple English.",
+        "Use clarification expressions when instructions are unclear.",
+        "Explain constraints politely.",
+        "Offer alternative solutions in a workplace context."
+      ]
+    };
+    const TODAY_QUESTIONS = [
+      { id: "q1", text: "What does the client want?", points: 10, keywords: ["client", "red lines", "seven lines", "draw"] },
+      { id: "q2", text: "What is the expert's problem?", points: 10, keywords: ["impossible", "not feasible", "unclear", "unrealistic"] },
+      { id: "q3", text: "Why does the meeting become confusing?", points: 10, keywords: ["requirement", "confusing", "unclear", "miscommunication"] },
+      { id: "q4", text: "Who is the expert?", points: 10, keywords: ["expert", "technical expert", "staff"] },
+      { id: "q5", text: "What does the client ask him to do?", points: 10, keywords: ["seven red lines", "draw lines", "red lines"] },
+      { id: "q6", text: "Why is the request impossible?", points: 10, keywords: ["impossible", "perpendicular", "transparent", "red", "green"] },
+      { id: "q7", text: "How does the expert respond?", points: 10, keywords: ["explain", "politely", "clarify", "tries to explain"] },
+      { id: "q8", text: "What makes the meeting funny?", points: 10, keywords: ["unrealistic", "confusing", "funny meeting", "impossible request"] },
+      { id: "q9", text: "Write one sentence to ask for clarification politely.", points: 15, keywords: ["clarify", "explain", "understand", "again"] },
+      { id: "q10", text: "Write one polite sentence to explain that something is not feasible.", points: 15, keywords: ["not possible", "cannot", "can't", "not feasible", "afraid", "sorry"] },
+      { id: "q11", text: "Write one alternative solution for this situation: Your leader asks you to finish a big report in one hour, but the data is not ready.", points: 15, keywords: ["alternative", "draft", "partial", "extend", "deadline", "data", "ready"] },
+      { id: "q12", text: "Personal takeaway: What useful English expression will you try to use at work this week?", points: 10, keywords: [] }
+    ];
     const PROGRAM_DEFS = [
       { id: "language_mastery", name: "Language Mastery Initiative", target: 2, icon: "🎓" },
       { id: "english_day", name: "English Day", target: 4, icon: "🇬🇧" },
@@ -674,7 +773,8 @@
       sentence: [],
       selectedWords: [],
       recognition: null,
-      bossSeconds: 30
+      bossSeconds: 30,
+      loginHistoryId: null
     };
 
     const $ = (id) => document.getElementById(id);
@@ -715,11 +815,12 @@
     }
     const QUESTION_BANK = buildQuestionBank();
 
-    function defaultUser({ name, nip, unit = "", password = "", avatar = "ranger" }) {
+    function defaultUser({ name, nip, unit = "", password = "", passwordHash = "", avatar = "ranger" }) {
       const av = AVATARS.find(a => a.id === avatar) || AVATARS[0];
       return {
-        name, nip, unit, password, avatar, avatarEmoji: av.emoji,
+        name, nip, unit, role: "participant", password, passwordHash, avatar, avatarEmoji: av.emoji,
         xp: 0, level: 1, stars: 0, streak: 0, totalQuestions: 0, correctQuestions: 0,
+        totalScore: 0, levelName: "Beginner", sessionHistory: [], loginHistory: [], submissions: [], scoreHistory: [],
         skills: { grammar: 0, vocab: 0, listening: 0, speaking: 0 },
         progress: {}, attempts: [], badges: [], registeredAt: new Date().toISOString(), lastActive: new Date().toISOString()
       };
@@ -728,20 +829,119 @@
     function loadRegisteredUsers() {
       const rawUsers = load("cecQuestUsers", {});
       return Object.fromEntries(Object.entries(rawUsers).filter(([nip, user]) => {
-        if (!user || !user.password) return false;
+        if (!user || (!user.password && !user.passwordHash)) return false;
         if (String(nip).startsWith("guest-") || String(nip).startsWith("demo")) return false;
         return true;
-      }));
+      }).map(([nip, user]) => [nip, normalizeUser(user)]));
     }
 
     function saveData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
     function loadData(key, fallback) { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
     function generateId(prefix) { return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`; }
 
+    function normalizeUser(user) {
+      if (!user) return user;
+      user.totalScore = Number(user.totalScore ?? user.total_score ?? user.xp ?? 0);
+      user.levelName = levelForScore(user.totalScore).name;
+      user.sessionHistory = Array.isArray(user.sessionHistory) ? user.sessionHistory : [];
+      user.loginHistory = Array.isArray(user.loginHistory) ? user.loginHistory : [];
+      user.submissions = Array.isArray(user.submissions) ? user.submissions : [];
+      user.scoreHistory = Array.isArray(user.scoreHistory) ? user.scoreHistory : [];
+      user.lastActivity = user.lastActivity || user.lastActive || user.updatedAt || new Date().toISOString();
+      return user;
+    }
+
+    function levelForScore(score) {
+      const total = Number(score || 0);
+      if (total >= 350) return { name: "Workplace English Champion", min: 350, next: 350 };
+      if (total >= 200) return { name: "Confident Speaker", min: 200, next: 350 };
+      if (total >= 100) return { name: "Communicator", min: 100, next: 200 };
+      if (total >= 50) return { name: "Learner", min: 50, next: 100 };
+      return { name: "Beginner", min: 0, next: 50 };
+    }
+
+    function levelProgress(score) {
+      const level = levelForScore(score);
+      if (level.next === level.min) return 100;
+      return Math.max(0, Math.min(100, Math.round(((Number(score || 0) - level.min) / (level.next - level.min)) * 100)));
+    }
+
+    function upsertTodaySession() {
+      const sessions = loadData(MONITORING_KEYS.sessions, []);
+      const withoutOld = sessions.filter(s => s.id !== TODAY_SESSION.id);
+      const session = {
+        ...TODAY_SESSION,
+        programType: "english_day",
+        theme: TODAY_SESSION.agenda,
+        activity: TODAY_SESSION.topic,
+        participants: Object.values(state.users).map(u => u.name).filter(Boolean),
+        status: "active",
+        notes: TODAY_SESSION.description
+      };
+      saveData(MONITORING_KEYS.sessions, [session, ...withoutOld]);
+      backend("saveEnglishDaySeed", { session, questions: TODAY_QUESTIONS });
+    }
+
+    function recordLogin(user, status = "success") {
+      const id = generateId("login");
+      const entry = { id, userId: user.nip, nip: user.nip, name: user.name, loginAt: new Date().toISOString(), logoutAt: "", status, deviceInfo: navigator.userAgent };
+      const history = loadData(DATA_KEYS.loginHistory, []);
+      history.unshift(entry);
+      saveData(DATA_KEYS.loginHistory, history);
+      user.loginHistory = [entry, ...(user.loginHistory || [])].slice(0, 50);
+      state.loginHistoryId = id;
+      backend("saveLoginHistory", entry);
+      return entry;
+    }
+
+    function recordLogout() {
+      const session = loadData(DATA_KEYS.currentSession, null);
+      const id = state.loginHistoryId || session?.loginHistoryId;
+      if (!id || !state.user) return;
+      const logoutAt = new Date().toISOString();
+      const history = loadData(DATA_KEYS.loginHistory, []).map(row => row.id === id ? { ...row, logoutAt } : row);
+      saveData(DATA_KEYS.loginHistory, history);
+      state.user.loginHistory = (state.user.loginHistory || []).map(row => row.id === id ? { ...row, logoutAt } : row);
+      backend("saveLoginHistory", { id, userId: state.user.nip, nip: state.user.nip, name: state.user.name, logoutAt, status: "logout" });
+    }
+
+    function createBrowserSession(user) {
+      const expiresAt = Date.now() + 12 * 60 * 60 * 1000;
+      saveData(DATA_KEYS.currentSession, { nip: user.nip, loginHistoryId: state.loginHistoryId, expiresAt });
+      localStorage.setItem("cecQuestCurrentUser", user.nip);
+    }
+
+    function readBrowserSession() {
+      const session = loadData(DATA_KEYS.currentSession, null);
+      if (!session || !session.nip || Date.now() > Number(session.expiresAt || 0)) return null;
+      return session;
+    }
+
+    async function hashPassword(password) {
+      if (!window.crypto?.subtle) return `legacy:${password}`;
+      const bytes = new TextEncoder().encode(password);
+      const digest = await crypto.subtle.digest("SHA-256", bytes);
+      return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    async function verifyPassword(user, password) {
+      if (user.passwordHash) return user.passwordHash === await hashPassword(password);
+      if (user.password === password) {
+        user.passwordHash = await hashPassword(password);
+        user.password = "";
+        return true;
+      }
+      return false;
+    }
+
     function seedMonitoringData() {
       if (!loadData(MONITORING_KEYS.programs, []).length) saveData(MONITORING_KEYS.programs, PROGRAM_DEFS);
       const existingSessions = loadData(MONITORING_KEYS.sessions, []);
-      if (existingSessions.length) return;
+      if (existingSessions.some(s => s.id === TODAY_SESSION.id)) return;
+      if (existingSessions.length) {
+        upsertTodaySession();
+        return;
+      }
       const now = new Date();
       const month = now.getMonth() + 1;
       const year = now.getFullYear();
@@ -765,6 +965,7 @@
       })));
       saveData(MONITORING_KEYS.attendance, attendance);
       saveData(MONITORING_KEYS.assessments, assessments);
+      upsertTodaySession();
     }
 
     function statusFromScore(score) {
@@ -954,7 +1155,7 @@
     async function backendGet(action) {
       if (!APPS_SCRIPT_URL) return null;
       try {
-        const res = await fetchWithTimeout(`${APPS_SCRIPT_URL}?action=${encodeURIComponent(action)}`, {}, 6000);
+        const res = await fetchWithTimeout(`${APPS_SCRIPT_URL}?action=${encodeURIComponent(action)}`, {}, 4000);
         return await res.json();
       } catch (err) {
         console.warn("Backend read unavailable", err);
@@ -981,33 +1182,58 @@
             nip: String(row.nip),
             unit: row.unit || user?.unit || "",
             password: row.password || user?.password || "",
+            passwordHash: row.passwordHash || user?.passwordHash || "",
             avatar: user?.avatar || "ranger"
           }),
           ...(user || {}),
           password: row.password || user?.password || "",
+          passwordHash: row.passwordHash || user?.passwordHash || "",
           xp: Number(row.xp || user?.xp || 0),
           level: Number(row.level || user?.level || 1),
           stars: Number(row.stars || user?.stars || 0)
         };
-        if (merged.password) state.users[String(row.nip)] = merged;
+        if (merged.password || merged.passwordHash) state.users[String(row.nip)] = normalizeUser(merged);
       });
       save("cecQuestUsers", state.users);
     }
 
+    function parseRawRow(row) {
+      if (!row) return null;
+      try { return row.rawJson ? JSON.parse(row.rawJson) : row; } catch (err) { return row; }
+    }
+
+    async function syncLearningDataFromBackend() {
+      const [loginRes, submissionsRes, scoresRes, programRes] = await Promise.all([
+        backendGet("getLoginHistory"),
+        backendGet("getSubmissions"),
+        backendGet("getScoreHistory"),
+        backendGet("getProgramData")
+      ]);
+      if (loginRes?.rows) saveData(DATA_KEYS.loginHistory, loginRes.rows.map(parseRawRow).filter(Boolean));
+      if (submissionsRes?.rows) saveData(DATA_KEYS.submissions, submissionsRes.rows.map(parseRawRow).filter(Boolean));
+      if (scoresRes?.rows) saveData(DATA_KEYS.scoreHistory, scoresRes.rows.map(parseRawRow).filter(Boolean));
+      if (programRes?.rows) {
+        const sessions = programRes.rows
+          .filter(row => row.type === "english_day_session_history")
+          .map(parseRawRow)
+          .filter(Boolean);
+        if (sessions.length) saveData(DATA_KEYS.sessionHistory, sessions);
+      }
+    }
+
     async function init() {
       state.users = loadRegisteredUsers();
-      await syncUsersFromBackend();
+      await Promise.all([syncUsersFromBackend(), syncLearningDataFromBackend()]);
       save("cecQuestUsers", state.users);
       seedMonitoringData();
       renderUnitOptions();
       bindEvents();
       setTimeout(() => {
         $("splash").classList.add("hide");
-        const last = localStorage.getItem("cecQuestCurrentUser");
-        if (last && state.users[last]) {
-          $("login-nip").value = last;
-          hydrateLoginName();
-          showAuth("login-screen");
+        const activeSession = readBrowserSession();
+        if (activeSession && state.users[activeSession.nip]) {
+          state.loginHistoryId = activeSession.loginHistoryId;
+          loginUser(activeSession.nip, { restore: true });
         } else if (Object.keys(state.users).length) showAuth("login-screen");
         else showAuth("register-screen");
       }, 1600);
@@ -1030,6 +1256,10 @@
         if (a === "check-sentence") checkSentence();
         if (a === "refresh-rank") renderLeaderboard();
         if (a === "logout") logout();
+        if (a === "watch-today-video") window.open(TODAY_SESSION.videoUrl, "_blank", "noopener");
+        if (a === "open-today-session") showEnglishDaySession();
+        if (a === "render-today-questions") renderTodayQuestions();
+        if (a === "mentor-detail") renderMentorDetail(action.dataset.nip);
         if (a === "copy-report") copyMonthlyReport();
         if (a === "print-report") printMonthlyReport();
         if (a === "export-report-json") exportMonthlyReportJson();
@@ -1037,7 +1267,9 @@
       });
       $("register-form").addEventListener("submit", registerUser);
       $("login-form").addEventListener("submit", submitLogin);
+      $("today-question-host").addEventListener("submit", submitTodayAnswers);
       $("login-nip").addEventListener("input", hydrateLoginName);
+      $("mentor-user").addEventListener("change", () => renderMentorDetail($("mentor-user").value));
       $("mentor-form").addEventListener("submit", saveMentorEntry);
       $("monthly-plan-form").addEventListener("submit", saveMonthlyPlan);
       $("session-form").addEventListener("submit", saveProgramSession);
@@ -1079,6 +1311,10 @@
     }
 
     function showScreen(id) {
+      if ((id === "mentor-screen" || id === "admin-screen") && !["mentor", "admin"].includes(state.user?.role)) {
+        toast("Menu ini khusus mentor/admin. Silakan login melalui Menu Mentor.", "err");
+        id = "home-screen";
+      }
       document.querySelectorAll(".screen,.auth-screen").forEach(s => s.classList.remove("active"));
       $(id).classList.add("active");
       $("bottom-nav").classList.remove("hidden");
@@ -1087,27 +1323,39 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    function registerUser(event) {
+    async function registerUser(event) {
       event.preventDefault();
+      const submit = event.submitter || $("register-form").querySelector("button[type='submit']");
       const name = $("reg-name").value.trim();
       const nip = $("reg-nip").value.trim();
       const unit = $("reg-unit").value;
       const password = $("reg-password").value.trim();
       if (!name || !nip || !unit || !password) return toast("Nama, NIP, unit kerja, dan password wajib diisi.", "err");
-      if (state.users[nip] && state.users[nip].password) {
+      if (state.users[nip] && (state.users[nip].password || state.users[nip].passwordHash)) {
         $("login-nip").value = nip;
         hydrateLoginName();
         toast("NIP sudah terregistrasi. Silakan login dengan password.", "ok");
         showAuth("login-screen");
         return;
       }
-      state.users[nip] = defaultUser({ name, nip, unit, password });
-      save("cecQuestUsers", state.users);
-      $("login-nip").value = nip;
-      hydrateLoginName();
-      backend("registerUser", publicUser(state.users[nip]));
-      toast("Registrasi tersimpan. Silakan login pegawai.", "ok");
-      showAuth("login-screen");
+      if (submit) {
+        submit.disabled = true;
+        submit.textContent = "Menyimpan...";
+      }
+      try {
+        state.users[nip] = normalizeUser(defaultUser({ name, nip, unit, passwordHash: await hashPassword(password) }));
+        save("cecQuestUsers", state.users);
+        $("login-nip").value = nip;
+        hydrateLoginName();
+        backend("registerUser", publicUser(state.users[nip]));
+        toast("Registrasi tersimpan. Silakan login pegawai.", "ok");
+        showAuth("login-screen");
+      } finally {
+        if (submit) {
+          submit.disabled = false;
+          submit.textContent = "Daftar";
+        }
+      }
     }
 
     function hydrateLoginName() {
@@ -1115,45 +1363,71 @@
       $("login-name").value = state.users[nip]?.name || "";
     }
 
-    function submitLogin(event) {
+    async function submitLogin(event) {
       event.preventDefault();
+      const submit = event.submitter || $("login-form").querySelector("button[type='submit']");
       const nip = $("login-nip").value.trim();
       const password = $("login-password").value.trim();
       if (!state.users[nip]) return toast("NIP belum terdaftar. Registrasi terlebih dahulu.", "err");
-      if (!state.users[nip].password) return toast("Akun lama belum memiliki password. Silakan registrasi ulang NIP ini.", "err");
-      if (state.users[nip].password !== password) return toast("Password salah.", "err");
-      state.users[nip].lastActive = new Date().toISOString();
-      save("cecQuestUsers", state.users);
-      loginUser(nip);
+      if (!state.users[nip].password && !state.users[nip].passwordHash) return toast("Akun lama belum memiliki password. Silakan registrasi ulang NIP ini.", "err");
+      if (!(await verifyPassword(state.users[nip], password))) return toast("Password salah.", "err");
+      if (submit) {
+        submit.disabled = true;
+        submit.textContent = "Memproses...";
+      }
+      try {
+        state.users[nip] = normalizeUser(state.users[nip]);
+        state.users[nip].lastActive = new Date().toISOString();
+        state.users[nip].lastActivity = state.users[nip].lastActive;
+        recordLogin(state.users[nip]);
+        save("cecQuestUsers", state.users);
+        loginUser(nip);
+      } catch (err) {
+        console.error(err);
+        toast("Login belum berhasil. Coba ulangi sebentar lagi.", "err");
+      } finally {
+        if (submit) {
+          submit.disabled = false;
+          submit.textContent = "Login Pegawai";
+        }
+      }
     }
 
     function mentorLogin() {
       const password = $("mentor-password").value.trim();
       if (password !== "acatigakali") return toast("Password mentor salah.", "err");
       state.user = defaultUser({ name: "Mentor CEC", nip: "__mentor", unit: "Mentor", password: "acatigakali", avatar: "advisor" });
+      state.user.role = "mentor";
       state.user.avatarEmoji = "📋";
       showScreen("mentor-screen");
       toast("Login mentor berhasil.", "ok");
     }
 
-    function loginUser(nip) {
-      state.user = state.users[nip];
+    function loginUser(nip, options = {}) {
+      state.user = normalizeUser(state.users[nip]);
       state.selectedAvatar = state.user.avatar || "ranger";
-      localStorage.setItem("cecQuestCurrentUser", nip);
-      showScreen("profile-screen");
-      toast(`Selamat datang, ${state.user.name}.`, "ok");
+      state.users[nip] = state.user;
+      createBrowserSession(state.user);
+      persistUser();
+      showScreen(options.restore ? "home-screen" : "profile-screen");
+      if (!options.restore) toast(`Selamat datang, ${state.user.name}.`, "ok");
     }
 
     function logout() {
+      recordLogout();
       localStorage.removeItem("cecQuestCurrentUser");
+      localStorage.removeItem(DATA_KEYS.currentSession);
       state.user = null;
+      state.loginHistoryId = null;
       showAuth("login-screen");
     }
 
     function persistUser() {
       if (!state.user) return;
       state.user.level = calcLevel(state.user.xp);
+      state.user.levelName = levelForScore(state.user.totalScore).name;
       state.user.lastActive = new Date().toISOString();
+      state.user.lastActivity = state.user.lastActive;
       state.users[state.user.nip] = state.user;
       save("cecQuestUsers", state.users);
     }
@@ -1178,17 +1452,17 @@
           <div class="between">
             <div class="user-mini">
               <div class="mini-avatar">${state.user.avatarEmoji}</div>
-              <div><div class="user-name">${esc(state.user.name)}</div><div class="user-title">${esc(titleForLevel(state.user.level))}</div></div>
+              <div><div class="user-name">${esc(state.user.name)}</div><div class="user-title">${esc(state.user.levelName || titleForLevel(state.user.level))}</div></div>
             </div>
-            <div class="row"><span class="pill xp-pill">${state.user.xp} XP</span><span class="pill">Lv ${state.user.level}</span></div>
+            <div class="row"><span class="pill xp-pill">${state.user.totalScore || state.user.xp} Score</span><span class="pill">${esc(state.user.levelName || `Lv ${state.user.level}`)}</span></div>
           </div>`;
       });
     }
 
     function renderHome() {
       $("welcome-title").textContent = `Selamat Datang, ${state.user.name}`;
-      $("home-xp").textContent = state.user.xp;
-      $("home-level").textContent = state.user.level;
+      $("home-xp").textContent = state.user.totalScore || state.user.xp;
+      $("home-level").textContent = state.user.levelName || state.user.level;
       $("home-stars").textContent = state.user.stars;
       const completed = completedLevels();
       $("world-progress-label").textContent = `${completed}/10`;
@@ -1466,21 +1740,68 @@
       const completed = completedLevels();
       $("profile-world-label").textContent = `${completed}/10`;
       $("profile-world-bar").style.width = `${completed * 10}%`;
+      $("profile-total-score").textContent = state.user.totalScore || 0;
+      $("profile-level-name").textContent = state.user.levelName || levelForScore(state.user.totalScore).name;
+      $("profile-last-activity").textContent = state.user.lastActivity ? new Date(state.user.lastActivity).toLocaleDateString("id-ID") : "-";
+      const progress = levelProgress(state.user.totalScore);
+      $("profile-level-progress").textContent = `${progress}%`;
+      $("profile-level-bar").style.width = `${progress}%`;
     }
 
     function renderMentor() {
-      const users = Object.values(state.users);
+      const users = Object.values(state.users).map(normalizeUser);
       const attempts = users.flatMap(u => (u.attempts || []).map(a => ({ ...a, name: u.name })));
       const entries = load("cecQuestMentorEntries", []).filter(e => state.users[e.nip]);
+      const loginHistory = loadData(DATA_KEYS.loginHistory, []);
+      const sessionHistory = loadData(DATA_KEYS.sessionHistory, []);
       $("mentor-total").textContent = users.length;
-      $("mentor-active").textContent = users.filter(u => (u.attempts || []).length > 0).length;
-      $("mentor-attempts").textContent = attempts.length + entries.length;
+      $("mentor-active").textContent = users.filter(u => (u.attempts || []).length > 0 || (u.sessionHistory || []).length > 0).length;
+      $("mentor-attempts").textContent = attempts.length + entries.length + sessionHistory.length;
       $("mentor-user").innerHTML = users.map(u => `<option value="${esc(u.nip)}">${esc(u.name)} - ${esc(u.unit || "Belum diisi")}</option>`).join("");
       const rows = [
         ...attempts.map(a => ({ date: a.date, name: a.name, activity: `Level ${a.level}: ${a.topic}`, score: `${a.score}%` })),
+        ...sessionHistory.map(s => ({ date: s.submittedAt || s.date, name: s.name, activity: s.title, score: `${s.score}/${s.maxScore}` })),
         ...entries.map(e => ({ date: e.date, name: e.name, activity: e.note, score: "Catatan" }))
       ].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 25);
       $("mentor-history").innerHTML = rows.length ? rows.map(r => `<tr><td>${new Date(r.date).toLocaleDateString("id-ID")}</td><td>${esc(r.name)}</td><td>${esc(r.activity)}</td><td>${esc(r.score)}</td></tr>`).join("") : `<tr><td colspan="4">Belum ada history.</td></tr>`;
+      $("mentor-progress").innerHTML = `
+        <div class="table-scroll"><table class="mini-table"><thead><tr><th>Nama</th><th>NIP</th><th>Total</th><th>Level</th><th>Sesi</th><th>Login terakhir</th><th>Aksi</th></tr></thead><tbody>
+          ${users.map(u => {
+            const lastLogin = loginHistory.find(l => l.userId === u.nip || l.nip === u.nip);
+            const sessions = sessionHistory.filter(s => s.userId === u.nip).length || (u.sessionHistory || []).length;
+            return `<tr><td>${esc(u.name)}</td><td>${esc(u.nip)}</td><td>${u.totalScore || 0}</td><td>${esc(u.levelName || levelForScore(u.totalScore).name)}</td><td>${sessions}</td><td>${lastLogin ? new Date(lastLogin.loginAt).toLocaleDateString("id-ID") : "-"}</td><td><button class="tab" type="button" data-action="mentor-detail" data-nip="${esc(u.nip)}">Detail</button></td></tr>`;
+          }).join("") || `<tr><td colspan="7">Belum ada peserta.</td></tr>`}
+        </tbody></table></div>`;
+      const selected = $("mentor-user").value || users[0]?.nip;
+      renderMentorDetail(selected);
+    }
+
+    function renderMentorDetail(nip) {
+      const user = normalizeUser(state.users[nip]);
+      if (!user) {
+        $("mentor-detail").innerHTML = `<p class="sub">Pilih peserta untuk melihat detail.</p>`;
+        return;
+      }
+      const loginHistory = loadData(DATA_KEYS.loginHistory, []).filter(row => row.userId === nip || row.nip === nip);
+      const sessionHistory = loadData(DATA_KEYS.sessionHistory, []).filter(row => row.userId === nip);
+      const submissions = loadData(DATA_KEYS.submissions, []).filter(row => row.userId === nip);
+      const scoreHistory = loadData(DATA_KEYS.scoreHistory, []).filter(row => row.userId === nip);
+      $("mentor-detail").innerHTML = `
+        <div class="stats">
+          <div class="stat"><b>${esc(user.name)}</b><span>${esc(user.unit || "Unit belum diisi")}</span></div>
+          <div class="stat"><b>${user.totalScore || 0}</b><span>Total score</span></div>
+          <div class="stat"><b>${esc(user.levelName || levelForScore(user.totalScore).name)}</b><span>Level</span></div>
+        </div>
+        <div class="between"><span>Progress level</span><span>${levelProgress(user.totalScore)}%</span></div>
+        <div class="progress"><span style="width:${levelProgress(user.totalScore)}%"></span></div>
+        <h3>Login History</h3>
+        <div class="history-list">${loginHistory.slice(0, 5).map(row => `<div class="history-item">${new Date(row.loginAt).toLocaleString("id-ID")} - ${esc(row.status || "success")}${row.logoutAt ? `, logout ${new Date(row.logoutAt).toLocaleString("id-ID")}` : ""}</div>`).join("") || `<p class="sub">Belum ada login history.</p>`}</div>
+        <h3>English Day Session</h3>
+        <div class="history-list">${sessionHistory.slice(0, 5).map(row => `<div class="history-item"><b>${esc(row.title)}</b><br>${row.score}/${row.maxScore} - ${new Date(row.submittedAt).toLocaleString("id-ID")}</div>`).join("") || `<p class="sub">Belum ada sesi.</p>`}</div>
+        <h3>Jawaban Peserta</h3>
+        <div class="history-list">${submissions.slice(0, 12).map(row => `<div class="history-item"><b>${esc(row.questionText)}</b><br>${esc(row.answerText)}<br><span class="score-level">${row.scoreAwarded} poin</span>${row.mentorNote ? `<br>${esc(row.mentorNote)}` : ""}</div>`).join("") || `<p class="sub">Belum ada jawaban.</p>`}</div>
+        <h3>Score History</h3>
+        <div class="history-list">${scoreHistory.slice(0, 6).map(row => `<div class="history-item">${row.score} poin dari ${esc(row.source)} - ${new Date(row.createdAt).toLocaleString("id-ID")}</div>`).join("") || `<p class="sub">Belum ada score history.</p>`}</div>`;
     }
 
     function saveMentorEntry(event) {
@@ -1497,6 +1818,108 @@
       backend("saveMentorEntry", entry);
       renderMentor();
       toast("Catatan mentor tersimpan.", "ok");
+    }
+
+    function showEnglishDaySession() {
+      showScreen("englishday-screen");
+      renderTodayQuestions();
+    }
+
+    function renderTodayQuestions() {
+      const previous = loadData(DATA_KEYS.sessionHistory, []).find(r => r.userId === state.user?.nip && r.sessionId === TODAY_SESSION.id);
+      $("today-question-host").innerHTML = `
+        <div class="between"><h2>Session Questions</h2><span class="pill">${previous ? "Submitted" : "Auto-score"}</span></div>
+        ${previous ? `<p class="sub">Anda sudah submit sesi ini. Submit ulang akan mengganti score sesi dan menyimpan history terbaru.</p>` : ""}
+        <form class="question-form" id="today-question-form">
+          ${TODAY_QUESTIONS.map((q, idx) => `
+            <div class="session-question">
+              <label for="today-${q.id}">${idx + 1}. ${esc(q.text)} <span class="score-level">${q.points} poin</span></label>
+              <textarea id="today-${q.id}" name="${q.id}" required placeholder="Tulis jawaban singkat dalam English sederhana."></textarea>
+            </div>`).join("")}
+          <button class="btn" type="submit">Submit Answers</button>
+        </form>`;
+    }
+
+    function scoreTodayAnswer(question, answer) {
+      const clean = answer.toLowerCase();
+      if (!clean.trim()) return 0;
+      if (!question.keywords.length) return clean.trim().split(/\s+/).length >= 3 ? question.points : Math.round(question.points * .5);
+      const hits = question.keywords.filter(k => clean.includes(k.toLowerCase())).length;
+      if (hits >= 2) return question.points;
+      if (hits === 1) return Math.ceil(question.points * .7);
+      return clean.trim().split(/\s+/).length >= 5 ? Math.ceil(question.points * .4) : 0;
+    }
+
+    function submitTodayAnswers(event) {
+      event.preventDefault();
+      if (!state.user) return toast("Silakan login dulu.", "err");
+      const form = event.target;
+      const submittedAt = new Date().toISOString();
+      const answers = TODAY_QUESTIONS.map(q => {
+        const answerText = String(new FormData(form).get(q.id) || "").trim();
+        const scoreAwarded = scoreTodayAnswer(q, answerText);
+        return {
+          id: generateId("sub"),
+          sessionId: TODAY_SESSION.id,
+          userId: state.user.nip,
+          questionId: q.id,
+          questionText: q.text,
+          answerText,
+          isCorrect: scoreAwarded >= q.points,
+          scoreAwarded,
+          submittedAt,
+          reviewedBy: "",
+          mentorNote: ""
+        };
+      });
+      const sessionScore = answers.reduce((sum, row) => sum + row.scoreAwarded, 0);
+      const previousRows = loadData(DATA_KEYS.submissions, []).filter(row => !(row.userId === state.user.nip && row.sessionId === TODAY_SESSION.id));
+      saveData(DATA_KEYS.submissions, [...answers, ...previousRows]);
+
+      const history = loadData(DATA_KEYS.sessionHistory, []).filter(row => !(row.userId === state.user.nip && row.sessionId === TODAY_SESSION.id));
+      const sessionEntry = {
+        id: generateId("ed_session"),
+        userId: state.user.nip,
+        name: state.user.name,
+        sessionId: TODAY_SESSION.id,
+        title: TODAY_SESSION.title,
+        date: TODAY_SESSION.date,
+        score: sessionScore,
+        maxScore: TODAY_QUESTIONS.reduce((sum, q) => sum + q.points, 0),
+        submittedAt
+      };
+      saveData(DATA_KEYS.sessionHistory, [sessionEntry, ...history]);
+
+      const scoreHistory = loadData(DATA_KEYS.scoreHistory, []);
+      const previousScore = (state.user.sessionHistory || []).find(row => row.sessionId === TODAY_SESSION.id)?.score || 0;
+      const delta = sessionScore - previousScore;
+      state.user.totalScore = Math.max(0, Number(state.user.totalScore || 0) + delta);
+      state.user.xp = Math.max(0, Number(state.user.xp || 0) + delta);
+      state.user.levelName = levelForScore(state.user.totalScore).name;
+      state.user.sessionHistory = [sessionEntry, ...(state.user.sessionHistory || []).filter(row => row.sessionId !== TODAY_SESSION.id)];
+      state.user.submissions = [...answers, ...(state.user.submissions || []).filter(row => row.sessionId !== TODAY_SESSION.id)];
+      state.user.scoreHistory = [{ id: generateId("score"), userId: state.user.nip, sessionId: TODAY_SESSION.id, score: sessionScore, source: "english_day_auto_score", createdAt: submittedAt }, ...(state.user.scoreHistory || [])];
+      state.user.lastActivity = submittedAt;
+      saveData(DATA_KEYS.scoreHistory, [state.user.scoreHistory[0], ...scoreHistory]);
+      persistUser();
+      backend("saveQuestionSubmission", { user: publicUser(state.user), session: TODAY_SESSION, sessionEntry, answers, scoreHistory: state.user.scoreHistory[0] });
+      renderTodayResult(sessionScore, sessionEntry.maxScore);
+      renderAll();
+      toast("Jawaban tersimpan. Score dan level diperbarui.", "ok");
+    }
+
+    function renderTodayResult(score, maxScore) {
+      const level = levelForScore(state.user.totalScore);
+      $("today-question-host").innerHTML = `
+        <div class="question-meta">Submission saved</div>
+        <h2>${score >= 100 ? "Excellent work" : score >= 70 ? "Good progress" : "Keep practicing"}</h2>
+        <div class="stats">
+          <div class="stat"><b>${score}/${maxScore}</b><span>Score sesi</span></div>
+          <div class="stat"><b>${state.user.totalScore}</b><span>Total score</span></div>
+          <div class="stat"><b>${esc(level.name)}</b><span>Level terbaru</span></div>
+        </div>
+        <p class="sub">Great effort. Use one clarification sentence from today in a real work conversation this week.</p>
+        <button class="btn secondary" type="button" data-nav="home-screen">Kembali ke Dashboard</button>`;
     }
 
     function renderProgramMonitoring() {
@@ -1831,6 +2254,7 @@
 
     function publicUser(user) {
       const copy = { ...user };
+      delete copy.password;
       return copy;
     }
 

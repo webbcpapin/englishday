@@ -20,6 +20,8 @@ Customs English Club Adventure untuk Bea Cukai Pangkalpinang.
 - Export report: copy, print, JSON, CSV.
 - Local Storage untuk progress browser.
 - Template Google Apps Script di `gas_backend.gs`.
+- English Day 11 Juni 2026: sesi "The Expert", video, 12 pertanyaan, auto-score keyword ringan, score history, dan level English Day.
+- Mentor dashboard: total score, level, sesi terakhir, login terakhir, detail profil, jawaban peserta, dan score per pertanyaan.
 
 ## Program CEC yang Dimonitor
 
@@ -46,8 +48,41 @@ Sheet yang dibuat otomatis:
 - `MonthlyPlans`
 - `Assessments`
 - `Reports`
+- `LoginHistory`
+- `EnglishDaySessions`
+- `Questions`
+- `Submissions`
+- `ScoreHistory`
+
+Kolom data utama:
+
+- `Users`: `nip`, `name`, `unit`, `passwordHash`, `avatar`, `xp`, `level`, `stars`, `badges`, `registeredAt`, `lastActive`, `totalScore`, `levelName`, `lastActivity`, `rawJson`
+- `LoginHistory`: `id`, `userId`, `nip`, `name`, `loginAt`, `logoutAt`, `deviceInfo`, `status`, `rawJson`
+- `EnglishDaySessions`: `id`, `title`, `agenda`, `topic`, `date`, `videoUrl`, `description`, `status`, `createdAt`, `rawJson`
+- `Questions`: `id`, `sessionId`, `questionText`, `questionType`, `options`, `correctAnswer`, `scorePoint`, `orderNumber`, `keywords`, `rawJson`
+- `Submissions`: `id`, `sessionId`, `userId`, `questionId`, `questionText`, `answerText`, `isCorrect`, `scoreAwarded`, `submittedAt`, `reviewedBy`, `mentorNote`, `rawJson`
+- `ScoreHistory`: `id`, `userId`, `sessionId`, `score`, `source`, `createdAt`, `rawJson`
 
 Setelah mengubah `gas_backend.gs`, deploy ulang Web App Apps Script agar versi backend terbaru aktif.
+
+## Menjalankan Lokal
+
+Aplikasi ini static HTML. Cara termudah:
+
+1. Jalankan server static dari folder repo:
+   `python -m http.server 8080`
+2. Buka `http://localhost:8080`.
+
+Tanpa server juga bisa dengan membuka `index.html`, tetapi beberapa browser lebih ketat untuk fitur Web Speech dan fetch.
+
+## Environment / Konfigurasi
+
+Tidak ada file `.env`. Konfigurasi utama berada di:
+
+- `index.html`: konstanta `APPS_SCRIPT_URL`
+- `gas_backend.gs`: konstanta `CONFIG.SPREADSHEET_ID`
+
+Password baru disimpan sebagai `passwordHash`. Akun lama dengan password plain text masih bisa login dan akan dimigrasikan di browser setelah login berhasil.
 
 ## Deploy GitHub Pages
 

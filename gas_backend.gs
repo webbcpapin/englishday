@@ -9,7 +9,12 @@ const CONFIG = {
     PROGRAM_DATA: 'ProgramData',
     MONTHLY_PLANS: 'MonthlyPlans',
     ASSESSMENTS: 'Assessments',
-    REPORTS: 'Reports'
+    REPORTS: 'Reports',
+    LOGIN_HISTORY: 'LoginHistory',
+    ENGLISH_DAY_SESSIONS: 'EnglishDaySessions',
+    QUESTIONS: 'Questions',
+    SUBMISSIONS: 'Submissions',
+    SCORE_HISTORY: 'ScoreHistory'
   }
 };
 
@@ -23,6 +28,11 @@ function doGet(e) {
   if (action === 'getProgramData') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.PROGRAM_DATA) });
   if (action === 'getMonthlyPlans') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.MONTHLY_PLANS) });
   if (action === 'getAssessments') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.ASSESSMENTS) });
+  if (action === 'getLoginHistory') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.LOGIN_HISTORY) });
+  if (action === 'getEnglishDaySessions') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.ENGLISH_DAY_SESSIONS) });
+  if (action === 'getQuestions') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.QUESTIONS) });
+  if (action === 'getSubmissions') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.SUBMISSIONS) });
+  if (action === 'getScoreHistory') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.SCORE_HISTORY) });
   if (action === 'test') return json_({ ok: true, app: 'CEC Quest Backend', time: new Date().toISOString() });
 
   return json_({
@@ -43,13 +53,16 @@ function doPost(e) {
   if (action === 'saveAttempt') return json_(saveAttempt_(payload));
   if (action === 'saveMentorEntry') return json_(saveMentorEntry_(payload));
   if (action === 'saveProgramData') return json_(saveProgramData_(payload));
+  if (action === 'saveLoginHistory') return json_(saveLoginHistory_(payload));
+  if (action === 'saveEnglishDaySeed') return json_(saveEnglishDaySeed_(payload));
+  if (action === 'saveQuestionSubmission') return json_(saveQuestionSubmission_(payload));
 
   return json_({ ok: false, error: 'Unknown action: ' + action });
 }
 
 function ensureSheets_() {
   const ss = getSs_();
-  ensureSheet_(ss, CONFIG.SHEETS.USERS, ['nip', 'name', 'unit', 'password', 'avatar', 'xp', 'level', 'stars', 'badges', 'registeredAt', 'lastActive', 'rawJson']);
+  ensureSheet_(ss, CONFIG.SHEETS.USERS, ['nip', 'name', 'unit', 'passwordHash', 'avatar', 'xp', 'level', 'stars', 'badges', 'registeredAt', 'lastActive', 'totalScore', 'levelName', 'lastActivity', 'rawJson']);
   ensureSheet_(ss, CONFIG.SHEETS.PROGRESS, ['nip', 'world', 'level', 'score', 'stars', 'xp', 'updatedAt']);
   ensureSheet_(ss, CONFIG.SHEETS.ATTEMPTS, ['id', 'nip', 'name', 'level', 'topic', 'score', 'stars', 'xp', 'date', 'rawJson']);
   ensureSheet_(ss, CONFIG.SHEETS.LEADERBOARD, ['nip', 'name', 'unit', 'xp', 'level', 'stars', 'updatedAt']);
@@ -58,6 +71,11 @@ function ensureSheets_() {
   ensureSheet_(ss, CONFIG.SHEETS.MONTHLY_PLANS, ['id', 'month', 'year', 'bigTheme', 'meetingsCount', 'createdAt', 'rawJson']);
   ensureSheet_(ss, CONFIG.SHEETS.ASSESSMENTS, ['id', 'sessionId', 'participantName', 'date', 'attendance', 'active', 'speaking', 'writing', 'grammar', 'presentation', 'createdAt', 'rawJson']);
   ensureSheet_(ss, CONFIG.SHEETS.REPORTS, ['id', 'month', 'year', 'healthScore', 'status', 'createdAt', 'rawJson']);
+  ensureSheet_(ss, CONFIG.SHEETS.LOGIN_HISTORY, ['id', 'userId', 'nip', 'name', 'loginAt', 'logoutAt', 'deviceInfo', 'status', 'rawJson']);
+  ensureSheet_(ss, CONFIG.SHEETS.ENGLISH_DAY_SESSIONS, ['id', 'title', 'agenda', 'topic', 'date', 'videoUrl', 'description', 'status', 'createdAt', 'rawJson']);
+  ensureSheet_(ss, CONFIG.SHEETS.QUESTIONS, ['id', 'sessionId', 'questionText', 'questionType', 'options', 'correctAnswer', 'scorePoint', 'orderNumber', 'keywords', 'rawJson']);
+  ensureSheet_(ss, CONFIG.SHEETS.SUBMISSIONS, ['id', 'sessionId', 'userId', 'questionId', 'questionText', 'answerText', 'isCorrect', 'scoreAwarded', 'submittedAt', 'reviewedBy', 'mentorNote', 'rawJson']);
+  ensureSheet_(ss, CONFIG.SHEETS.SCORE_HISTORY, ['id', 'userId', 'sessionId', 'score', 'source', 'createdAt', 'rawJson']);
 }
 
 function ensureSheet_(ss, name, headers) {
@@ -92,7 +110,7 @@ function upsertUser_(user) {
     user.nip,
     user.name || '',
     user.unit || '',
-    user.password || '',
+    user.passwordHash || '',
     user.avatarEmoji || user.avatar || '',
     Number(user.xp || 0),
     Number(user.level || 1),
@@ -100,6 +118,9 @@ function upsertUser_(user) {
     Array.isArray(user.badges) ? user.badges.join(',') : (user.badges || ''),
     user.registeredAt || new Date().toISOString(),
     user.lastActive || new Date().toISOString(),
+    Number(user.totalScore || user.xp || 0),
+    user.levelName || '',
+    user.lastActivity || user.lastActive || new Date().toISOString(),
     JSON.stringify(user)
   ];
 
@@ -226,6 +247,126 @@ function saveProgramData_(payload) {
     JSON.stringify(data)
   ]);
   return { ok: true, id: id, type: type };
+}
+
+function saveLoginHistory_(entry) {
+  if (!entry || !entry.id) return { ok: false, error: 'Missing login history id' };
+  const sh = getSs_().getSheetByName(CONFIG.SHEETS.LOGIN_HISTORY);
+  const data = sh.getDataRange().getValues();
+  const row = findRow_(data, 0, entry.id);
+  const existing = row > 0 ? data[row - 1] : [];
+  const values = [
+    entry.id,
+    entry.userId || entry.nip || existing[1] || '',
+    entry.nip || entry.userId || existing[2] || '',
+    entry.name || existing[3] || '',
+    entry.loginAt || existing[4] || '',
+    entry.logoutAt || existing[5] || '',
+    entry.deviceInfo || existing[6] || '',
+    entry.status || existing[7] || '',
+    JSON.stringify(entry)
+  ];
+  if (row > 0) sh.getRange(row, 1, 1, values.length).setValues([values]);
+  else sh.appendRow(values);
+  return { ok: true, id: entry.id };
+}
+
+function saveEnglishDaySeed_(payload) {
+  const session = payload.session || {};
+  const questions = payload.questions || [];
+  if (!session.id) return { ok: false, error: 'Missing session id' };
+  upsertEnglishDaySession_(session);
+  questions.forEach(function(question, index) {
+    upsertQuestion_(Object.assign({}, question, {
+      sessionId: session.id,
+      orderNumber: index + 1,
+      questionType: 'short_answer'
+    }));
+  });
+  return { ok: true, sessionId: session.id, questions: questions.length };
+}
+
+function upsertEnglishDaySession_(session) {
+  const sh = getSs_().getSheetByName(CONFIG.SHEETS.ENGLISH_DAY_SESSIONS);
+  const data = sh.getDataRange().getValues();
+  const row = findRow_(data, 0, session.id);
+  const values = [
+    session.id,
+    session.title || '',
+    session.agenda || '',
+    session.topic || '',
+    session.date || '',
+    session.videoUrl || '',
+    session.description || '',
+    session.status || 'active',
+    new Date().toISOString(),
+    JSON.stringify(session)
+  ];
+  if (row > 0) sh.getRange(row, 1, 1, values.length).setValues([values]);
+  else sh.appendRow(values);
+}
+
+function upsertQuestion_(question) {
+  const sh = getSs_().getSheetByName(CONFIG.SHEETS.QUESTIONS);
+  const data = sh.getDataRange().getValues();
+  const row = findRow_(data, 0, question.id);
+  const values = [
+    question.id,
+    question.sessionId || '',
+    question.text || question.questionText || '',
+    question.questionType || 'short_answer',
+    JSON.stringify(question.options || []),
+    question.correctAnswer || '',
+    Number(question.points || question.scorePoint || 0),
+    Number(question.orderNumber || 0),
+    Array.isArray(question.keywords) ? question.keywords.join(', ') : (question.keywords || ''),
+    JSON.stringify(question)
+  ];
+  if (row > 0) sh.getRange(row, 1, 1, values.length).setValues([values]);
+  else sh.appendRow(values);
+}
+
+function saveQuestionSubmission_(payload) {
+  const user = payload.user || {};
+  const session = payload.session || {};
+  const sessionEntry = payload.sessionEntry || {};
+  const answers = payload.answers || [];
+  const scoreHistory = payload.scoreHistory || {};
+  if (user.nip) upsertUser_(user);
+  if (session.id) upsertEnglishDaySession_(session);
+  answers.forEach(function(answer) { appendSubmission_(answer); });
+  if (scoreHistory.id) appendScoreHistory_(scoreHistory);
+  saveProgramData_({ type: 'english_day_session_history', data: sessionEntry });
+  return { ok: true, userId: user.nip || '', submissions: answers.length };
+}
+
+function appendSubmission_(answer) {
+  getSs_().getSheetByName(CONFIG.SHEETS.SUBMISSIONS).appendRow([
+    answer.id || Utilities.getUuid(),
+    answer.sessionId || '',
+    answer.userId || '',
+    answer.questionId || '',
+    answer.questionText || '',
+    answer.answerText || '',
+    answer.isCorrect === true ? 'yes' : 'no',
+    Number(answer.scoreAwarded || 0),
+    answer.submittedAt || new Date().toISOString(),
+    answer.reviewedBy || '',
+    answer.mentorNote || '',
+    JSON.stringify(answer)
+  ]);
+}
+
+function appendScoreHistory_(row) {
+  getSs_().getSheetByName(CONFIG.SHEETS.SCORE_HISTORY).appendRow([
+    row.id || Utilities.getUuid(),
+    row.userId || '',
+    row.sessionId || '',
+    Number(row.score || 0),
+    row.source || '',
+    row.createdAt || new Date().toISOString(),
+    JSON.stringify(row)
+  ]);
 }
 
 function syncLeaderboard_(user) {
