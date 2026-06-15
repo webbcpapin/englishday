@@ -9,9 +9,9 @@ Customs English Club Adventure untuk Bea Cukai Pangkalpinang.
 - Menu mentor dari halaman login dengan password khusus.
 - Profil pegawai tampil setelah login, berisi progress, pilihan avatar, dan tombol mulai petualangan.
 - Dashboard: XP, level, misi harian, world progress, quick actions.
-- Quest: 6 world, World 1 aktif, 10 level, 250 soal terstruktur.
+- Quest: 6 world, World 1 aktif, 10 level berbasis difficulty untuk English for Workplace.
 - Quiz: vocabulary, grammar, listening Text-to-Speech, sentence builder.
-- Structured question bank dari materi pembelajaran Drive: BEDROOM VOCAB, Adjectives + Prepositions, Phrases, Tongue Twisters, dan English for Workplace Communication.
+- Structured question bank dari materi pembelajaran Google Drive Starred: BEDROOM VOCAB, Worksheet Grammar / Adjectives + Prepositions, Phrases, Tongue Twisters, 3 English E-Course, English Day, dan English for Workplace Communication.
 - Boss Battle Level 10: self introduction memakai Web Speech API.
 - Result: star, XP, badge, confetti.
 - Leaderboard tanpa data dummy, badge, profil, mentor dashboard, admin panel.
@@ -87,21 +87,21 @@ Password baru disimpan sebagai `passwordHash`. Akun lama dengan password plain t
 
 Untuk mode GitHub Pages static, `localStorage` adalah source of truth utama untuk akun login di browser yang sama. Google Apps Script hanya dipakai sebagai backup/sinkronisasi tambahan, sehingga registrasi dan login lokal tetap berjalan walaupun backend lambat, error, atau terkena CORS.
 
-## Question Bank
+## Question Bank Drive-Based
 
 Question bank dipisahkan dari logic utama:
 
 - `data/sources.js`: metadata sumber materi.
-- `data/questions.js`: 150 soal baru dari materi Bahasa Inggris.
+- `data/questions.js`: 200 soal baru dari materi Bahasa Inggris.
 - `index.html`: quiz engine, helper filter, admin stats, dan fallback legacy.
 
 Komposisi soal baru:
 
 - `BEDROOM VOCAB`: 40 soal untuk vocabulary, reading, sentence builder, speaking, dan listening.
-- `Adjectives + Prepositions`: 60 soal grammar, listening grammar, error correction, dan sentence completion.
-- `Phrases`: 20 soal conversation, roleplay, office phrases, dan English Day challenge.
-- `Tongue Twisters`: 15 soal pronunciation, speaking, fluency, dan listening.
-- `English for Workplace Communication`: 15 soal reading, listening, speaking, dan roleplay.
+- `Worksheet Grammar / Adjectives + Prepositions`: 80 soal grammar, listening grammar, error correction, dan sentence completion.
+- `Phrases`: 30 soal conversation, roleplay, office phrases, dan English Day challenge.
+- `Tongue Twisters`: 20 soal pronunciation, speaking, fluency, dan listening.
+- `English for Workplace Communication`: 30 soal reading, listening, speaking, writing, grammar, dan roleplay.
 
 Setiap soal memakai struktur standar:
 
@@ -141,35 +141,40 @@ Helper quiz tersedia di `index.html`:
 Quiz memakai pola:
 
 ```js
+const USE_LEGACY_QUESTIONS = false;
 const LEGACY_QUESTION_BANK = buildQuestionBank();
 const DRIVE_QUESTION_BANK = window.DRIVE_QUESTION_BANK;
-const QUESTION_BANK = [...DRIVE_QUESTION_BANK, ...LEGACY_QUESTION_BANK];
+const QUESTION_BANK = USE_LEGACY_QUESTIONS
+  ? [...DRIVE_QUESTION_BANK, ...LEGACY_QUESTION_BANK]
+  : [...DRIVE_QUESTION_BANK];
 ```
 
-Jika level belum punya cukup soal dari Drive, sistem otomatis mencampur soal Drive dengan fallback legacy.
+Jika level belum punya cukup soal dari Drive, sistem mengambil soal dari difficulty yang berdekatan. Legacy questions tidak dipakai kecuali `USE_LEGACY_QUESTIONS` diubah menjadi `true` untuk debug/admin legacy mode.
 
 ## Mapping Materi ke Level
 
-World 1 tetap mempertahankan level lama:
+World 1 mempertahankan sistem leveling, tetapi nama dan isi level sudah naik kelas:
 
-1. Alphabet & Pronunciation
-2. Numbers
-3. Days of Week
-4. Months
-5. Colors and Object Description
-6. Family
-7. Occupation
-8. Countries
-9. Daily Activities
-10. Self Introduction
+1. Workplace Warm-up
+2. Vocabulary in Context
+3. Reading and Description
+4. Sentence Builder
+5. Grammar Pattern 1
+6. Grammar Pattern 2
+7. Office Phrases and Conversation
+8. Listening and Pronunciation
+9. Roleplay and Workplace Case
+10. CEC Boss Challenge
 
 Mapping materi baru:
 
-- `BEDROOM VOCAB`: Level 5, 8, 9, 10.
-- `Adjectives + Prepositions`: Level 9, 10, 11, 12.
-- `Phrases`: World 2, Level 11 sampai 20.
-- `Tongue Twisters`: Level 1, 10, 20.
-- `English for Workplace Communication`: Level 11 sampai 20 dan program English Day / English for Workplace Communication.
+- `BEDROOM VOCAB`: Level 2, 3, 4, 9, 10.
+- `Worksheet Grammar`: Level 5 dan 6.
+- `Phrases`: Level 1, 7, 9, 10.
+- `Tongue Twisters`: Level 8 dan 10.
+- `English for Workplace Communication`: Level 1, 7, 9, 10 dan program English Day / English for Workplace Communication.
+
+World 2 sampai World 6 tetap tampil sebagai locked/future expansion untuk materi 3 English E-Course dan program CEC lanjutan.
 
 ## Menambah atau Update Soal Manual dari Google Drive
 
@@ -180,8 +185,19 @@ Mapping materi baru:
 5. Untuk pilihan ganda, isi `options`, `answer`, dan `explanation`.
 6. Untuk speaking/roleplay/pronunciation, isi `expectedAnswer`, `rubric`, `exampleAnswer`, dan `explanation`.
 7. Jalankan app secara lokal dan cek Admin -> Question Bank untuk memastikan statistik dan filter terbaca.
+8. Pastikan `USE_LEGACY_QUESTIONS` tetap `false` jika ingin quiz default hanya memakai materi Drive.
 
 Tidak ada build step. Selama file `.js` dan `index.html` tetap static, GitHub Pages tetap compatible.
+
+## Test GitHub Pages
+
+1. Jalankan lokal dengan `python -m http.server 8080`.
+2. Buka `http://localhost:8080`.
+3. Cek registrasi: setelah daftar, user harus langsung masuk.
+4. Cek logout dan login ulang dengan NIP/password yang sama.
+5. Buka Quest level 1 sampai 10 dan pastikan tidak ada soal alphabet, numbers, colors, days, months, atau family sebagai quiz default.
+6. Cek Admin -> Question Bank untuk total 200 soal, breakdown by level/type/source/difficulty, dan filter.
+7. Push ke GitHub Pages dan buka `https://webbcpapin.github.io/englishday/`.
 
 ## Deploy GitHub Pages
 

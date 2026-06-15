@@ -141,7 +141,7 @@
     .world.active { border-color: var(--gold); background: rgba(212,175,55,.13); }
     .world.locked { opacity: .52; cursor: not-allowed; }
     .level-grid { grid-template-columns: repeat(5, 1fr); }
-    .level { aspect-ratio: 1; min-height: 64px; border-radius: var(--r-md); border: 1px solid var(--line); background: rgba(255,255,255,.1); color: #fff; display: grid; place-items: center; text-align: center; padding: 6px; }
+    .level { min-height: 132px; border-radius: var(--r-md); border: 1px solid var(--line); background: rgba(255,255,255,.1); color: #fff; display: grid; place-items: center; text-align: center; padding: 8px; }
     .level.current { border-color: var(--gold); background: rgba(212,175,55,.16); animation: pulse 2s infinite; }
     .level.done { border-color: var(--green); background: rgba(34,197,94,.14); }
     .level.locked { opacity: .45; cursor: not-allowed; }
@@ -643,6 +643,7 @@
       { name: "Daily Activities", words: [["wake up", "bangun"], ["work", "bekerja"], ["read", "membaca"], ["write", "menulis"], ["check", "memeriksa"], ["speak", "berbicara"], ["listen", "mendengarkan"], ["eat", "makan"], ["go home", "pulang"], ["study", "belajar"]], grammar: ["I check documents every morning.", "She studies English after work.", "We listen to the announcement."], sentence: "I check documents every morning" },
       { name: "Self Introduction (BOSS)", words: [["name", "nama"], ["office", "kantor"], ["customs", "bea cukai"], ["pangkalpinang", "pangkalpinang"], ["duty", "tugas"], ["document", "dokumen"], ["goods", "barang"], ["passenger", "penumpang"], ["inspection", "pemeriksaan"], ["service", "pelayanan"]], grammar: ["Hello, my name is Andi.", "I work at Bea Cukai Pangkalpinang.", "My duty is checking documents."], sentence: "I work at Bea Cukai Pangkalpinang" }
     ];
+    const LEGACY_LEVEL_TOPICS = LEVEL_TOPICS;
     const BADGES = [
       ["explorer", "Explorer", "Selesaikan 100 soal", "🌱"],
       ["grammar", "Grammar Master", "Jawab 50 grammar", "📚"],
@@ -664,7 +665,10 @@
       ["bedroom_vocab_master", "Bedroom Vocabulary Master", "Kuasai vocabulary bedroom", "BV"],
       ["phrase_collector", "Phrase Collector", "Latihan office phrases", "PC"],
       ["pronunciation_challenger", "Pronunciation Challenger", "Latihan tongue twisters", "PR"],
-      ["workplace_communicator_drive", "Workplace Communicator", "Latihan workplace communication", "WC"]
+      ["workplace_communicator_drive", "Workplace Communicator", "Latihan workplace communication", "WC"],
+      ["reading_explorer_drive", "Reading Explorer", "Benar 15 soal reading", "RE"],
+      ["roleplay_performer", "Roleplay Performer", "Selesaikan 8 roleplay", "RP"],
+      ["cec_boss_challenger", "CEC Boss Challenger", "Selesaikan Level 10", "BC"]
     ];
     const MONITORING_KEYS = {
       programs: "cec_programs",
@@ -795,9 +799,9 @@
 
     function buildQuestionBank() {
       const bank = [];
-      LEVEL_TOPICS.slice(1).forEach((topic, li) => {
+      LEGACY_LEVEL_TOPICS.slice(1).forEach((topic, li) => {
         const level = li + 1;
-        const wrongPool = LEVEL_TOPICS.slice(1).flatMap(t => t.words.map(w => w[1]));
+        const wrongPool = LEGACY_LEVEL_TOPICS.slice(1).flatMap(t => t.words.map(w => w[1]));
         topic.words.forEach(([term, meaning], i) => {
           bank.push({ level, type: "vocab", title: "Vocabulary Hunter", prompt: `Apa arti "${term}"?`, options: shuffle([meaning, ...shuffle(wrongPool.filter(w => w !== meaning)).slice(0, 3)]), answer: meaning, xp: 10 });
         });
@@ -823,19 +827,21 @@
       return bank.slice(0, 250);
     }
     const QUESTION_SOURCES = window.QUESTION_SOURCES || [];
+    const LEVEL_DEFS = window.LEVEL_DEFS || [];
+    const USE_LEGACY_QUESTIONS = false;
     const DRIVE_QUESTION_BANK = (window.DRIVE_QUESTION_BANK || []).map(normalizeQuestion);
     const LEGACY_QUESTION_BANK = buildQuestionBank().map((q, index) => normalizeQuestion({
       id: `legacy_l${q.level}_${q.type}_${index + 1}`,
       sourceId: "legacy",
       source: "LEGACY",
       world: 1,
-      levelName: LEVEL_TOPICS[q.level]?.name || `Level ${q.level}`,
+      levelName: LEGACY_LEVEL_TOPICS[q.level]?.name || `Level ${q.level}`,
       skill: q.type === "vocab" ? "vocabulary" : q.type === "sentence" ? "speaking" : q.type,
       difficulty: "easy",
       explanation: q.answer ? `Correct answer: ${q.answer}` : "Legacy question from the original CEC Quest bank.",
       ...q
     }));
-    const QUESTION_BANK = [...DRIVE_QUESTION_BANK, ...LEGACY_QUESTION_BANK];
+    const QUESTION_BANK = USE_LEGACY_QUESTIONS ? [...DRIVE_QUESTION_BANK, ...LEGACY_QUESTION_BANK] : [...DRIVE_QUESTION_BANK];
 
     function normalizeQuestion(q) {
       const answer = q.answer ?? q.expectedAnswer ?? "";
@@ -863,11 +869,28 @@
       return QUESTION_BANK.filter(q => q.source === source || q.sourceId === source);
     }
 
+    function getQuestionsByDifficulty(difficulty) {
+      return QUESTION_BANK.filter(q => q.difficulty === difficulty);
+    }
+
     function getQuestionSetForQuiz(level, limit = 25) {
-      const driveQuestions = getQuestionsByLevel(level).filter(q => q.source !== "LEGACY");
-      const legacyQuestions = LEGACY_QUESTION_BANK.filter(q => Number(q.level) === Number(level));
+      const levelDef = LEVEL_DEFS.find(item => Number(item.level) === Number(level));
+      const driveQuestions = DRIVE_QUESTION_BANK.filter(q => Number(q.level) === Number(level));
       if (driveQuestions.length >= limit) return shuffle(driveQuestions).slice(0, limit);
-      return shuffle([...driveQuestions, ...legacyQuestions]).slice(0, limit);
+      const adjacentDifficulty = adjacentDifficulties(levelDef?.difficulty || "medium");
+      const nearby = DRIVE_QUESTION_BANK.filter(q => q.level !== level && adjacentDifficulty.includes(q.difficulty));
+      const combined = [...driveQuestions, ...nearby];
+      if (combined.length >= limit || !USE_LEGACY_QUESTIONS) return shuffle(combined).slice(0, limit);
+      const legacyQuestions = LEGACY_QUESTION_BANK.filter(q => Number(q.level) === Number(level));
+      return shuffle([...combined, ...legacyQuestions]).slice(0, limit);
+    }
+
+    function adjacentDifficulties(difficulty) {
+      const key = String(difficulty || "").toLowerCase();
+      if (key.includes("easy")) return ["easy", "medium"];
+      if (key.includes("advanced")) return ["advanced", "hard"];
+      if (key.includes("hard")) return ["medium", "hard", "advanced"];
+      return ["easy", "medium", "hard"];
     }
 
     function getQuestionStats() {
@@ -922,6 +945,7 @@
       user.loginHistory = Array.isArray(user.loginHistory) ? user.loginHistory : [];
       user.submissions = Array.isArray(user.submissions) ? user.submissions : [];
       user.scoreHistory = Array.isArray(user.scoreHistory) ? user.scoreHistory : [];
+      user.badgeStats = user.badgeStats || {};
       user.lastActivity = user.lastActivity || user.lastActive || user.updatedAt || new Date().toISOString();
       return user;
     }
@@ -1622,6 +1646,7 @@
     function renderLevels() {
       $("level-grid").innerHTML = "";
       for (let i = 1; i <= 10; i++) {
+        const def = LEVEL_DEFS.find(item => Number(item.level) === i) || { name: `Level ${i}`, difficulty: "medium", sourcePriority: ["Drive"] };
         const done = state.user.progress[`1_${i}`];
         const unlocked = i === 1 || state.user.progress[`1_${i - 1}`];
         const cls = done ? "done" : unlocked ? "current" : "locked";
@@ -1629,7 +1654,7 @@
         const btn = document.createElement("button");
         btn.className = `level ${cls}`;
         btn.disabled = !unlocked;
-        btn.innerHTML = `<div><b>${i}</b><div class="small">${stars}</div></div>`;
+        btn.innerHTML = `<div><b>${i}</b><div class="small">${esc(def.name)}</div><div class="small">${esc(def.difficulty)}</div><div class="small">${esc((def.sourcePriority || []).slice(0, 2).join(", "))}</div><div class="small">${stars}</div></div>`;
         btn.addEventListener("click", () => i === 10 ? showBoss() : startLevel(i));
         $("level-grid").appendChild(btn);
       }
@@ -1663,7 +1688,7 @@
       if (["speaking", "roleplay", "pronunciation"].includes(q.type)) return renderOpenPractice(q);
       const audio = q.type === "listening" ? `<div class="audio-panel"><button class="round-btn" type="button" id="play-audio">▶</button><div class="small">Text-to-Speech browser</div></div>` : "";
       $("question-host").innerHTML = `
-        <div class="question-meta">${q.title} - Level ${state.currentLevel}<br><span class="small">Source: ${esc(q.source || "LEGACY")}</span></div>
+        <div class="question-meta">${q.title} - Level ${state.currentLevel}<br><span class="small">Source: ${esc(q.source || "LEGACY")} | Difficulty: ${esc(q.difficulty || "medium")}</span></div>
         <div class="question-text">${esc(q.prompt)}</div>
         ${audio}
         <div class="choices">${(q.options || []).map(o => `<button class="choice" type="button" data-choice="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;
@@ -1676,7 +1701,7 @@
       state.sentence = q.words;
       state.selectedWords = [];
       $("question-host").innerHTML = `
-        <div class="question-meta">${q.title} - Level ${state.currentLevel}<br><span class="small">Source: ${esc(q.source || "LEGACY")}</span></div>
+        <div class="question-meta">${q.title} - Level ${state.currentLevel}<br><span class="small">Source: ${esc(q.source || "LEGACY")} | Difficulty: ${esc(q.difficulty || "medium")}</span></div>
         <div class="question-text">${esc(q.prompt)}</div>
         <div id="sentence-drop" class="sentence-drop"><span class="small">Kalimat tersusun muncul di sini</span></div>
         <div id="word-bank" class="word-bank">${shuffle(q.words).map(w => `<button class="word" type="button" data-word="${esc(w)}">${esc(w)}</button>`).join("")}</div>
@@ -1686,7 +1711,7 @@
 
     function renderOpenPractice(q) {
       $("question-host").innerHTML = `
-        <div class="question-meta">${q.title} - Level ${state.currentLevel}<br><span class="small">Source: ${esc(q.source || "LEGACY")}</span></div>
+        <div class="question-meta">${q.title} - Level ${state.currentLevel}<br><span class="small">Source: ${esc(q.source || "LEGACY")} | Difficulty: ${esc(q.difficulty || "medium")}</span></div>
         <div class="question-text">${esc(q.prompt)}</div>
         ${q.exampleAnswer ? `<div class="card small">Example: ${esc(q.exampleAnswer)}</div>` : ""}
         ${q.rubric ? `<div class="small">Rubric: ${q.rubric.map(esc).join(", ")}</div>` : ""}
@@ -1751,6 +1776,7 @@
         const msg = ok ? "Practice submitted." : "Jawaban terlalu singkat. Coba tulis satu kalimat lengkap.";
         host.insertAdjacentHTML("beforeend", `<div class="card small">${esc(msg)}</div>`);
       }
+      host.insertAdjacentHTML("beforeend", `<div class="card small"><b>${ok ? "Benar" : "Perlu review"}</b><br>Jawaban benar/contoh: ${esc(expected || q.expectedAnswer || "-")}<br>${esc(q.explanation || "Review the source material.")}<br>Source: ${esc(q.source || "LEGACY")}</div>`);
       host.insertAdjacentHTML("beforeend", `<button class="btn" type="button" data-action="next-question">Lanjut</button>`);
     }
 
@@ -1770,7 +1796,9 @@
       state.user.stars += stars;
       state.user.streak = Math.max(state.user.streak || 0, state.maxStreak);
       state.user.progress[`1_${state.currentLevel}`] = { stars, score: pct, date: new Date().toISOString() };
-      state.user.attempts.unshift({ date: new Date().toISOString(), level: state.currentLevel, topic: LEVEL_TOPICS[state.currentLevel].name, score: pct, stars, xp: xpTotal });
+      const levelDef = LEVEL_DEFS.find(item => Number(item.level) === Number(state.currentLevel));
+      state.user.attempts.unshift({ date: new Date().toISOString(), level: state.currentLevel, topic: levelDef?.name || `Level ${state.currentLevel}`, score: pct, stars, xp: xpTotal });
+      updateLearningBadgeStats();
       checkBadges(pct);
       persistUser();
       backend("saveProgress", { user: publicUser(state.user), latestAttempt: state.user.attempts[0] });
@@ -2398,7 +2426,7 @@
         </div>
         <h3>Question Source</h3>
         <div class="program-grid">
-          ${QUESTION_SOURCES.map(s => `<div class="program-card"><b>${esc(s.name)}</b><div class="small">${esc(s.category)}</div><div class="small">Level: ${s.recommendedLevels.join(", ")}</div><div class="small">Skills: ${s.skills.join(", ")}</div></div>`).join("")}
+          ${QUESTION_SOURCES.map(s => `<div class="program-card"><b>${esc(s.name)}</b><div class="small">${esc(s.category)}</div><div class="small">Difficulty: ${(s.difficultyRange || []).join(", ")}</div><div class="small">Skills: ${(s.skills || []).join(", ")}</div></div>`).join("")}
         </div>
         <h3>Stats</h3>
         <div class="program-grid">
@@ -2435,6 +2463,7 @@
 
     function checkBadges(pct) {
       const add = (id) => { if (!state.user.badges.includes(id)) state.user.badges.push(id); };
+      const stats = state.user.badgeStats || {};
       if (state.user.totalQuestions >= 100) add("explorer");
       if (state.user.skills.grammar >= 50) add("grammar");
       if (state.user.skills.vocab >= 50) add("vocab");
@@ -2442,12 +2471,28 @@
       if (completedLevels() >= 9 && state.currentLevel === 10) add("customs");
       if (state.maxStreak >= 10) add("streak");
       if (pct === 100) add("perfect");
-      const sources = new Set((state.reviewAnswers || []).map(item => item.question.sourceId || item.question.source));
-      if (sources.has("adjectives_prepositions")) add("grammar_builder_drive");
-      if (sources.has("bedroom_vocab")) add("bedroom_vocab_master");
-      if (sources.has("phrases")) add("phrase_collector");
-      if (sources.has("tongue_twisters")) add("pronunciation_challenger");
-      if (sources.has("workplace_communication")) add("workplace_communicator_drive");
+      if ((stats.grammarCorrect || 0) >= 30) add("grammar_builder_drive");
+      if ((stats.bedroomCorrect || 0) >= 25) add("bedroom_vocab_master");
+      if ((stats.phrasesDone || 0) >= 20) add("phrase_collector");
+      if ((stats.pronunciationDone || 0) >= 10) add("pronunciation_challenger");
+      if (state.user.progress?.["1_9"]) add("workplace_communicator_drive");
+      if (state.user.progress?.["1_10"]) add("cec_boss_challenger");
+      if ((stats.readingCorrect || 0) >= 15) add("reading_explorer_drive");
+      if ((stats.roleplayDone || 0) >= 8) add("roleplay_performer");
+    }
+
+    function updateLearningBadgeStats() {
+      const stats = state.user.badgeStats || {};
+      (state.reviewAnswers || []).forEach(item => {
+        const q = item.question;
+        if (item.ok && q.type === "grammar") stats.grammarCorrect = (stats.grammarCorrect || 0) + 1;
+        if (item.ok && q.sourceId === "bedroom_vocab") stats.bedroomCorrect = (stats.bedroomCorrect || 0) + 1;
+        if (q.sourceId === "phrases") stats.phrasesDone = (stats.phrasesDone || 0) + 1;
+        if (q.type === "pronunciation") stats.pronunciationDone = (stats.pronunciationDone || 0) + 1;
+        if (item.ok && q.type === "reading") stats.readingCorrect = (stats.readingCorrect || 0) + 1;
+        if (q.type === "roleplay") stats.roleplayDone = (stats.roleplayDone || 0) + 1;
+      });
+      state.user.badgeStats = stats;
     }
 
     function incrementSkill(type, ok) {
