@@ -6,6 +6,11 @@
   <meta name="theme-color" content="#003366">
   <title>CEC Quest - Bea Cukai Pangkalpinang</title>
   <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/english-day/favicon.ico" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="assets/english-day/english_day_favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/english-day/english_day_favicon_32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/english-day/english_day_favicon_64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/english-day/english_day_favicon_180.png">
   <style>
     :root {
       --navy: #003366;
@@ -56,7 +61,7 @@
     }
     .splash.hide { opacity: 0; visibility: hidden; }
     .splash-card { width: min(100%, 360px); text-align: center; }
-    .brand-logo { width: 96px; height: 96px; object-fit: contain; margin: 0 auto 18px; display: block; filter: drop-shadow(0 12px 22px rgba(0,0,0,.35)); animation: pulse 2.2s infinite; }
+    .brand-logo { width: min(100%, 320px); height: auto; object-fit: contain; margin: 0 auto 18px; display: block; filter: drop-shadow(0 12px 22px rgba(0,0,0,.35)); animation: pulse 2.2s infinite; }
     .brand-title { margin: 0; color: var(--gold-2); font-size: 2.15rem; font-weight: 900; letter-spacing: 0; }
     .brand-subtitle { margin: 6px 0 4px; color: var(--muted); font-weight: 600; }
     .brand-office { color: var(--gold-2); font-size: .85rem; text-transform: uppercase; font-weight: 800; }
@@ -73,7 +78,7 @@
     }
     .auth-card { width: min(100%, 392px); padding: 24px; }
     .auth-logo { display: grid; place-items: center; gap: 8px; margin-bottom: 20px; text-align: center; }
-    .auth-logo img { width: 74px; height: 74px; object-fit: contain; }
+    .auth-logo img { width: min(100%, 220px); height: auto; object-fit: contain; }
     h1, h2, h3, p { margin-top: 0; }
     h1 { font-size: 1.55rem; margin-bottom: 4px; }
     h2 { font-size: 1.25rem; margin-bottom: 10px; }
@@ -117,7 +122,7 @@
 
     .hero { display: grid; gap: 14px; margin-bottom: 16px; }
     .office-band { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: var(--r-lg); background: rgba(212,175,55,.13); border: 1px solid rgba(212,175,55,.32); }
-    .office-band img { width: 56px; height: 56px; object-fit: contain; flex: 0 0 auto; }
+    .office-band img { width: 112px; max-width: 34%; height: auto; object-fit: contain; flex: 0 0 auto; }
     .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
     .stat { padding: 12px; border-radius: var(--r-md); background: rgba(255,255,255,.1); border: 1px solid var(--line); }
     .stat b { display: block; font-size: 1.05rem; color: var(--gold-2); }
@@ -220,7 +225,7 @@
 <body>
   <div id="splash" class="splash">
     <div class="splash-card">
-      <img class="brand-logo" src="assets/logo-bea-cukai.png" alt="Logo Bea Cukai">
+      <img class="brand-logo" src="assets/english-day/english_day_logo_full.png" alt="English Day Logo">
       <h1 class="brand-title">CEC QUEST</h1>
       <div class="brand-subtitle">Customs English Club Adventure</div>
       <div class="brand-office">Bea Cukai Pangkalpinang</div>
@@ -233,7 +238,7 @@
     <section id="register-screen" class="auth-screen">
       <div class="card auth-card">
         <div class="auth-logo">
-          <img src="assets/logo-bea-cukai.png" alt="Logo Bea Cukai">
+          <img src="assets/english-day/english_day_logo_full.png" alt="English Day Logo">
           <div>
             <h1>Registrasi Pegawai</h1>
             <p class="sub">CEC Quest Bea Cukai Pangkalpinang</p>
@@ -265,7 +270,7 @@
     <section id="login-screen" class="auth-screen">
       <div class="card auth-card">
         <div class="auth-logo">
-          <img src="assets/logo-bea-cukai.png" alt="Logo Bea Cukai">
+          <img src="assets/english-day/english_day_logo_full.png" alt="English Day Logo">
           <div>
             <h1>Login Pegawai</h1>
             <p class="sub">Lengkapi unit kerja dan karakter belajar</p>
@@ -299,7 +304,7 @@
       <header class="topbar"></header>
       <div class="hero">
         <div class="office-band">
-          <img src="assets/logo-bea-cukai.png" alt="Logo Bea Cukai">
+          <img src="assets/english-day/english_day_logo_full.png" alt="English Day Logo">
           <div>
             <h2 id="welcome-title">Selamat Datang</h2>
             <div class="sub">Customs English Club Adventure - Bea Cukai Pangkalpinang</div>
@@ -681,6 +686,7 @@
       badges: "cec_badges",
       participants: "cec_participants"
     };
+    const DUMMY_PARTICIPANT_NAMES = ["Rina Wulandari", "Budi Santoso", "Sari Lestari"];
     const DATA_KEYS = {
       currentSession: "cecQuestSession",
       loginHistory: "cec_login_history",
@@ -1046,7 +1052,7 @@
       const month = now.getMonth() + 1;
       const year = now.getFullYear();
       const participants = Object.values(state.users).map(u => u.name).filter(Boolean);
-      const names = participants.length ? participants : ["Agung Hermawan", "Rina Wulandari", "Budi Santoso", "Sari Lestari"];
+      const names = participants;
       const baseSessions = [
         { programType: "language_mastery", title: "Speaking Clinic with Mentor", topic: "Self Introduction and Office Duties", speaker: "Mentor CEC", location: "Aula KPPBC TMP C Pangkalpinang", participants: names.slice(0, 8), documentationUrl: "", notes: "Peserta perlu latihan pronunciation.", followUp: "Latihan speaking circle minggu depan" },
         { programType: "english_day", title: "English Day Check-in", theme: "Office Small Talk", activity: "Pair conversation and check-in", participants: names, activeParticipants: names.slice(0, 3), participationScore: 82, documentationUrl: "", mentorNotes: "Partisipasi meningkat.", obstacles: "Sebagian peserta masih malu berbicara.", followUp: "Gunakan question card" },
@@ -1066,6 +1072,22 @@
       saveData(MONITORING_KEYS.attendance, attendance);
       saveData(MONITORING_KEYS.assessments, assessments);
       upsertTodaySession();
+    }
+
+    function cleanupDummyMonitoringData() {
+      const dummy = new Set(DUMMY_PARTICIPANT_NAMES);
+      const cleanNameArray = (arr) => Array.isArray(arr) ? arr.filter(name => !dummy.has(name)) : arr;
+      const sessions = loadData(MONITORING_KEYS.sessions, []).map(session => {
+        const next = { ...session };
+        next.participants = cleanNameArray(next.participants);
+        next.activeParticipants = cleanNameArray(next.activeParticipants);
+        if (dummy.has(next.pic)) next.pic = "";
+        if (dummy.has(next.winner)) next.winner = "";
+        return next;
+      });
+      saveData(MONITORING_KEYS.sessions, sessions);
+      saveData(MONITORING_KEYS.attendance, loadData(MONITORING_KEYS.attendance, []).filter(row => !dummy.has(row.participantName || row.participantId)));
+      saveData(MONITORING_KEYS.assessments, loadData(MONITORING_KEYS.assessments, []).filter(row => !dummy.has(row.participantName || row.participantId)));
     }
 
     function statusFromScore(score) {
@@ -1334,6 +1356,7 @@
       state.users = loadRegisteredUsers();
       const [userSyncOk] = await Promise.all([syncUsersFromBackend(), syncLearningDataFromBackend()]);
       if (userSyncOk) save("cecQuestUsers", state.users);
+      cleanupDummyMonitoringData();
       seedMonitoringData();
       renderUnitOptions();
       bindEvents();

@@ -8,10 +8,16 @@
   "theme_color": "#003366",
   "icons": [
     {
-      "src": "assets/logo-bea-cukai.png",
+      "src": "assets/english-day/english_day_favicon_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/english-day/english_day_favicon_512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }

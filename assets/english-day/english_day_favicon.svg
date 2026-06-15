@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#031525"/><stop offset="0.55" stop-color="#07335F"/><stop offset="1" stop-color="#0A5D92"/></linearGradient></defs>
+<circle cx="512" cy="512" r="480" fill="url(#bg)" stroke="#F2C94C" stroke-width="32"/>
+<circle cx="512" cy="440" r="255" fill="#F6F0E6"/>
+<path d="M285 515c20-160 65-255 227-255s207 95 227 255c-55 80-125 118-227 118S340 595 285 515z" fill="#D8D2CA" stroke="#AFA79E" stroke-width="10"/>
+<ellipse cx="512" cy="440" rx="130" ry="150" fill="#F0C4AA"/>
+<path d="M370 420c18-112 56-170 142-170s124 58 142 170" fill="none" stroke="#F3EEE8" stroke-width="30" stroke-linecap="round"/>
+<ellipse cx="455" cy="420" rx="25" ry="30" fill="#3B2723"/><ellipse cx="569" cy="420" rx="25" ry="30" fill="#3B2723"/>
+<circle cx="447" cy="410" r="7" fill="#fff"/><circle cx="561" cy="410" r="7" fill="#fff"/>
+<path d="M464 495c35 28 66 28 100 0" fill="none" stroke="#B85D6B" stroke-width="13" stroke-linecap="round"/>
+<path d="M250 710l170 20-65 55-115 5zM268 790l145 14-62 48-95 2zM292 862l104 8-48 38-66 0z" fill="#F2C94C" stroke="#082D55" stroke-width="8"/>
+<rect x="335" y="750" width="354" height="170" rx="60" fill="#F2C94C" stroke="#fff" stroke-width="10"/>
+<text x="512" y="880" text-anchor="middle" font-size="148" font-family="Arial, sans-serif" font-weight="900" fill="#07335F">ED</text>
+</svg>
