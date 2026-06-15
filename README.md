@@ -85,6 +85,8 @@ Tidak ada file `.env`. Konfigurasi utama berada di:
 
 Password baru disimpan sebagai `passwordHash`. Akun lama dengan password plain text masih bisa login dan akan dimigrasikan di browser setelah login berhasil.
 
+Untuk mode GitHub Pages static, `localStorage` adalah source of truth utama untuk akun login di browser yang sama. Google Apps Script hanya dipakai sebagai backup/sinkronisasi tambahan, sehingga registrasi dan login lokal tetap berjalan walaupun backend lambat, error, atau terkena CORS.
+
 ## Question Bank
 
 Question bank dipisahkan dari logic utama:
