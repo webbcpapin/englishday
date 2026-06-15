@@ -602,6 +602,8 @@
   </main>
   <div id="toast-wrap" class="toast-wrap"></div>
 
+  <script src="data/sources.js"></script>
+  <script src="data/questions.js"></script>
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby8gNLHo0JAs2Ka4pkYkiCbfMStqP-Tzm3LS9KVv9cOMf5xXxW3Q-Psh_yFTe-XRCrw/exec";
     const UNITS = [
@@ -657,7 +659,12 @@
       ["workplace_communicator", "Workplace Communicator", "Hadir 4 pertemuan bulanan", "🏢"],
       ["monthly_cec_star", "Monthly CEC Star", "Nilai bulanan minimal 85", "⭐"],
       ["most_improved", "Most Improved Learner", "Peningkatan nilai tertinggi", "📈"],
-      ["best_speaker", "Best Speaker", "Nilai speaking tertinggi", "🎤"]
+      ["best_speaker", "Best Speaker", "Nilai speaking tertinggi", "🎤"],
+      ["grammar_builder_drive", "Grammar Builder", "Selesaikan soal Adjectives + Prepositions", "GB"],
+      ["bedroom_vocab_master", "Bedroom Vocabulary Master", "Kuasai vocabulary bedroom", "BV"],
+      ["phrase_collector", "Phrase Collector", "Latihan office phrases", "PC"],
+      ["pronunciation_challenger", "Pronunciation Challenger", "Latihan tongue twisters", "PR"],
+      ["workplace_communicator_drive", "Workplace Communicator", "Latihan workplace communication", "WC"]
     ];
     const MONITORING_KEYS = {
       programs: "cec_programs",
@@ -774,7 +781,9 @@
       selectedWords: [],
       recognition: null,
       bossSeconds: 30,
-      loginHistoryId: null
+      loginHistoryId: null,
+      reviewAnswers: [],
+      adminQuestionFilters: { level: "", type: "", skill: "", source: "", difficulty: "" }
     };
 
     const $ = (id) => document.getElementById(id);
@@ -813,7 +822,71 @@
       });
       return bank.slice(0, 250);
     }
-    const QUESTION_BANK = buildQuestionBank();
+    const QUESTION_SOURCES = window.QUESTION_SOURCES || [];
+    const DRIVE_QUESTION_BANK = (window.DRIVE_QUESTION_BANK || []).map(normalizeQuestion);
+    const LEGACY_QUESTION_BANK = buildQuestionBank().map((q, index) => normalizeQuestion({
+      id: `legacy_l${q.level}_${q.type}_${index + 1}`,
+      sourceId: "legacy",
+      source: "LEGACY",
+      world: 1,
+      levelName: LEVEL_TOPICS[q.level]?.name || `Level ${q.level}`,
+      skill: q.type === "vocab" ? "vocabulary" : q.type === "sentence" ? "speaking" : q.type,
+      difficulty: "easy",
+      explanation: q.answer ? `Correct answer: ${q.answer}` : "Legacy question from the original CEC Quest bank.",
+      ...q
+    }));
+    const QUESTION_BANK = [...DRIVE_QUESTION_BANK, ...LEGACY_QUESTION_BANK];
+
+    function normalizeQuestion(q) {
+      const answer = q.answer ?? q.expectedAnswer ?? "";
+      return {
+        world: 1,
+        difficulty: "easy",
+        skill: q.type || "general",
+        title: q.title || "Question",
+        xp: 10,
+        explanation: q.explanation || (answer ? `Correct answer: ${answer}` : "Review the source material and try again."),
+        ...q,
+        answer
+      };
+    }
+
+    function getQuestionsByLevel(level) {
+      return QUESTION_BANK.filter(q => Number(q.level) === Number(level));
+    }
+
+    function getQuestionsByType(type) {
+      return QUESTION_BANK.filter(q => q.type === type);
+    }
+
+    function getQuestionsBySource(source) {
+      return QUESTION_BANK.filter(q => q.source === source || q.sourceId === source);
+    }
+
+    function getQuestionSetForQuiz(level, limit = 25) {
+      const driveQuestions = getQuestionsByLevel(level).filter(q => q.source !== "LEGACY");
+      const legacyQuestions = LEGACY_QUESTION_BANK.filter(q => Number(q.level) === Number(level));
+      if (driveQuestions.length >= limit) return shuffle(driveQuestions).slice(0, limit);
+      return shuffle([...driveQuestions, ...legacyQuestions]).slice(0, limit);
+    }
+
+    function getQuestionStats() {
+      const countBy = (key) => QUESTION_BANK.reduce((acc, q) => {
+        const value = q[key] || "-";
+        acc[value] = (acc[value] || 0) + 1;
+        return acc;
+      }, {});
+      return {
+        total: QUESTION_BANK.length,
+        driveTotal: DRIVE_QUESTION_BANK.length,
+        legacyTotal: LEGACY_QUESTION_BANK.length,
+        byLevel: countBy("level"),
+        byType: countBy("type"),
+        bySkill: countBy("skill"),
+        bySource: countBy("source"),
+        byDifficulty: countBy("difficulty")
+      };
+    }
 
     function defaultUser({ name, nip, unit = "", password = "", passwordHash = "", avatar = "ranger" }) {
       const av = AVATARS.find(a => a.id === avatar) || AVATARS[0];
@@ -832,15 +905,17 @@
         if (!user || (!user.password && !user.passwordHash)) return false;
         if (String(nip).startsWith("guest-") || String(nip).startsWith("demo")) return false;
         return true;
-      }).map(([nip, user]) => [nip, normalizeUser(user)]));
+      }).map(([nip, user]) => [normalizeNip(nip), normalizeUser({ ...user, nip: user.nip || nip })]));
     }
 
     function saveData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
     function loadData(key, fallback) { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
     function generateId(prefix) { return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`; }
+    function normalizeNip(nip) { return String(nip || "").trim().replace(/\s+/g, ""); }
 
     function normalizeUser(user) {
       if (!user) return user;
+      user.nip = normalizeNip(user.nip);
       user.totalScore = Number(user.totalScore ?? user.total_score ?? user.xp ?? 0);
       user.levelName = levelForScore(user.totalScore).name;
       user.sessionHistory = Array.isArray(user.sessionHistory) ? user.sessionHistory : [];
@@ -907,14 +982,15 @@
 
     function createBrowserSession(user) {
       const expiresAt = Date.now() + 12 * 60 * 60 * 1000;
-      saveData(DATA_KEYS.currentSession, { nip: user.nip, loginHistoryId: state.loginHistoryId, expiresAt });
-      localStorage.setItem("cecQuestCurrentUser", user.nip);
+      const nip = normalizeNip(user.nip);
+      saveData(DATA_KEYS.currentSession, { nip, loginHistoryId: state.loginHistoryId, expiresAt });
+      localStorage.setItem("cecQuestCurrentUser", nip);
     }
 
     function readBrowserSession() {
       const session = loadData(DATA_KEYS.currentSession, null);
       if (!session || !session.nip || Date.now() > Number(session.expiresAt || 0)) return null;
-      return session;
+      return { ...session, nip: normalizeNip(session.nip) };
     }
 
     async function hashPassword(password) {
@@ -1171,30 +1247,39 @@
 
     async function syncUsersFromBackend() {
       const response = await backendGet("getUsers");
-      if (!response || !Array.isArray(response.rows)) return;
+      if (!response || !Array.isArray(response.rows)) return false;
       response.rows.forEach(row => {
-        if (!row.nip) return;
+        const nip = normalizeNip(row.nip);
+        if (!nip) return;
         let user = null;
         try { user = row.rawJson ? JSON.parse(row.rawJson) : null; } catch (err) { user = null; }
-        const merged = {
+        const existing = state.users[nip];
+        const backendUser = normalizeUser({
           ...defaultUser({
-            name: row.name || user?.name || "",
-            nip: String(row.nip),
-            unit: row.unit || user?.unit || "",
+            name: row.name || user?.name || existing?.name || "",
+            nip,
+            unit: row.unit || user?.unit || existing?.unit || "",
             password: row.password || user?.password || "",
             passwordHash: row.passwordHash || user?.passwordHash || "",
-            avatar: user?.avatar || "ranger"
+            avatar: user?.avatar || existing?.avatar || "ranger"
           }),
+          ...(user || {})
+        });
+        const merged = {
+          ...backendUser,
           ...(user || {}),
-          password: row.password || user?.password || "",
-          passwordHash: row.passwordHash || user?.passwordHash || "",
-          xp: Number(row.xp || user?.xp || 0),
-          level: Number(row.level || user?.level || 1),
-          stars: Number(row.stars || user?.stars || 0)
+          ...(existing || {}),
+          passwordHash: existing?.passwordHash || row.passwordHash || user?.passwordHash || "",
+          password: existing?.password || row.password || user?.password || "",
+          xp: Math.max(Number(existing?.xp || 0), Number(row.xp || user?.xp || 0)),
+          level: Math.max(Number(existing?.level || 1), Number(row.level || user?.level || 1)),
+          stars: Math.max(Number(existing?.stars || 0), Number(row.stars || user?.stars || 0)),
+          totalScore: Math.max(Number(existing?.totalScore || 0), Number(row.totalScore || user?.totalScore || row.xp || user?.xp || 0))
         };
-        if (merged.password || merged.passwordHash) state.users[String(row.nip)] = normalizeUser(merged);
+        if (merged.password || merged.passwordHash) state.users[nip] = normalizeUser(merged);
       });
       save("cecQuestUsers", state.users);
+      return true;
     }
 
     function parseRawRow(row) {
@@ -1223,8 +1308,8 @@
 
     async function init() {
       state.users = loadRegisteredUsers();
-      await Promise.all([syncUsersFromBackend(), syncLearningDataFromBackend()]);
-      save("cecQuestUsers", state.users);
+      const [userSyncOk] = await Promise.all([syncUsersFromBackend(), syncLearningDataFromBackend()]);
+      if (userSyncOk) save("cecQuestUsers", state.users);
       seedMonitoringData();
       renderUnitOptions();
       bindEvents();
@@ -1238,6 +1323,29 @@
         else showAuth("register-screen");
       }, 1600);
     }
+
+    window.debugAuth = function(nip) {
+      const key = normalizeNip(nip);
+      const users = JSON.parse(localStorage.getItem("cecQuestUsers") || "{}");
+      const user = users[key];
+      console.log({
+        exists: !!user,
+        nip: key,
+        name: user?.name,
+        hasPassword: !!user?.password,
+        hasPasswordHash: !!user?.passwordHash,
+        role: user?.role,
+        lastActive: user?.lastActive
+      });
+    };
+
+    window.resetLocalUser = function(nip) {
+      const key = normalizeNip(nip);
+      const users = JSON.parse(localStorage.getItem("cecQuestUsers") || "{}");
+      delete users[key];
+      localStorage.setItem("cecQuestUsers", JSON.stringify(users));
+      console.log("Local user removed:", key);
+    };
 
     function bindEvents() {
       document.addEventListener("click", (event) => {
@@ -1254,6 +1362,8 @@
         if (a === "quit-quiz") quitQuiz();
         if (a === "next-question") nextQuestion();
         if (a === "check-sentence") checkSentence();
+        if (a === "submit-open-practice") submitOpenPractice();
+        if (a === "show-review") renderQuizReview();
         if (a === "refresh-rank") renderLeaderboard();
         if (a === "logout") logout();
         if (a === "watch-today-video") window.open(TODAY_SESSION.videoUrl, "_blank", "noopener");
@@ -1264,6 +1374,13 @@
         if (a === "print-report") printMonthlyReport();
         if (a === "export-report-json") exportMonthlyReportJson();
         if (a === "export-report-csv") exportMonthlyReportCsv();
+      });
+      document.addEventListener("change", (event) => {
+        const filter = event.target.closest("[id^='admin-filter-']");
+        if (!filter) return;
+        const key = filter.id.replace("admin-filter-", "");
+        state.adminQuestionFilters[key] = filter.value;
+        renderAdmin();
       });
       $("register-form").addEventListener("submit", registerUser);
       $("login-form").addEventListener("submit", submitLogin);
@@ -1327,10 +1444,11 @@
       event.preventDefault();
       const submit = event.submitter || $("register-form").querySelector("button[type='submit']");
       const name = $("reg-name").value.trim();
-      const nip = $("reg-nip").value.trim();
+      const nip = normalizeNip($("reg-nip").value);
       const unit = $("reg-unit").value;
       const password = $("reg-password").value.trim();
       if (!name || !nip || !unit || !password) return toast("Nama, NIP, unit kerja, dan password wajib diisi.", "err");
+      if (password.length < 4) return toast("Password minimal 4 karakter.", "err");
       if (state.users[nip] && (state.users[nip].password || state.users[nip].passwordHash)) {
         $("login-nip").value = nip;
         hydrateLoginName();
@@ -1347,9 +1465,15 @@
         save("cecQuestUsers", state.users);
         $("login-nip").value = nip;
         hydrateLoginName();
-        backend("registerUser", publicUser(state.users[nip]));
-        toast("Registrasi tersimpan. Silakan login pegawai.", "ok");
-        showAuth("login-screen");
+        backend("registerUser", publicUser(state.users[nip])).then(result => {
+          if (!result?.ok) {
+            console.warn("Backend registration sync failed; local account remains active.", result);
+            toast("Akun lokal aktif. Backend belum tersinkron, coba lagi nanti.", "");
+          }
+        });
+        recordLogin(state.users[nip]);
+        toast("Registrasi lokal berhasil. Data backend akan disinkronkan di background.", "ok");
+        loginUser(nip);
       } finally {
         if (submit) {
           submit.disabled = false;
@@ -1359,18 +1483,18 @@
     }
 
     function hydrateLoginName() {
-      const nip = $("login-nip").value.trim();
+      const nip = normalizeNip($("login-nip").value);
       $("login-name").value = state.users[nip]?.name || "";
     }
 
     async function submitLogin(event) {
       event.preventDefault();
       const submit = event.submitter || $("login-form").querySelector("button[type='submit']");
-      const nip = $("login-nip").value.trim();
+      const nip = normalizeNip($("login-nip").value);
       const password = $("login-password").value.trim();
-      if (!state.users[nip]) return toast("NIP belum terdaftar. Registrasi terlebih dahulu.", "err");
-      if (!state.users[nip].password && !state.users[nip].passwordHash) return toast("Akun lama belum memiliki password. Silakan registrasi ulang NIP ini.", "err");
-      if (!(await verifyPassword(state.users[nip], password))) return toast("Password salah.", "err");
+      if (!state.users[nip]) return toast("NIP belum terdaftar di perangkat ini. Silakan daftar dulu.", "err");
+      if (!state.users[nip].password && !state.users[nip].passwordHash) return toast("Data akun ditemukan, tetapi passwordHash kosong. Silakan reset akun lokal atau daftar ulang.", "err");
+      if (!(await verifyPassword(state.users[nip], password))) return toast("Password salah. Periksa kembali password Anda.", "err");
       if (submit) {
         submit.disabled = true;
         submit.textContent = "Memproses...";
@@ -1404,6 +1528,7 @@
     }
 
     function loginUser(nip, options = {}) {
+      nip = normalizeNip(nip);
       state.user = normalizeUser(state.users[nip]);
       state.selectedAvatar = state.user.avatar || "ranger";
       state.users[nip] = state.user;
@@ -1512,12 +1637,13 @@
 
     function startLevel(level, fromBoss = false) {
       state.currentLevel = level;
-      state.questions = shuffle(QUESTION_BANK.filter(q => q.level === level)).slice(0, 25);
+      state.questions = getQuestionSetForQuiz(level, 25);
       state.qIndex = 0;
       state.score = 0;
       state.earnedXp = fromBoss ? 50 : 0;
       state.streak = 0;
       state.maxStreak = 0;
+      state.reviewAnswers = [];
       showScreen("quiz-screen");
       renderQuestion();
     }
@@ -1534,27 +1660,38 @@
       const q = state.questions[state.qIndex];
       $("quiz-progress").style.width = `${(state.qIndex / state.questions.length) * 100}%`;
       if (q.type === "sentence") return renderSentence(q);
+      if (["speaking", "roleplay", "pronunciation"].includes(q.type)) return renderOpenPractice(q);
       const audio = q.type === "listening" ? `<div class="audio-panel"><button class="round-btn" type="button" id="play-audio">▶</button><div class="small">Text-to-Speech browser</div></div>` : "";
       $("question-host").innerHTML = `
-        <div class="question-meta">${q.title} - Level ${state.currentLevel}</div>
+        <div class="question-meta">${q.title} - Level ${state.currentLevel}<br><span class="small">Source: ${esc(q.source || "LEGACY")}</span></div>
         <div class="question-text">${esc(q.prompt)}</div>
         ${audio}
-        <div class="choices">${q.options.map(o => `<button class="choice" type="button" data-choice="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;
+        <div class="choices">${(q.options || []).map(o => `<button class="choice" type="button" data-choice="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;
       $("question-host").querySelectorAll("[data-choice]").forEach(btn => btn.addEventListener("click", () => answerCurrent(btn.dataset.choice)));
       const play = $("play-audio");
-      if (play) play.addEventListener("click", () => speak(q.speak));
+      if (play) play.addEventListener("click", () => speak(q.speak || q.answer));
     }
 
     function renderSentence(q) {
       state.sentence = q.words;
       state.selectedWords = [];
       $("question-host").innerHTML = `
-        <div class="question-meta">${q.title} - Level ${state.currentLevel}</div>
+        <div class="question-meta">${q.title} - Level ${state.currentLevel}<br><span class="small">Source: ${esc(q.source || "LEGACY")}</span></div>
         <div class="question-text">${esc(q.prompt)}</div>
         <div id="sentence-drop" class="sentence-drop"><span class="small">Kalimat tersusun muncul di sini</span></div>
         <div id="word-bank" class="word-bank">${shuffle(q.words).map(w => `<button class="word" type="button" data-word="${esc(w)}">${esc(w)}</button>`).join("")}</div>
         <button class="btn" type="button" data-action="check-sentence">Cek Jawaban</button>`;
       $("word-bank").querySelectorAll("[data-word]").forEach(btn => btn.addEventListener("click", () => moveWord(btn)));
+    }
+
+    function renderOpenPractice(q) {
+      $("question-host").innerHTML = `
+        <div class="question-meta">${q.title} - Level ${state.currentLevel}<br><span class="small">Source: ${esc(q.source || "LEGACY")}</span></div>
+        <div class="question-text">${esc(q.prompt)}</div>
+        ${q.exampleAnswer ? `<div class="card small">Example: ${esc(q.exampleAnswer)}</div>` : ""}
+        ${q.rubric ? `<div class="small">Rubric: ${q.rubric.map(esc).join(", ")}</div>` : ""}
+        <textarea id="open-answer" placeholder="Tulis jawaban atau catatan latihan Anda di sini."></textarea>
+        <button class="btn" type="button" data-action="submit-open-practice">Submit Practice</button>`;
     }
 
     function moveWord(btn) {
@@ -1568,11 +1705,18 @@
       answerCurrent(state.selectedWords.join(" "), q.answer);
     }
 
+    function submitOpenPractice() {
+      const q = state.questions[state.qIndex];
+      const value = $("open-answer")?.value.trim() || q.expectedAnswer || "";
+      answerCurrent(value, q.expectedAnswer || q.answer || value);
+    }
+
     function answerCurrent(value, expectedOverride) {
       clearInterval(state.timer);
       const q = state.questions[state.qIndex];
-      const expected = expectedOverride || q.answer;
-      const ok = value === expected;
+      const expected = expectedOverride || q.answer || q.expectedAnswer || "";
+      const openPractice = ["speaking", "roleplay", "pronunciation"].includes(q.type);
+      const ok = openPractice ? String(value || "").trim().length >= 8 : value === expected;
       if (ok) {
         state.score += 1;
         state.streak += 1;
@@ -1585,6 +1729,14 @@
       state.user.totalQuestions += 1;
       if (ok) state.user.correctQuestions += 1;
       incrementSkill(q.type, ok);
+      state.reviewAnswers.push({
+        question: q,
+        userAnswer: value || "(no answer)",
+        correctAnswer: expected || q.expectedAnswer || "-",
+        ok,
+        explanation: q.explanation || "Review the source material.",
+        source: q.source || "LEGACY"
+      });
       const host = $("question-host");
       host.querySelectorAll("[data-choice]").forEach(btn => {
         btn.disabled = true;
@@ -1593,6 +1745,10 @@
       });
       if (q.type === "sentence") {
         const msg = ok ? "Benar." : `Jawaban benar: ${expected}`;
+        host.insertAdjacentHTML("beforeend", `<div class="card small">${esc(msg)}</div>`);
+      }
+      if (openPractice) {
+        const msg = ok ? "Practice submitted." : "Jawaban terlalu singkat. Coba tulis satu kalimat lengkap.";
         host.insertAdjacentHTML("beforeend", `<div class="card small">${esc(msg)}</div>`);
       }
       host.insertAdjacentHTML("beforeend", `<button class="btn" type="button" data-action="next-question">Lanjut</button>`);
@@ -1634,7 +1790,25 @@
           <div class="stat"><b>+${xpTotal}</b><span>XP</span></div>
         </div>
         <button class="btn" data-nav="quest-screen" type="button">Kembali ke Level</button>
+        <button class="btn secondary" type="button" data-action="show-review">Review Jawaban</button>
         <button class="btn secondary" data-action="continue" type="button">Lanjutkan Belajar</button>`;
+    }
+
+    function renderQuizReview() {
+      $("result-host").innerHTML = `
+        <div class="question-meta">Review Screen</div>
+        <h2>Review Jawaban</h2>
+        <div class="stack">
+          ${state.reviewAnswers.map((item, index) => `
+            <div class="history-item">
+              <b>${index + 1}. ${esc(item.question.prompt)}</b>
+              <div class="small">Source: ${esc(item.source)} | Type: ${esc(item.question.type)} | ${item.ok ? "Correct" : "Review"}</div>
+              <div>Jawaban Anda: ${esc(item.userAnswer)}</div>
+              <div>Jawaban benar/contoh: ${esc(item.correctAnswer)}</div>
+              <div class="small">${esc(item.explanation)}</div>
+            </div>`).join("") || `<p class="sub">Belum ada jawaban untuk direview.</p>`}
+        </div>
+        <button class="btn" data-nav="quest-screen" type="button">Kembali ke Level</button>`;
     }
 
     function showBoss() {
@@ -2203,7 +2377,51 @@
     }
 
     function renderAdmin() {
-      $("admin-questions").innerHTML = `<h2>Question Bank</h2><div class="stats"><div class="stat"><b>${QUESTION_BANK.length}</b><span>Total Soal</span></div><div class="stat"><b>10</b><span>Level</span></div><div class="stat"><b>4</b><span>Tipe</span></div></div>`;
+      const stats = getQuestionStats();
+      const filters = state.adminQuestionFilters;
+      const unique = key => [...new Set(QUESTION_BANK.map(q => q[key]).filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b), "id-ID", { numeric: true }));
+      const optionList = (key, label) => `<select id="admin-filter-${key}"><option value="">${label}</option>${unique(key).map(v => `<option value="${esc(v)}" ${String(filters[key]) === String(v) ? "selected" : ""}>${esc(v)}</option>`).join("")}</select>`;
+      const filtered = QUESTION_BANK.filter(q => {
+        return (!filters.level || String(q.level) === String(filters.level))
+          && (!filters.type || q.type === filters.type)
+          && (!filters.skill || q.skill === filters.skill)
+          && (!filters.source || q.source === filters.source)
+          && (!filters.difficulty || q.difficulty === filters.difficulty);
+      }).slice(0, 40);
+      const statRows = (title, rows) => `<div class="program-card"><b>${title}</b>${Object.entries(rows).sort((a, b) => String(a[0]).localeCompare(String(b[0]), "id-ID", { numeric: true })).map(([k, v]) => `<div class="between small"><span>${esc(k)}</span><span>${v}</span></div>`).join("")}</div>`;
+      $("admin-questions").innerHTML = `
+        <h2>Question Bank</h2>
+        <div class="stats">
+          <div class="stat"><b>${stats.total}</b><span>Total Questions</span></div>
+          <div class="stat"><b>${stats.driveTotal}</b><span>Drive Sources</span></div>
+          <div class="stat"><b>${stats.legacyTotal}</b><span>Legacy Fallback</span></div>
+        </div>
+        <h3>Question Source</h3>
+        <div class="program-grid">
+          ${QUESTION_SOURCES.map(s => `<div class="program-card"><b>${esc(s.name)}</b><div class="small">${esc(s.category)}</div><div class="small">Level: ${s.recommendedLevels.join(", ")}</div><div class="small">Skills: ${s.skills.join(", ")}</div></div>`).join("")}
+        </div>
+        <h3>Stats</h3>
+        <div class="program-grid">
+          ${statRows("Questions by Level", stats.byLevel)}
+          ${statRows("Questions by Skill", stats.bySkill)}
+          ${statRows("Questions by Source", stats.bySource)}
+          ${statRows("Questions by Difficulty", stats.byDifficulty)}
+        </div>
+        <h3>Filter Soal</h3>
+        <div class="form-grid">
+          <div class="row">
+            ${optionList("level", "All levels")}
+            ${optionList("type", "All types")}
+          </div>
+          <div class="row">
+            ${optionList("skill", "All skills")}
+            ${optionList("source", "All sources")}
+          </div>
+          ${optionList("difficulty", "All difficulties")}
+        </div>
+        <div class="table-scroll"><table class="mini-table"><thead><tr><th>ID</th><th>Level</th><th>Type</th><th>Skill</th><th>Source</th><th>Difficulty</th><th>Prompt</th></tr></thead><tbody>
+          ${filtered.map(q => `<tr><td>${esc(q.id)}</td><td>${esc(q.level)}</td><td>${esc(q.type)}</td><td>${esc(q.skill)}</td><td>${esc(q.source)}</td><td>${esc(q.difficulty)}</td><td>${esc(q.prompt).slice(0, 120)}</td></tr>`).join("") || `<tr><td colspan="7">Tidak ada soal sesuai filter.</td></tr>`}
+        </tbody></table></div>`;
       $("admin-users").innerHTML = `<h2>User</h2><table class="history-table"><thead><tr><th>Nama</th><th>Unit</th><th>XP</th></tr></thead><tbody>${Object.values(state.users).map(u => `<tr><td>${esc(u.name)}</td><td>${esc(u.unit || "-")}</td><td>${u.xp}</td></tr>`).join("")}</tbody></table>`;
       const avg = Object.values(state.users).length ? Math.round(Object.values(state.users).reduce((s, u) => s + completedLevels(u), 0) / Object.values(state.users).length) : 0;
       $("admin-analytics").innerHTML = `<h2>Analytics</h2><div class="stats"><div class="stat"><b>${Object.keys(state.users).length}</b><span>User</span></div><div class="stat"><b>${avg}/10</b><span>Rata Progress</span></div><div class="stat"><b>${UNITS.length}</b><span>Unit Kerja</span></div></div>`;
@@ -2224,6 +2442,12 @@
       if (completedLevels() >= 9 && state.currentLevel === 10) add("customs");
       if (state.maxStreak >= 10) add("streak");
       if (pct === 100) add("perfect");
+      const sources = new Set((state.reviewAnswers || []).map(item => item.question.sourceId || item.question.source));
+      if (sources.has("adjectives_prepositions")) add("grammar_builder_drive");
+      if (sources.has("bedroom_vocab")) add("bedroom_vocab_master");
+      if (sources.has("phrases")) add("phrase_collector");
+      if (sources.has("tongue_twisters")) add("pronunciation_challenger");
+      if (sources.has("workplace_communication")) add("workplace_communicator_drive");
     }
 
     function incrementSkill(type, ok) {
@@ -2231,7 +2455,7 @@
       if (type === "grammar") state.user.skills.grammar += 1;
       if (type === "vocab") state.user.skills.vocab += 1;
       if (type === "listening") state.user.skills.listening += 1;
-      if (type === "sentence") state.user.skills.speaking += 1;
+      if (["sentence", "speaking", "roleplay", "pronunciation", "reading"].includes(type)) state.user.skills.speaking += 1;
     }
 
     function dailyProgress() {
