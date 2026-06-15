@@ -87,6 +87,8 @@ Password baru disimpan sebagai `passwordHash`. Akun lama dengan password plain t
 
 Untuk mode GitHub Pages static, `localStorage` adalah source of truth utama untuk akun login di browser yang sama. Google Apps Script hanya dipakai sebagai backup/sinkronisasi tambahan, sehingga registrasi dan login lokal tetap berjalan walaupun backend lambat, error, atau terkena CORS.
 
+Login multi perangkat didukung melalui Google Apps Script: jika NIP belum ada di `localStorage` perangkat baru, halaman login akan mencoba mengambil profil dari sheet backend lewat `getUsers`, menyimpan profil itu ke perangkat baru, lalu memverifikasi password. Syaratnya akun pernah berhasil tersinkron ke backend dan memiliki `passwordHash`. Jika backend sedang down, perangkat yang sudah pernah login tetap bisa memakai data lokal.
+
 ## Question Bank Drive-Based
 
 Question bank dipisahkan dari logic utama:

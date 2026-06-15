@@ -1295,37 +1295,55 @@
       const response = await backendGet("getUsers");
       if (!response || !Array.isArray(response.rows)) return false;
       response.rows.forEach(row => {
-        const nip = normalizeNip(row.nip);
-        if (!nip) return;
-        let user = null;
-        try { user = row.rawJson ? JSON.parse(row.rawJson) : null; } catch (err) { user = null; }
-        const existing = state.users[nip];
-        const backendUser = normalizeUser({
-          ...defaultUser({
-            name: row.name || user?.name || existing?.name || "",
-            nip,
-            unit: row.unit || user?.unit || existing?.unit || "",
-            password: row.password || user?.password || "",
-            passwordHash: row.passwordHash || user?.passwordHash || "",
-            avatar: user?.avatar || existing?.avatar || "ranger"
-          }),
-          ...(user || {})
-        });
-        const merged = {
-          ...backendUser,
-          ...(user || {}),
-          ...(existing || {}),
-          passwordHash: existing?.passwordHash || row.passwordHash || user?.passwordHash || "",
-          password: existing?.password || row.password || user?.password || "",
-          xp: Math.max(Number(existing?.xp || 0), Number(row.xp || user?.xp || 0)),
-          level: Math.max(Number(existing?.level || 1), Number(row.level || user?.level || 1)),
-          stars: Math.max(Number(existing?.stars || 0), Number(row.stars || user?.stars || 0)),
-          totalScore: Math.max(Number(existing?.totalScore || 0), Number(row.totalScore || user?.totalScore || row.xp || user?.xp || 0))
-        };
-        if (merged.password || merged.passwordHash) state.users[nip] = normalizeUser(merged);
+        mergeBackendUserRow(row);
       });
       save("cecQuestUsers", state.users);
       return true;
+    }
+
+    function mergeBackendUserRow(row) {
+      const nip = normalizeNip(row?.nip);
+      if (!nip) return null;
+      let user = null;
+      try { user = row.rawJson ? JSON.parse(row.rawJson) : null; } catch (err) { user = null; }
+      const existing = state.users[nip];
+      const backendUser = normalizeUser({
+        ...defaultUser({
+          name: row.name || user?.name || existing?.name || "",
+          nip,
+          unit: row.unit || user?.unit || existing?.unit || "",
+          password: row.password || user?.password || "",
+          passwordHash: row.passwordHash || user?.passwordHash || "",
+          avatar: user?.avatar || existing?.avatar || "ranger"
+        }),
+        ...(user || {})
+      });
+      const merged = {
+        ...backendUser,
+        ...(user || {}),
+        ...(existing || {}),
+        passwordHash: existing?.passwordHash || row.passwordHash || user?.passwordHash || "",
+        password: existing?.password || row.password || user?.password || "",
+        xp: Math.max(Number(existing?.xp || 0), Number(row.xp || user?.xp || 0)),
+        level: Math.max(Number(existing?.level || 1), Number(row.level || user?.level || 1)),
+        stars: Math.max(Number(existing?.stars || 0), Number(row.stars || user?.stars || 0)),
+        totalScore: Math.max(Number(existing?.totalScore || 0), Number(row.totalScore || user?.totalScore || row.xp || user?.xp || 0))
+      };
+      if (merged.password || merged.passwordHash) {
+        state.users[nip] = normalizeUser(merged);
+        return state.users[nip];
+      }
+      return null;
+    }
+
+    async function fetchUserFromBackendForLogin(nip) {
+      const response = await backendGet("getUsers");
+      if (!response || !Array.isArray(response.rows)) return null;
+      const row = response.rows.find(item => normalizeNip(item.nip) === nip);
+      if (!row) return null;
+      const user = mergeBackendUserRow(row);
+      if (user) save("cecQuestUsers", state.users);
+      return user;
     }
 
     function parseRawRow(row) {
@@ -1539,14 +1557,20 @@
       const submit = event.submitter || $("login-form").querySelector("button[type='submit']");
       const nip = normalizeNip($("login-nip").value);
       const password = $("login-password").value.trim();
-      if (!state.users[nip]) return toast("NIP belum terdaftar di perangkat ini. Silakan daftar dulu.", "err");
-      if (!state.users[nip].password && !state.users[nip].passwordHash) return toast("Data akun ditemukan, tetapi passwordHash kosong. Silakan reset akun lokal atau daftar ulang.", "err");
-      if (!(await verifyPassword(state.users[nip], password))) return toast("Password salah. Periksa kembali password Anda.", "err");
+      if (!nip || !password) return toast("NIP dan password wajib diisi.", "err");
       if (submit) {
         submit.disabled = true;
         submit.textContent = "Memproses...";
       }
       try {
+        if (!state.users[nip]) {
+          submit.textContent = "Mencari akun...";
+          const remoteUser = await fetchUserFromBackendForLogin(nip);
+          if (!remoteUser) return toast("NIP belum ada di perangkat ini dan belum ditemukan di backend. Silakan daftar dulu di salah satu perangkat.", "err");
+          toast("Profil ditemukan di backend. Menyiapkan login perangkat ini.", "ok");
+        }
+        if (!state.users[nip].password && !state.users[nip].passwordHash) return toast("Data akun ditemukan, tetapi passwordHash kosong. Silakan reset akun lokal atau daftar ulang.", "err");
+        if (!(await verifyPassword(state.users[nip], password))) return toast("Password salah. Periksa kembali password Anda.", "err");
         state.users[nip] = normalizeUser(state.users[nip]);
         state.users[nip].lastActive = new Date().toISOString();
         state.users[nip].lastActivity = state.users[nip].lastActive;
