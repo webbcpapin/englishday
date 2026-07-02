@@ -694,6 +694,8 @@
       submissions: "cec_question_submissions",
       scoreHistory: "cec_score_history"
     };
+    const SESSION_DURATION_DAYS = 30;
+    const SESSION_DURATION_MS = SESSION_DURATION_DAYS * 24 * 60 * 60 * 1000;
     const TODAY_SESSION = {
       id: "english_day_the_expert_2026_06_11",
       date: "2026-06-11",
@@ -1011,9 +1013,27 @@
     }
 
     function createBrowserSession(user) {
-      const expiresAt = Date.now() + 12 * 60 * 60 * 1000;
       const nip = normalizeNip(user.nip);
-      saveData(DATA_KEYS.currentSession, { nip, loginHistoryId: state.loginHistoryId, expiresAt });
+      saveData(DATA_KEYS.currentSession, {
+        nip,
+        loginHistoryId: state.loginHistoryId,
+        expiresAt: Date.now() + SESSION_DURATION_MS,
+        createdAt: new Date().toISOString()
+      });
+      localStorage.setItem("cecQuestCurrentUser", nip);
+    }
+
+    function refreshBrowserSession() {
+      if (!state.user) return;
+      const session = loadData(DATA_KEYS.currentSession, {});
+      const nip = normalizeNip(state.user.nip);
+      saveData(DATA_KEYS.currentSession, {
+        ...session,
+        nip,
+        loginHistoryId: state.loginHistoryId || session.loginHistoryId || "",
+        expiresAt: Date.now() + SESSION_DURATION_MS,
+        refreshedAt: new Date().toISOString()
+      });
       localStorage.setItem("cecQuestCurrentUser", nip);
     }
 
@@ -1274,10 +1294,11 @@
       }
     }
 
-    async function backendGet(action) {
+    async function backendGet(action, params = {}) {
       if (!APPS_SCRIPT_URL) return null;
       try {
-        const res = await fetchWithTimeout(`${APPS_SCRIPT_URL}?action=${encodeURIComponent(action)}`, {}, 4000);
+        const query = new URLSearchParams({ action, ...params });
+        const res = await fetchWithTimeout(`${APPS_SCRIPT_URL}?${query.toString()}`, {}, 4000);
         return await res.json();
       } catch (err) {
         console.warn("Backend read unavailable", err);
@@ -1301,19 +1322,31 @@
       return true;
     }
 
+    function newestTimestamp(...values) {
+      return Math.max(...values.map(value => Date.parse(value || "") || 0));
+    }
+
+    function chooseNewestValue(localValue, remoteValue, localStamp, remoteStamp) {
+      if (remoteStamp > localStamp) return remoteValue ?? localValue;
+      return localValue ?? remoteValue;
+    }
+
     function mergeBackendUserRow(row) {
-      const nip = normalizeNip(row?.nip);
+      const sourceRow = row?.user || row?.row || row;
+      const nip = normalizeNip(sourceRow?.nip);
       if (!nip) return null;
       let user = null;
-      try { user = row.rawJson ? JSON.parse(row.rawJson) : null; } catch (err) { user = null; }
+      try { user = sourceRow.rawJson ? JSON.parse(sourceRow.rawJson) : null; } catch (err) { user = null; }
       const existing = state.users[nip];
+      const localStamp = newestTimestamp(existing?.updatedAt, existing?.lastActivity, existing?.lastActive);
+      const remoteStamp = newestTimestamp(user?.updatedAt, sourceRow.updatedAt, user?.lastActivity, sourceRow.lastActivity, user?.lastActive, sourceRow.lastActive);
       const backendUser = normalizeUser({
         ...defaultUser({
-          name: row.name || user?.name || existing?.name || "",
+          name: sourceRow.name || user?.name || existing?.name || "",
           nip,
-          unit: row.unit || user?.unit || existing?.unit || "",
-          password: row.password || user?.password || "",
-          passwordHash: row.passwordHash || user?.passwordHash || "",
+          unit: sourceRow.unit || user?.unit || existing?.unit || "",
+          password: sourceRow.password || user?.password || "",
+          passwordHash: sourceRow.passwordHash || user?.passwordHash || "",
           avatar: user?.avatar || existing?.avatar || "ranger"
         }),
         ...(user || {})
@@ -1322,12 +1355,20 @@
         ...backendUser,
         ...(user || {}),
         ...(existing || {}),
-        passwordHash: existing?.passwordHash || row.passwordHash || user?.passwordHash || "",
-        password: existing?.password || row.password || user?.password || "",
-        xp: Math.max(Number(existing?.xp || 0), Number(row.xp || user?.xp || 0)),
-        level: Math.max(Number(existing?.level || 1), Number(row.level || user?.level || 1)),
-        stars: Math.max(Number(existing?.stars || 0), Number(row.stars || user?.stars || 0)),
-        totalScore: Math.max(Number(existing?.totalScore || 0), Number(row.totalScore || user?.totalScore || row.xp || user?.xp || 0))
+        passwordHash: existing?.passwordHash || sourceRow.passwordHash || user?.passwordHash || "",
+        password: existing?.password || sourceRow.password || user?.password || "",
+        xp: Math.max(Number(existing?.xp || 0), Number(sourceRow.xp || user?.xp || 0)),
+        level: Math.max(Number(existing?.level || 1), Number(sourceRow.level || user?.level || 1)),
+        stars: Math.max(Number(existing?.stars || 0), Number(sourceRow.stars || user?.stars || 0)),
+        totalScore: Math.max(Number(existing?.totalScore || 0), Number(sourceRow.totalScore || user?.totalScore || sourceRow.xp || user?.xp || 0)),
+        progress: chooseNewestValue(existing?.progress, user?.progress, localStamp, remoteStamp) || {},
+        attempts: chooseNewestValue(existing?.attempts, user?.attempts, localStamp, remoteStamp) || [],
+        badges: chooseNewestValue(existing?.badges, user?.badges, localStamp, remoteStamp) || [],
+        badgeStats: chooseNewestValue(existing?.badgeStats, user?.badgeStats, localStamp, remoteStamp) || {},
+        sessionHistory: chooseNewestValue(existing?.sessionHistory, user?.sessionHistory, localStamp, remoteStamp) || [],
+        submissions: chooseNewestValue(existing?.submissions, user?.submissions, localStamp, remoteStamp) || [],
+        scoreHistory: chooseNewestValue(existing?.scoreHistory, user?.scoreHistory, localStamp, remoteStamp) || [],
+        updatedAt: new Date(Math.max(localStamp, remoteStamp, Date.now())).toISOString()
       };
       if (merged.password || merged.passwordHash) {
         state.users[nip] = normalizeUser(merged);
@@ -1337,6 +1378,13 @@
     }
 
     async function fetchUserFromBackendForLogin(nip) {
+      nip = normalizeNip(nip);
+      const direct = await backendGet("getUserByNip", { nip });
+      if (direct?.user || direct?.row) {
+        const user = mergeBackendUserRow(direct.user || direct.row);
+        if (user) save("cecQuestUsers", state.users);
+        return user;
+      }
       const response = await backendGet("getUsers");
       if (!response || !Array.isArray(response.rows)) return null;
       const row = response.rows.find(item => normalizeNip(item.nip) === nip);
@@ -1344,6 +1392,20 @@
       const user = mergeBackendUserRow(row);
       if (user) save("cecQuestUsers", state.users);
       return user;
+    }
+
+    async function syncUserState(user = state.user) {
+      if (!user || !user.nip) return false;
+      const payload = publicUser(normalizeUser({ ...user, nip: normalizeNip(user.nip) }));
+      const result = await backend("saveUserState", payload);
+      if (result?.ok) {
+        localStorage.setItem("cecQuestPendingSync", "false");
+        localStorage.setItem("cecQuestLastSyncedAt", new Date().toISOString());
+        return true;
+      }
+      localStorage.setItem("cecQuestPendingSync", "true");
+      backend("saveProgress", { user: payload });
+      return false;
     }
 
     function parseRawRow(row) {
@@ -1412,6 +1474,33 @@
       console.log("Local user removed:", key);
     };
 
+    window.debugSession = function() {
+      console.log({
+        currentSession: JSON.parse(localStorage.getItem(DATA_KEYS.currentSession) || "null"),
+        currentUser: localStorage.getItem("cecQuestCurrentUser"),
+        pendingSync: localStorage.getItem("cecQuestPendingSync"),
+        lastSyncedAt: localStorage.getItem("cecQuestLastSyncedAt"),
+        users: Object.keys(JSON.parse(localStorage.getItem("cecQuestUsers") || "{}"))
+      });
+    };
+
+    window.forceLogout = function() {
+      localStorage.removeItem("cecQuestCurrentUser");
+      localStorage.removeItem(DATA_KEYS.currentSession);
+      state.user = null;
+      state.loginHistoryId = null;
+      showAuth("login-screen");
+      console.log("Local browser session removed.");
+    };
+
+    window.forceSyncCurrentUser = function() {
+      if (!state.user) {
+        console.warn("No active user to sync.");
+        return Promise.resolve(false);
+      }
+      return syncUserState(state.user);
+    };
+
     function bindEvents() {
       document.addEventListener("click", (event) => {
         const nav = event.target.closest("[data-nav]");
@@ -1421,7 +1510,7 @@
         const a = action.dataset.action;
         if (a === "show-login") showAuth("login-screen");
         if (a === "back-register") showAuth("register-screen");
-        if (a === "mentor-login") mentorLogin();
+        if (a === "mentor-login") mentorAccountLogin();
         if (a === "start-adventure") showScreen("home-screen");
         if (a === "continue") continueLearning();
         if (a === "quit-quiz") quitQuiz();
@@ -1589,13 +1678,28 @@
     }
 
     function mentorLogin() {
+      return mentorAccountLogin();
       const password = $("mentor-password").value.trim();
-      if (password !== "acatigakali") return toast("Password mentor salah.", "err");
-      state.user = defaultUser({ name: "Mentor CEC", nip: "__mentor", unit: "Mentor", password: "acatigakali", avatar: "advisor" });
+      if (password) return mentorAccountLogin();
+      state.user = null;
       state.user.role = "mentor";
       state.user.avatarEmoji = "📋";
       showScreen("mentor-screen");
       toast("Login mentor berhasil.", "ok");
+    }
+
+    async function mentorAccountLogin() {
+      const nip = normalizeNip($("login-nip").value);
+      const password = $("login-password").value.trim() || $("mentor-password").value.trim();
+      if (!nip || !password) return toast("Isi NIP dan password akun mentor/admin.", "err");
+      if (!state.users[nip]) await fetchUserFromBackendForLogin(nip);
+      const user = state.users[nip];
+      if (!user) return toast("Akun mentor/admin tidak ditemukan.", "err");
+      if (!["mentor", "admin"].includes(user.role)) return toast("Akun ini belum memiliki role mentor/admin.", "err");
+      if (!(await verifyPassword(user, password))) return toast("Password mentor/admin salah.", "err");
+      recordLogin(user);
+      save("cecQuestUsers", state.users);
+      loginUser(nip, { targetScreen: "mentor-screen" });
     }
 
     function loginUser(nip, options = {}) {
@@ -1603,9 +1707,10 @@
       state.user = normalizeUser(state.users[nip]);
       state.selectedAvatar = state.user.avatar || "ranger";
       state.users[nip] = state.user;
-      createBrowserSession(state.user);
+      if (options.restore) refreshBrowserSession();
+      else createBrowserSession(state.user);
       persistUser();
-      showScreen(options.restore ? "home-screen" : "profile-screen");
+      showScreen(options.targetScreen || (options.restore ? "home-screen" : "profile-screen"));
       if (!options.restore) toast(`Selamat datang, ${state.user.name}.`, "ok");
     }
 
@@ -1624,8 +1729,10 @@
       state.user.levelName = levelForScore(state.user.totalScore).name;
       state.user.lastActive = new Date().toISOString();
       state.user.lastActivity = state.user.lastActive;
+      state.user.updatedAt = state.user.lastActive;
       state.users[state.user.nip] = state.user;
       save("cecQuestUsers", state.users);
+      syncUserState(state.user);
     }
 
     function renderAll() {

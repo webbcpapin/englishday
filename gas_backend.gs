@@ -23,6 +23,8 @@ function doGet(e) {
   ensureSheets_();
 
   if (action === 'getUsers') return json_(getUsers_());
+  if (action === 'getUserByNip') return json_(getUserByNip_(e.parameter.nip));
+  if (action === 'getUserProgress') return json_(getUserProgress_(e.parameter.nip));
   if (action === 'getLeaderboard') return json_(getLeaderboard_());
   if (action === 'getAttempts') return json_(readSheet_(CONFIG.SHEETS.ATTEMPTS));
   if (action === 'getProgramData') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.PROGRAM_DATA) });
@@ -38,7 +40,7 @@ function doGet(e) {
   return json_({
     ok: true,
     message: 'CEC Quest Google Apps Script backend is ready.',
-    actions: ['getUsers', 'getLeaderboard', 'getAttempts', 'test']
+    actions: ['getUsers', 'getUserByNip', 'getUserProgress', 'getLeaderboard', 'getAttempts', 'saveUserState', 'syncUser', 'test']
   });
 }
 
@@ -49,6 +51,8 @@ function doPost(e) {
   const payload = body.payload || {};
 
   if (action === 'registerUser') return json_(upsertUser_(payload));
+  if (action === 'saveUserState') return json_(upsertUser_(payload));
+  if (action === 'syncUser') return json_(upsertUser_(payload.user || payload));
   if (action === 'saveProgress') return json_(saveProgress_(payload));
   if (action === 'saveAttempt') return json_(saveAttempt_(payload));
   if (action === 'saveMentorEntry') return json_(saveMentorEntry_(payload));
@@ -102,6 +106,7 @@ function getSs_() {
 
 function upsertUser_(user) {
   if (!user || !user.nip) return { ok: false, error: 'Missing user.nip' };
+  user.nip = normalizeNip_(user.nip);
 
   const sh = getSs_().getSheetByName(CONFIG.SHEETS.USERS);
   const data = sh.getDataRange().getValues();
@@ -388,6 +393,32 @@ function syncLeaderboard_(user) {
 
 function getUsers_() {
   return { ok: true, rows: readSheet_(CONFIG.SHEETS.USERS) };
+}
+
+function normalizeNip_(nip) {
+  return String(nip || '').trim().replace(/\s+/g, '');
+}
+
+function getUserByNip_(nip) {
+  const key = normalizeNip_(nip);
+  if (!key) return { ok: false, error: 'Missing nip' };
+  const row = readSheet_(CONFIG.SHEETS.USERS).find(function(item) {
+    return normalizeNip_(item.nip) === key;
+  });
+  return { ok: true, user: row || null };
+}
+
+function getUserProgress_(nip) {
+  const key = normalizeNip_(nip);
+  if (!key) return { ok: false, error: 'Missing nip' };
+  return {
+    ok: true,
+    user: getUserByNip_(key).user,
+    progress: readSheet_(CONFIG.SHEETS.PROGRESS).filter(function(row) { return normalizeNip_(row.nip) === key; }),
+    attempts: readSheet_(CONFIG.SHEETS.ATTEMPTS).filter(function(row) { return normalizeNip_(row.nip) === key; }),
+    submissions: readSheet_(CONFIG.SHEETS.SUBMISSIONS).filter(function(row) { return normalizeNip_(row.userId || row.nip) === key; }),
+    scoreHistory: readSheet_(CONFIG.SHEETS.SCORE_HISTORY).filter(function(row) { return normalizeNip_(row.userId || row.nip) === key; })
+  };
 }
 
 function getLeaderboard_() {

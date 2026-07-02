@@ -6,7 +6,7 @@ Customs English Club Adventure untuk Bea Cukai Pangkalpinang.
 
 - Registrasi awal: nama, NIP, unit kerja resmi, dan password.
 - Login pegawai: NIP dan password, dengan deteksi nama jika NIP sudah terdaftar.
-- Menu mentor dari halaman login dengan password khusus.
+- Menu mentor/admin dari halaman login memakai akun ber-role `mentor` atau `admin`.
 - Profil pegawai tampil setelah login, berisi progress, pilihan avatar, dan tombol mulai petualangan.
 - Dashboard: XP, level, misi harian, world progress, quick actions.
 - Quest: 6 world, World 1 aktif, 10 level berbasis difficulty untuk English for Workplace.
@@ -85,9 +85,13 @@ Tidak ada file `.env`. Konfigurasi utama berada di:
 
 Password baru disimpan sebagai `passwordHash`. Akun lama dengan password plain text masih bisa login dan akan dimigrasikan di browser setelah login berhasil.
 
-Untuk mode GitHub Pages static, `localStorage` adalah source of truth utama untuk akun login di browser yang sama. Google Apps Script hanya dipakai sebagai backup/sinkronisasi tambahan, sehingga registrasi dan login lokal tetap berjalan walaupun backend lambat, error, atau terkena CORS.
+Untuk mode GitHub Pages static, `localStorage` adalah source of truth utama di perangkat yang sedang dipakai. Google Apps Script/Google Sheets dipakai sebagai backup dan sinkronisasi multi perangkat, sehingga registrasi dan login lokal tetap berjalan walaupun backend lambat, error, atau terkena CORS.
 
-Login multi perangkat didukung melalui Google Apps Script: jika NIP belum ada di `localStorage` perangkat baru, halaman login akan mencoba mengambil profil dari sheet backend lewat `getUsers`, menyimpan profil itu ke perangkat baru, lalu memverifikasi password. Syaratnya akun pernah berhasil tersinkron ke backend dan memiliki `passwordHash`. Jika backend sedang down, perangkat yang sudah pernah login tetap bisa memakai data lokal.
+Login multi perangkat didukung melalui Google Apps Script: jika NIP belum ada di `localStorage` perangkat baru, halaman login akan mencoba mengambil profil dari sheet backend lewat `getUserByNip` dan fallback `getUsers`, menyimpan profil itu ke perangkat baru, lalu memverifikasi password. Syaratnya akun pernah berhasil tersinkron ke backend dan memiliki `passwordHash`. Jika backend sedang down, perangkat yang sudah pernah login tetap bisa memakai data lokal.
+
+Session browser berlaku 30 hari dan diperpanjang otomatis saat aplikasi berhasil restore session. Progress, XP, stars, badge, attempts, dan profil disimpan lokal lebih dulu lalu dikirim ke backend lewat `saveUserState` di background. Jika endpoint baru belum diredeploy, aplikasi tetap fallback ke endpoint lama `saveProgress`.
+
+Login mentor/admin tidak lagi memakai password global. Tombol mentor memakai NIP dan password akun yang punya role `mentor` atau `admin`.
 
 ## Question Bank Drive-Based
 
