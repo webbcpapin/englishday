@@ -98,6 +98,9 @@ function ensureSheet_(ss, name, headers) {
       current.splice(index, 0, header);
     }
   });
+  if (name === CONFIG.SHEETS.USERS) {
+    sh.getRange('A:A').setNumberFormat('@');
+  }
 }
 
 function getSs_() {
@@ -109,10 +112,11 @@ function upsertUser_(user) {
   user.nip = normalizeNip_(user.nip);
 
   const sh = getSs_().getSheetByName(CONFIG.SHEETS.USERS);
+  sh.getRange('A:A').setNumberFormat('@');
   const data = sh.getDataRange().getValues();
-  const row = findRow_(data, 0, user.nip);
+  const row = findUserRowByNip_(data, user.nip);
   const values = [
-    user.nip,
+    String(user.nip || ''),
     user.name || '',
     user.unit || '',
     user.passwordHash || '',
@@ -129,8 +133,13 @@ function upsertUser_(user) {
     JSON.stringify(user)
   ];
 
-  if (row > 0) sh.getRange(row, 1, 1, values.length).setValues([values]);
-  else sh.appendRow(values);
+  if (row > 0) {
+    sh.getRange(row, 1, 1, values.length).setValues([values]);
+    sh.getRange(row, 1).setNumberFormat('@');
+  } else {
+    sh.appendRow(values);
+    sh.getRange(sh.getLastRow(), 1).setNumberFormat('@');
+  }
 
   syncLeaderboard_(user);
   return { ok: true, user: user };
@@ -395,15 +404,42 @@ function getUsers_() {
   return { ok: true, rows: readSheet_(CONFIG.SHEETS.USERS) };
 }
 
+function parseRawJson_(row) {
+  if (!row || !row.rawJson) return null;
+  try {
+    return JSON.parse(row.rawJson);
+  } catch (err) {
+    return null;
+  }
+}
+
 function normalizeNip_(nip) {
   return String(nip || '').trim().replace(/\s+/g, '');
+}
+
+function backendRowNip_(row) {
+  const raw = parseRawJson_(row);
+  return normalizeNip_((raw && raw.nip) || row.nip || '');
+}
+
+function nipMatches_(row, targetNip) {
+  const key = normalizeNip_(targetNip);
+  const candidate = backendRowNip_(row);
+  if (!key || !candidate) return false;
+  if (candidate === key) return true;
+  let prefixLength = 0;
+  while (prefixLength < candidate.length && prefixLength < key.length && candidate[prefixLength] === key[prefixLength]) prefixLength++;
+  return candidate.length >= 12 && key.length >= 12 && prefixLength >= 12;
 }
 
 function getUserByNip_(nip) {
   const key = normalizeNip_(nip);
   if (!key) return { ok: false, error: 'Missing nip' };
-  const row = readSheet_(CONFIG.SHEETS.USERS).find(function(item) {
-    return normalizeNip_(item.nip) === key;
+  const rows = readSheet_(CONFIG.SHEETS.USERS);
+  const row = rows.find(function(item) {
+    return backendRowNip_(item) === key;
+  }) || rows.find(function(item) {
+    return nipMatches_(item, key);
   });
   return { ok: true, user: row || null };
 }
@@ -444,6 +480,24 @@ function readSheet_(name) {
 function findRow_(data, col, value) {
   for (let i = 1; i < data.length; i++) {
     if (String(data[i][col]) === String(value)) return i + 1;
+  }
+  return -1;
+}
+
+function findUserRowByNip_(data, nip) {
+  const headers = data[0] || [];
+  const nipIndex = headers.indexOf('nip');
+  const rawIndex = headers.indexOf('rawJson');
+  for (let i = 1; i < data.length; i++) {
+    const row = {};
+    headers.forEach(function(header, index) { row[header] = data[i][index]; });
+    if (backendRowNip_(row) === normalizeNip_(nip)) return i + 1;
+    if (nipIndex >= 0 && normalizeNip_(data[i][nipIndex]) === normalizeNip_(nip)) return i + 1;
+    if (rawIndex >= 0) {
+      const raw = parseRawJson_({ rawJson: data[i][rawIndex] });
+      if (raw && normalizeNip_(raw.nip) === normalizeNip_(nip)) return i + 1;
+    }
+    if (nipMatches_(row, nip)) return i + 1;
   }
   return -1;
 }

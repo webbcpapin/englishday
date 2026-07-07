@@ -1331,12 +1331,32 @@
       return localValue ?? remoteValue;
     }
 
+    function parseBackendRawUser(row) {
+      if (!row) return null;
+      try { return row.rawJson ? JSON.parse(row.rawJson) : null; } catch (err) { return null; }
+    }
+
+    function getBackendRowNip(row) {
+      const rawUser = parseBackendRawUser(row);
+      return normalizeNip(rawUser?.nip || row?.nip || "");
+    }
+
+    function backendRowMatchesNip(row, targetNip) {
+      const target = normalizeNip(targetNip);
+      const candidate = getBackendRowNip(row);
+      if (!candidate || !target) return false;
+      if (candidate === target) return true;
+      let prefixLength = 0;
+      while (prefixLength < candidate.length && prefixLength < target.length && candidate[prefixLength] === target[prefixLength]) prefixLength++;
+      return candidate.length >= 12 && target.length >= 12 && prefixLength >= 12;
+    }
+
     function mergeBackendUserRow(row) {
       const sourceRow = row?.user || row?.row || row;
-      const nip = normalizeNip(sourceRow?.nip);
-      if (!nip) return null;
       let user = null;
       try { user = sourceRow.rawJson ? JSON.parse(sourceRow.rawJson) : null; } catch (err) { user = null; }
+      const nip = normalizeNip(user?.nip || sourceRow?.nip);
+      if (!nip) return null;
       const existing = state.users[nip];
       const localStamp = newestTimestamp(existing?.updatedAt, existing?.lastActivity, existing?.lastActive);
       const remoteStamp = newestTimestamp(user?.updatedAt, sourceRow.updatedAt, user?.lastActivity, sourceRow.lastActivity, user?.lastActive, sourceRow.lastActive);
@@ -1387,7 +1407,7 @@
       }
       const response = await backendGet("getUsers");
       if (!response || !Array.isArray(response.rows)) return null;
-      const row = response.rows.find(item => normalizeNip(item.nip) === nip);
+      const row = response.rows.find(item => getBackendRowNip(item) === nip) || response.rows.find(item => backendRowMatchesNip(item, nip));
       if (!row) return null;
       const user = mergeBackendUserRow(row);
       if (user) save("cecQuestUsers", state.users);
