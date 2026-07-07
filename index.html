@@ -1287,7 +1287,7 @@
           method: "POST",
           body: JSON.stringify({ action, payload }),
           headers: { "Content-Type": "text/plain;charset=utf-8" }
-        }, 6000);
+        }, 22000);
         return await res.json();
       } catch (err) {
         console.warn("Backend unavailable", err);
