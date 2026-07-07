@@ -1051,8 +1051,9 @@
     }
 
     async function verifyPassword(user, password) {
-      if (user.passwordHash) return user.passwordHash === await hashPassword(password);
-      if (user.password === password) {
+      const plainPassword = user.password == null ? "" : String(user.password);
+      if (user.passwordHash && user.passwordHash === await hashPassword(password)) return true;
+      if (plainPassword && plainPassword === String(password)) {
         user.passwordHash = await hashPassword(password);
         user.password = "";
         return true;
@@ -1302,8 +1303,37 @@
         return await res.json();
       } catch (err) {
         console.warn("Backend read unavailable", err);
-        return null;
+        return backendGetJsonp(action, params);
       }
+    }
+
+    function backendGetJsonp(action, params = {}) {
+      if (!APPS_SCRIPT_URL || typeof document === "undefined") return Promise.resolve(null);
+      return new Promise(resolve => {
+        const callbackName = `cecQuestJsonp_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        const query = new URLSearchParams({ action, ...params, callback: callbackName });
+        const script = document.createElement("script");
+        const cleanup = () => {
+          delete window[callbackName];
+          script.remove();
+        };
+        const timeout = setTimeout(() => {
+          cleanup();
+          resolve(null);
+        }, 6000);
+        window[callbackName] = data => {
+          clearTimeout(timeout);
+          cleanup();
+          resolve(data);
+        };
+        script.onerror = () => {
+          clearTimeout(timeout);
+          cleanup();
+          resolve(null);
+        };
+        script.src = `${APPS_SCRIPT_URL}?${query.toString()}`;
+        document.head.appendChild(script);
+      });
     }
 
     function fetchWithTimeout(url, options = {}, timeout = 6000) {

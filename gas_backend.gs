@@ -22,26 +22,26 @@ function doGet(e) {
   const action = (e.parameter.action || '').trim();
   ensureSheets_();
 
-  if (action === 'getUsers') return json_(getUsers_());
-  if (action === 'getUserByNip') return json_(getUserByNip_(e.parameter.nip));
-  if (action === 'getUserProgress') return json_(getUserProgress_(e.parameter.nip));
-  if (action === 'getLeaderboard') return json_(getLeaderboard_());
-  if (action === 'getAttempts') return json_(readSheet_(CONFIG.SHEETS.ATTEMPTS));
-  if (action === 'getProgramData') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.PROGRAM_DATA) });
-  if (action === 'getMonthlyPlans') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.MONTHLY_PLANS) });
-  if (action === 'getAssessments') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.ASSESSMENTS) });
-  if (action === 'getLoginHistory') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.LOGIN_HISTORY) });
-  if (action === 'getEnglishDaySessions') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.ENGLISH_DAY_SESSIONS) });
-  if (action === 'getQuestions') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.QUESTIONS) });
-  if (action === 'getSubmissions') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.SUBMISSIONS) });
-  if (action === 'getScoreHistory') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.SCORE_HISTORY) });
-  if (action === 'test') return json_({ ok: true, app: 'CEC Quest Backend', time: new Date().toISOString() });
+  if (action === 'getUsers') return json_(getUsers_(), e);
+  if (action === 'getUserByNip') return json_(getUserByNip_(e.parameter.nip), e);
+  if (action === 'getUserProgress') return json_(getUserProgress_(e.parameter.nip), e);
+  if (action === 'getLeaderboard') return json_(getLeaderboard_(), e);
+  if (action === 'getAttempts') return json_(readSheet_(CONFIG.SHEETS.ATTEMPTS), e);
+  if (action === 'getProgramData') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.PROGRAM_DATA) }, e);
+  if (action === 'getMonthlyPlans') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.MONTHLY_PLANS) }, e);
+  if (action === 'getAssessments') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.ASSESSMENTS) }, e);
+  if (action === 'getLoginHistory') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.LOGIN_HISTORY) }, e);
+  if (action === 'getEnglishDaySessions') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.ENGLISH_DAY_SESSIONS) }, e);
+  if (action === 'getQuestions') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.QUESTIONS) }, e);
+  if (action === 'getSubmissions') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.SUBMISSIONS) }, e);
+  if (action === 'getScoreHistory') return json_({ ok: true, rows: readSheet_(CONFIG.SHEETS.SCORE_HISTORY) }, e);
+  if (action === 'test') return json_({ ok: true, app: 'CEC Quest Backend', time: new Date().toISOString() }, e);
 
   return json_({
     ok: true,
     message: 'CEC Quest Google Apps Script backend is ready.',
     actions: ['getUsers', 'getUserByNip', 'getUserProgress', 'getLeaderboard', 'getAttempts', 'saveUserState', 'syncUser', 'test']
-  });
+  }, e);
 }
 
 function doPost(e) {
@@ -511,7 +511,13 @@ function parseBody_(e) {
   }
 }
 
-function json_(payload) {
+function json_(payload, e) {
+  const callback = e && e.parameter && String(e.parameter.callback || '').trim();
+  if (callback && /^[A-Za-z_$][0-9A-Za-z_$]*(\.[A-Za-z_$][0-9A-Za-z_$]*)*$/.test(callback)) {
+    return ContentService
+      .createTextOutput(callback + '(' + JSON.stringify(payload) + ');')
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
   return ContentService
     .createTextOutput(JSON.stringify(payload))
     .setMimeType(ContentService.MimeType.JSON);
