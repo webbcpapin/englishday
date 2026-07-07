@@ -1299,7 +1299,7 @@
       if (!APPS_SCRIPT_URL) return null;
       try {
         const query = new URLSearchParams({ action, ...params });
-        const res = await fetchWithTimeout(`${APPS_SCRIPT_URL}?${query.toString()}`, {}, 4000);
+        const res = await fetchWithTimeout(`${APPS_SCRIPT_URL}?${query.toString()}`, {}, 15000);
         return await res.json();
       } catch (err) {
         console.warn("Backend read unavailable", err);
@@ -1320,7 +1320,7 @@
         const timeout = setTimeout(() => {
           cleanup();
           resolve(null);
-        }, 6000);
+        }, 22000);
         window[callbackName] = data => {
           clearTimeout(timeout);
           cleanup();
