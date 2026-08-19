@@ -1303,8 +1303,10 @@
         const res = await fetchWithTimeout(`${APPS_SCRIPT_URL}?${query.toString()}`, {}, 15000);
         return await res.json();
       } catch (err) {
+        const fallback = await backendGetJsonp(action, params);
+        if (fallback) return fallback;
         console.warn("Backend read unavailable", err);
-        return backendGetJsonp(action, params);
+        return null;
       }
     }
 
