@@ -694,6 +694,7 @@
       submissions: "cec_question_submissions",
       scoreHistory: "cec_score_history"
     };
+    const MENTOR_ACCESS_PASSWORD = "acatigakali";
     const SESSION_DURATION_DAYS = 30;
     const SESSION_DURATION_MS = SESSION_DURATION_DAYS * 24 * 60 * 60 * 1000;
     const TODAY_SESSION = {
@@ -1729,19 +1730,17 @@
 
     function mentorLogin() {
       return mentorAccountLogin();
-      const password = $("mentor-password").value.trim();
-      if (password) return mentorAccountLogin();
-      state.user = null;
-      state.user.role = "mentor";
-      state.user.avatarEmoji = "📋";
-      showScreen("mentor-screen");
-      toast("Login mentor berhasil.", "ok");
     }
 
     async function mentorAccountLogin() {
       const nip = normalizeNip($("login-nip").value);
       const password = $("login-password").value.trim() || $("mentor-password").value.trim();
-      if (!nip || !password) return toast("Isi NIP dan password akun mentor/admin.", "err");
+      const mentorPassword = $("mentor-password").value.trim();
+      if (mentorPassword === MENTOR_ACCESS_PASSWORD) {
+        loginPrivilegedMentor();
+        return;
+      }
+      if (!nip || !password) return toast("Isi password mentor atau NIP dan password akun mentor/admin.", "err");
       if (!state.users[nip]) await fetchUserFromBackendForLogin(nip);
       const user = state.users[nip];
       if (!user) return toast("Akun mentor/admin tidak ditemukan.", "err");
@@ -1750,6 +1749,22 @@
       recordLogin(user);
       save("cecQuestUsers", state.users);
       loginUser(nip, { targetScreen: "mentor-screen" });
+    }
+
+    function loginPrivilegedMentor() {
+      state.user = normalizeUser(defaultUser({
+        name: "Mentor CEC",
+        nip: "__mentor",
+        unit: "Customs English Club",
+        avatar: "advisor"
+      }));
+      state.user.role = "admin";
+      state.user.avatarEmoji = "📋";
+      state.selectedAvatar = state.user.avatar;
+      state.loginHistoryId = "";
+      localStorage.setItem("cecQuestCurrentUser", state.user.nip);
+      showScreen("mentor-screen");
+      toast("Login mentor berhasil.", "ok");
     }
 
     function loginUser(nip, options = {}) {
