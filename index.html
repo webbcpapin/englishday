@@ -944,6 +944,7 @@
     function loadData(key, fallback) { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
     function generateId(prefix) { return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`; }
     function normalizeNip(nip) { return String(nip || "").trim().replace(/\s+/g, ""); }
+    function normalizeAccessPassword(password) { return String(password || "").trim().toLowerCase().replace(/\s+/g, ""); }
 
     function normalizeUser(user) {
       if (!user) return user;
@@ -1563,7 +1564,7 @@
         const a = action.dataset.action;
         if (a === "show-login") showAuth("login-screen");
         if (a === "back-register") showAuth("register-screen");
-        if (a === "mentor-login") mentorAccountLogin();
+        if (a === "mentor-login") mentorLogin();
         if (a === "start-adventure") showScreen("home-screen");
         if (a === "continue") continueLearning();
         if (a === "quit-quiz") quitQuiz();
@@ -1737,8 +1738,8 @@
     async function mentorAccountLogin() {
       const nip = normalizeNip($("login-nip").value);
       const password = $("login-password").value.trim() || $("mentor-password").value.trim();
-      const mentorPassword = $("mentor-password").value.trim();
-      if (mentorPassword === MENTOR_ACCESS_PASSWORD) {
+      const mentorPassword = normalizeAccessPassword($("mentor-password").value);
+      if (mentorPassword === normalizeAccessPassword(MENTOR_ACCESS_PASSWORD)) {
         loginPrivilegedMentor();
         return;
       }
