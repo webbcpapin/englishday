@@ -1,0 +1,2694 @@
+{
+  "baseline": "e3f655a56ba6dba8f37d6dfcb592f6c7f44cbd2c",
+  "questionCount": 200,
+  "auditSeed": 20261126,
+  "correctAnswerOmittedInSeededSample": 40,
+  "duplicateChoices": 5,
+  "repeatedItems": 27,
+  "missingReadingPassage": 10,
+  "review": "Structural audit covers every ID; pedagogical sign-off remains pending. Preview fixes duplicate choices and adds metadata, retaining original IDs and all 200 records.",
+  "findings": [
+    {
+      "id": "bedroom_vocab_vocab_l2_q001",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 2,
+      "type": "vocab",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_vocab_l2_q002",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 2,
+      "type": "vocab",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_vocab_l3_q003",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 3,
+      "type": "vocab",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_vocab_l3_q004",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 3,
+      "type": "vocab",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_vocab_l2_q005",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 2,
+      "type": "vocab",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_vocab_l2_q006",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 2,
+      "type": "vocab",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_vocab_l3_q007",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 3,
+      "type": "vocab",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_vocab_l3_q008",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 3,
+      "type": "vocab",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_vocab_l2_q009",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 2,
+      "type": "vocab",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_vocab_l2_q010",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 2,
+      "type": "vocab",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_reading_l2_q011",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 2,
+      "type": "reading",
+      "issues": [
+        "reading_passage_missing",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_reading_l3_q012",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 3,
+      "type": "reading",
+      "issues": [
+        "reading_passage_missing",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_reading_l3_q013",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 3,
+      "type": "reading",
+      "issues": [
+        "reading_passage_missing",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_reading_l4_q014",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 4,
+      "type": "reading",
+      "issues": [
+        "correct_answer_omitted",
+        "reading_passage_missing",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_reading_l2_q015",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 2,
+      "type": "reading",
+      "issues": [
+        "reading_passage_missing",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_reading_l3_q016",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 3,
+      "type": "reading",
+      "issues": [
+        "correct_answer_omitted",
+        "reading_passage_missing",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_reading_l3_q017",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 3,
+      "type": "reading",
+      "issues": [
+        "correct_answer_omitted",
+        "reading_passage_missing",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_reading_l4_q018",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 4,
+      "type": "reading",
+      "issues": [
+        "correct_answer_omitted",
+        "reading_passage_missing",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_reading_l2_q019",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 2,
+      "type": "reading",
+      "issues": [
+        "correct_answer_omitted",
+        "reading_passage_missing",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_reading_l3_q020",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 3,
+      "type": "reading",
+      "issues": [
+        "correct_answer_omitted",
+        "reading_passage_missing",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_sentence_l4_q021",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 4,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_sentence_l4_q022",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 4,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_sentence_l3_q023",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 3,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_sentence_l2_q024",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 2,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_sentence_l4_q025",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 4,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_sentence_l4_q026",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 4,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_sentence_l3_q027",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 3,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_sentence_l2_q028",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 2,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_sentence_l4_q029",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 4,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_sentence_l4_q030",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 4,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_listening_l3_q031",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 3,
+      "type": "listening",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_listening_l8_q032",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 8,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_listening_l3_q033",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 3,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_listening_l8_q034",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 8,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_listening_l3_q035",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 3,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_speaking_l9_q036",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 9,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_speaking_l10_q037",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 10,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_speaking_l9_q038",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 9,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_speaking_l10_q039",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 10,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "bedroom_vocab_speaking_l9_q040",
+      "source": "BEDROOM VOCAB",
+      "world": 1,
+      "level": 9,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "source_accessed_2026-11-26"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l5_q001",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "grammar",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l5_q002",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "grammar",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q003",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q004",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l5_q005",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "grammar",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l5_q006",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "grammar",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q007",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q008",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l5_q009",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "grammar",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l5_q010",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "grammar",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q011",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q012",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l5_q013",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "grammar",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l5_q014",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "grammar",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q015",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q016",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l5_q017",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "grammar",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l5_q018",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "grammar",
+      "issues": [
+        "correct_answer_omitted",
+        "repeated_item:worksheet_grammar_grammar_l5_q001",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q019",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "repeated_item:worksheet_grammar_grammar_l5_q002",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q020",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "correct_answer_omitted",
+        "repeated_item:worksheet_grammar_grammar_l6_q003",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l5_q021",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l6_q022",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l5_q023",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l6_q024",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l5_q025",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l6_q026",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l5_q027",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l6_q028",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l5_q029",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l6_q030",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l5_q031",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l6_q032",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l5_q033",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l6_q034",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l5_q035",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l6_q036",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l5_q037",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l6_q038",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "listening",
+      "issues": [
+        "repeated_item:worksheet_grammar_listening_l5_q021",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l5_q039",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "listening",
+      "issues": [
+        "repeated_item:worksheet_grammar_listening_l6_q022",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_listening_l6_q040",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "listening",
+      "issues": [
+        "repeated_item:worksheet_grammar_listening_l5_q023",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_reading_l5_q041",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "reading",
+      "issues": [
+        "duplicate_choices",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_reading_l6_q042",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "reading",
+      "issues": [
+        "duplicate_choices",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_reading_l6_q043",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "reading",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_reading_l5_q044",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "reading",
+      "issues": [
+        "duplicate_choices",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_reading_l5_q045",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "reading",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_reading_l6_q046",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "reading",
+      "issues": [
+        "duplicate_choices",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_reading_l6_q047",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "reading",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_reading_l5_q048",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "reading",
+      "issues": [
+        "duplicate_choices",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_reading_l5_q049",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "reading",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_reading_l6_q050",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "reading",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_sentence_l5_q051",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_sentence_l6_q052",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_sentence_l5_q053",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_sentence_l6_q054",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_sentence_l5_q055",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_sentence_l6_q056",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_sentence_l5_q057",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_sentence_l6_q058",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_sentence_l5_q059",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_sentence_l6_q060",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_sentence_l5_q061",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q062",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "correct_answer_omitted",
+        "repeated_item:worksheet_grammar_grammar_l5_q013",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l5_q063",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "grammar",
+      "issues": [
+        "repeated_item:worksheet_grammar_grammar_l5_q014",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q064",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "repeated_item:worksheet_grammar_grammar_l6_q015",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_sentence_l5_q065",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q066",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "correct_answer_omitted",
+        "repeated_item:worksheet_grammar_grammar_l5_q017",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l5_q067",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "grammar",
+      "issues": [
+        "correct_answer_omitted",
+        "repeated_item:worksheet_grammar_grammar_l5_q001",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q068",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "repeated_item:worksheet_grammar_grammar_l5_q002",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_sentence_l5_q069",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q070",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "correct_answer_omitted",
+        "repeated_item:worksheet_grammar_grammar_l6_q004",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l5_q071",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "grammar",
+      "issues": [
+        "repeated_item:worksheet_grammar_grammar_l5_q005",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q072",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "repeated_item:worksheet_grammar_grammar_l5_q006",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_sentence_l5_q073",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q074",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "correct_answer_omitted",
+        "repeated_item:worksheet_grammar_grammar_l6_q008",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l5_q075",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "grammar",
+      "issues": [
+        "repeated_item:worksheet_grammar_grammar_l5_q009",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q076",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "repeated_item:worksheet_grammar_grammar_l5_q010",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_sentence_l5_q077",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q078",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "repeated_item:worksheet_grammar_grammar_l6_q012",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l5_q079",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 5,
+      "type": "grammar",
+      "issues": [
+        "repeated_item:worksheet_grammar_grammar_l5_q013",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "worksheet_grammar_grammar_l6_q080",
+      "source": "Worksheet Grammar",
+      "world": 1,
+      "level": 6,
+      "type": "grammar",
+      "issues": [
+        "repeated_item:worksheet_grammar_grammar_l5_q014",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_vocab_l1_q001",
+      "source": "Phrases",
+      "world": 1,
+      "level": 1,
+      "type": "vocab",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_listening_l7_q002",
+      "source": "Phrases",
+      "world": 1,
+      "level": 7,
+      "type": "listening",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_vocab_l7_q003",
+      "source": "Phrases",
+      "world": 1,
+      "level": 7,
+      "type": "vocab",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_listening_l9_q004",
+      "source": "Phrases",
+      "world": 1,
+      "level": 9,
+      "type": "listening",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_vocab_l1_q005",
+      "source": "Phrases",
+      "world": 1,
+      "level": 1,
+      "type": "vocab",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_listening_l1_q006",
+      "source": "Phrases",
+      "world": 1,
+      "level": 1,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_vocab_l7_q007",
+      "source": "Phrases",
+      "world": 1,
+      "level": 7,
+      "type": "vocab",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_listening_l7_q008",
+      "source": "Phrases",
+      "world": 1,
+      "level": 7,
+      "type": "listening",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_vocab_l9_q009",
+      "source": "Phrases",
+      "world": 1,
+      "level": 9,
+      "type": "vocab",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_listening_l1_q010",
+      "source": "Phrases",
+      "world": 1,
+      "level": 1,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_roleplay_l7_q011",
+      "source": "Phrases",
+      "world": 1,
+      "level": 7,
+      "type": "roleplay",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_roleplay_l7_q012",
+      "source": "Phrases",
+      "world": 1,
+      "level": 7,
+      "type": "roleplay",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_roleplay_l9_q013",
+      "source": "Phrases",
+      "world": 1,
+      "level": 9,
+      "type": "roleplay",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_roleplay_l9_q014",
+      "source": "Phrases",
+      "world": 1,
+      "level": 9,
+      "type": "roleplay",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_roleplay_l10_q015",
+      "source": "Phrases",
+      "world": 1,
+      "level": 10,
+      "type": "roleplay",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_speaking_l7_q016",
+      "source": "Phrases",
+      "world": 1,
+      "level": 7,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_speaking_l9_q017",
+      "source": "Phrases",
+      "world": 1,
+      "level": 9,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_speaking_l9_q018",
+      "source": "Phrases",
+      "world": 1,
+      "level": 9,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_speaking_l10_q019",
+      "source": "Phrases",
+      "world": 1,
+      "level": 10,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_speaking_l10_q020",
+      "source": "Phrases",
+      "world": 1,
+      "level": 10,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_roleplay_l1_q021",
+      "source": "Phrases",
+      "world": 1,
+      "level": 1,
+      "type": "roleplay",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_reading_l7_q022",
+      "source": "Phrases",
+      "world": 1,
+      "level": 7,
+      "type": "reading",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_reading_l7_q023",
+      "source": "Phrases",
+      "world": 1,
+      "level": 7,
+      "type": "reading",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_roleplay_l9_q024",
+      "source": "Phrases",
+      "world": 1,
+      "level": 9,
+      "type": "roleplay",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_reading_l10_q025",
+      "source": "Phrases",
+      "world": 1,
+      "level": 10,
+      "type": "reading",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_reading_l1_q026",
+      "source": "Phrases",
+      "world": 1,
+      "level": 1,
+      "type": "reading",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_roleplay_l7_q027",
+      "source": "Phrases",
+      "world": 1,
+      "level": 7,
+      "type": "roleplay",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_reading_l7_q028",
+      "source": "Phrases",
+      "world": 1,
+      "level": 7,
+      "type": "reading",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_reading_l9_q029",
+      "source": "Phrases",
+      "world": 1,
+      "level": 9,
+      "type": "reading",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "phrases_roleplay_l10_q030",
+      "source": "Phrases",
+      "world": 1,
+      "level": 10,
+      "type": "roleplay",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_pronunciation_l8_q001",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 8,
+      "type": "pronunciation",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_pronunciation_l8_q002",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 8,
+      "type": "pronunciation",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_pronunciation_l10_q003",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 10,
+      "type": "pronunciation",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_pronunciation_l8_q004",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 8,
+      "type": "pronunciation",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_pronunciation_l8_q005",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 8,
+      "type": "pronunciation",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_speaking_l10_q006",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 10,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_speaking_l8_q007",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 8,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_speaking_l8_q008",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 8,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_speaking_l10_q009",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 10,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_speaking_l8_q010",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 8,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_listening_l8_q011",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 8,
+      "type": "listening",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_listening_l8_q012",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 8,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_listening_l10_q013",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 10,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_listening_l8_q014",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 8,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_listening_l8_q015",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 8,
+      "type": "listening",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_pronunciation_l8_q016",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 8,
+      "type": "pronunciation",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_pronunciation_l8_q017",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 8,
+      "type": "pronunciation",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_pronunciation_l10_q018",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 10,
+      "type": "pronunciation",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_pronunciation_l8_q019",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 8,
+      "type": "pronunciation",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "tongue_twisters_pronunciation_l8_q020",
+      "source": "Tongue Twisters",
+      "world": 1,
+      "level": 8,
+      "type": "pronunciation",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_reading_l1_q001",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 1,
+      "type": "reading",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_reading_l7_q002",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 7,
+      "type": "reading",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_reading_l9_q003",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 9,
+      "type": "reading",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_reading_l9_q004",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 9,
+      "type": "reading",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_reading_l10_q005",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 10,
+      "type": "reading",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_listening_l7_q006",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 7,
+      "type": "listening",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_listening_l9_q007",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 9,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_listening_l9_q008",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 9,
+      "type": "listening",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_listening_l10_q009",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 10,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_listening_l10_q010",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 10,
+      "type": "listening",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_speaking_l7_q011",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 7,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_roleplay_l9_q012",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 9,
+      "type": "roleplay",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_speaking_l9_q013",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 9,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_roleplay_l10_q014",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 10,
+      "type": "roleplay",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_speaking_l10_q015",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 10,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_grammar_l1_q016",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 1,
+      "type": "grammar",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_sentence_l7_q017",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 7,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_roleplay_l9_q018",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 9,
+      "type": "roleplay",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_speaking_l9_q019",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 9,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_listening_l10_q020",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 10,
+      "type": "listening",
+      "issues": [
+        "correct_answer_omitted",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_grammar_l1_q021",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 1,
+      "type": "grammar",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_sentence_l7_q022",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 7,
+      "type": "sentence",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_roleplay_l9_q023",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 9,
+      "type": "roleplay",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_speaking_l9_q024",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 9,
+      "type": "speaking",
+      "issues": [
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_listening_l10_q025",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 10,
+      "type": "listening",
+      "issues": [
+        "correct_answer_omitted",
+        "repeated_item:workplace_communication_listening_l10_q010",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_grammar_l1_q026",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 1,
+      "type": "grammar",
+      "issues": [
+        "repeated_item:workplace_communication_grammar_l1_q016",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_sentence_l7_q027",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 7,
+      "type": "sentence",
+      "issues": [
+        "repeated_item:workplace_communication_sentence_l7_q017",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_roleplay_l9_q028",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 9,
+      "type": "roleplay",
+      "issues": [
+        "repeated_item:workplace_communication_roleplay_l9_q018",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_speaking_l9_q029",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 9,
+      "type": "speaking",
+      "issues": [
+        "repeated_item:workplace_communication_speaking_l9_q019",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    },
+    {
+      "id": "workplace_communication_listening_l10_q030",
+      "source": "English for Workplace Communication",
+      "world": 1,
+      "level": 10,
+      "type": "listening",
+      "issues": [
+        "correct_answer_omitted",
+        "repeated_item:workplace_communication_listening_l10_q020",
+        "cefr_missing",
+        "content_version_missing",
+        "review_status_missing",
+        "original_source_not_verified"
+      ]
+    }
+  ]
+}
